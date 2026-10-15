@@ -1,0 +1,42 @@
+---
+// 投资者关系：与其他栏目共用版式，题图右侧放股票行情卡片
+import SectionPage from '../layouts/SectionPage.astro';
+import { pages, site } from '../content/zh';
+---
+<SectionPage page={pages.investors}>
+  <!-- 行情卡片：原型中为静态占位，正式版接入行情接口 -->
+  <div class="quote spot" slot="aside">
+    <div class="q-top">
+      <div>
+        <div class="q-name">{site.name}</div>
+        <div class="q-code">A股 · {site.stockCode} · 深交所创业板</div>
+      </div>
+      <span class="q-tag"><i></i>行情待接入</span>
+    </div>
+    <div class="price">--.--</div>
+    <div class="q-meta"><span>涨跌幅 --</span><span>总市值 --</span><span>成交额 --</span></div>
+  </div>
+</SectionPage>
+
+<style>
+  .quote {
+    position: relative; overflow: hidden;
+    background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.18); backdrop-filter: blur(12px);
+    border-radius: var(--radius); padding: 28px 32px; color: #fff;
+    transition: border-color .3s, transform .4s var(--ease);
+  }
+  .quote::before {
+    content: ''; position: absolute; inset: 0; pointer-events: none; opacity: 0; transition: opacity .3s;
+    background: radial-gradient(300px circle at var(--mx, 50%) var(--my, 50%), rgba(0,193,222,.25), transparent 70%);
+  }
+  .quote:hover { border-color: rgba(0,193,222,.6); transform: translateY(-4px); }
+  .quote:hover::before { opacity: 1; }
+  .q-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+  .q-name { font-size: 20px; font-weight: 600; }
+  .q-code { font-size: 13px; opacity: .65; margin-top: 2px; }
+  .q-tag { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; padding: 3px 10px; border-radius: 999px; background: rgba(255,255,255,.12); white-space: nowrap; }
+  .q-tag i { width: 6px; height: 6px; border-radius: 50%; background: var(--brand-2); animation: pulse 1.6s infinite; }
+  @keyframes pulse { 50% { opacity: .3; } }
+  .price { font-size: 52px; font-weight: 700; margin: 20px 0 10px; font-variant-numeric: tabular-nums; }
+  .q-meta { display: flex; gap: 20px; font-size: 13px; opacity: .65; flex-wrap: wrap; }
+</style>

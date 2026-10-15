@@ -1,0 +1,48 @@
+---
+// 页面底部的“下一章”：一张大号主题色卡片，悬停时箭头飞出、形状转动
+import { u } from '../../lib/url';
+import type { Page } from '../../content/zh';
+interface Props { next: Page }
+const { next } = Astro.props;
+const [c1, c2] = next.theme ?? ['#0071ce', '#00c1de'];
+---
+<div class="container wrap">
+  <a href={u(next.href)} class="next spot" style={`--n1:${c1};--n2:${c2}`}>
+    <span class="shape" aria-hidden="true"></span>
+    <span class="label">下一章 · NEXT</span>
+    <span class="title">{next.title}</span>
+    <span class="intro">{next.intro}</span>
+    <span class="go" aria-hidden="true">→</span>
+  </a>
+</div>
+
+<style>
+  .wrap { padding-top: 40px; padding-bottom: 80px; }
+  .next {
+    position: relative; overflow: hidden; isolation: isolate; display: flex; flex-direction: column; gap: 10px;
+    padding: 56px; border-radius: 40px; color: #fff;
+    background: linear-gradient(130deg, var(--n1), var(--n2));
+    transition: transform .6s var(--spring), box-shadow .4s;
+  }
+  .next::after {
+    content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none; opacity: 0; transition: opacity .3s;
+    background: radial-gradient(420px circle at var(--mx, 50%) var(--my, 50%), rgba(255,255,255,.3), transparent 65%);
+  }
+  .next:hover { transform: scale(1.015); box-shadow: 0 40px 70px -30px color-mix(in srgb, var(--n1) 90%, transparent); }
+  .next:hover::after { opacity: 1; }
+  .shape { position: absolute; z-index: -1; width: 340px; height: 340px; border-radius: 42% 58% 60% 40%; border: 2px solid rgba(255,255,255,.35); right: -60px; top: -120px; transition: transform 1s var(--spring); }
+  .next:hover .shape { transform: rotate(90deg) scale(1.1); }
+  .label { font-size: 12px; font-weight: 700; letter-spacing: .25em; opacity: .85; }
+  .title { font-size: clamp(40px, 6vw, 80px); font-weight: 900; line-height: 1.05; }
+  .intro { max-width: 620px; opacity: .9; }
+  .go {
+    position: absolute; right: 48px; bottom: 48px; width: 72px; height: 72px; border-radius: 50%; background: #fff; color: var(--n1);
+    display: grid; place-items: center; font-size: 28px; font-weight: 800; transition: transform .5s var(--spring);
+  }
+  .next:hover .go { transform: translateX(10px) rotate(-30deg) scale(1.1); }
+  @media (max-width: 768px) {
+    .wrap { padding-bottom: 56px; }
+    .next { padding: 32px 24px 96px; border-radius: 28px; }
+    .go { right: 24px; bottom: 24px; width: 56px; height: 56px; }
+  }
+</style>

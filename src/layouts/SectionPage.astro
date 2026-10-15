@@ -1,0 +1,45 @@
+---
+// 栏目页共用版式：页头 → 主题色题图 → 连续的各板块 → 下一章 → 页脚
+import BaseLayout from './BaseLayout.astro';
+import Header from '../components/zh/Header.astro';
+import Footer from '../components/zh/Footer.astro';
+import PageHero from '../components/zh/PageHero.astro';
+import Blocks from '../components/zh/Blocks.astro';
+import NextPage from '../components/zh/NextPage.astro';
+import { site, nextOf, type Page } from '../content/zh';
+
+interface Props {
+  page: Page;
+  crumbs?: { label: string; href: string }[];
+}
+const { page, crumbs = [] } = Astro.props;
+const next = nextOf[page.key];
+const theme = page.theme ?? ['#0071ce', '#00c1de'];
+---
+<BaseLayout title={`${page.title}_${site.name}`} description={page.intro}>
+  <Header current={page.key} />
+  <main style={`--c1:${theme[0]};--c2:${theme[1]}`}>
+    <PageHero title={page.title} en={page.en} intro={page.intro} crumbs={crumbs} theme={theme}>
+      <slot name="aside" slot="aside" />
+    </PageHero>
+
+    {page.sections.map((s) => (
+      <section id={s.id} class="block-section">
+        <div class="container">
+          <div class="s-head reveal">
+            <span class="s-ghost" aria-hidden="true">{s.en}</span>
+            <h2 class="s-title">{s.title ?? s.label}</h2>
+            {s.intro && <p class="s-intro">{s.intro}</p>}
+          </div>
+          <div class="s-body">
+            <Blocks blocks={s.blocks} />
+          </div>
+        </div>
+      </section>
+    ))}
+
+    <slot />
+    {next && <NextPage next={next} />}
+  </main>
+  <Footer />
+</BaseLayout>

@@ -1,0 +1,93 @@
+---
+// 业务布局：一整页连续滚动。五大业务依次展开，每项业务以一张主题色“章节卡”开场，
+// 接着是它的各个小板块。吸附栏只用来提示当前位置和快速跳转，不需要点也能一路看完。
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Header from '../../components/zh/Header.astro';
+import Footer from '../../components/zh/Footer.astro';
+import PageHero from '../../components/zh/PageHero.astro';
+import SubNav from '../../components/zh/SubNav.astro';
+import Blocks from '../../components/zh/Blocks.astro';
+import NextPage from '../../components/zh/NextPage.astro';
+import { site, pages, businessPages, nextOf } from '../../content/zh';
+
+const page = pages.business;
+---
+<BaseLayout title={`${page.title}_${site.name}`} description={page.intro}>
+  <Header current="business" />
+  <main>
+    <PageHero title={page.title} en={page.en} intro={page.intro} theme={page.theme} />
+    <SubNav items={businessPages} />
+
+    {businessPages.map((b, i) => (
+      <article id={b.key} class="chapter" style={`--c1:${b.theme?.[0]};--c2:${b.theme?.[1]}`}>
+        <div class="container">
+          <header class="ch-head reveal spot">
+            <span class="ch-shape s1" aria-hidden="true"></span>
+            <span class="ch-shape s2" aria-hidden="true"></span>
+            <span class="ch-no">{String(i + 1).padStart(2, '0')} / {String(businessPages.length).padStart(2, '0')}</span>
+            <span class="ch-en">{b.en}</span>
+            <h2 class="ch-title">{b.title}</h2>
+            <p class="ch-intro">{b.intro}</p>
+            <ul class="ch-toc">
+              {b.sections.map((s) => <li><a href={`#${b.key}-${s.id}`}>{s.label}</a></li>)}
+            </ul>
+          </header>
+        </div>
+
+        {b.sections.map((s) => (
+          <section id={`${b.key}-${s.id}`} class="block-section">
+            <div class="container">
+              <div class="s-head reveal">
+                <span class="s-ghost" aria-hidden="true">{s.en}</span>
+                <h3 class="s-title">{s.title ?? s.label}</h3>
+                {s.intro && <p class="s-intro">{s.intro}</p>}
+              </div>
+              <div class="s-body">
+                <Blocks blocks={s.blocks} />
+              </div>
+            </div>
+          </section>
+        ))}
+      </article>
+    ))}
+
+    <NextPage next={nextOf.business} />
+  </main>
+  <Footer />
+</BaseLayout>
+
+<style>
+  .chapter { padding-top: 72px; }
+  .chapter + .chapter { padding-top: 40px; }
+  .ch-head {
+    position: relative; overflow: hidden; isolation: isolate; border-radius: 40px; padding: 64px; color: #fff;
+    background: linear-gradient(130deg, var(--c1), var(--c2));
+    box-shadow: 0 30px 60px -34px color-mix(in srgb, var(--c1) 90%, transparent);
+    display: flex; flex-direction: column; gap: 10px;
+  }
+  .ch-head::after {
+    content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none; opacity: 0; transition: opacity .3s;
+    background: radial-gradient(420px circle at var(--mx, 50%) var(--my, 50%), rgba(255,255,255,.25), transparent 65%);
+  }
+  .ch-head:hover::after { opacity: 1; }
+  .ch-shape { position: absolute; z-index: -1; transition: transform 1.2s var(--spring); }
+  .s1 { width: 380px; height: 380px; border-radius: 50%; border: 2px solid rgba(255,255,255,.3); right: -90px; top: -150px; }
+  .s2 { width: 170px; height: 170px; border-radius: 40% 60% 55% 45%; background: rgba(255,255,255,.18); right: 12%; bottom: -50px; }
+  .ch-head:hover .s1 { transform: scale(1.12) rotate(30deg); }
+  .ch-head:hover .s2 { transform: rotate(70deg) translateY(-16px); }
+  .ch-no { font-size: 13px; font-weight: 700; opacity: .8; font-variant-numeric: tabular-nums; }
+  .ch-en { font-size: 13px; font-weight: 800; letter-spacing: .25em; opacity: .85; }
+  .ch-title { font-size: clamp(44px, 7vw, 92px); font-weight: 900; line-height: 1.05; }
+  .ch-intro { font-size: 18px; max-width: 640px; opacity: .92; }
+  /* 本业务内容速览：仅作提示，往下滚动即可依次看到 */
+  .ch-toc { list-style: none; display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+  .ch-toc a { display: inline-block; padding: 6px 14px; border-radius: 999px; background: rgba(255,255,255,.18); font-size: 14px; font-weight: 600; backdrop-filter: blur(6px); transition: background .25s, color .25s, transform .4s var(--spring); }
+  .ch-toc a:hover { background: #fff; color: var(--c1); transform: translateY(-2px); }
+  .s-head .s-ghost { -webkit-text-stroke-color: color-mix(in srgb, var(--c1) 22%, transparent); }
+  .s-title { font-size: clamp(26px, 3.2vw, 40px); }
+  @media (max-width: 768px) {
+    .chapter { padding-top: 48px; }
+    .ch-head { padding: 36px 24px; border-radius: 28px; }
+    .ch-intro { font-size: 16px; }
+  }
+</style>

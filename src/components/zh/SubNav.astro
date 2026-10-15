@@ -1,0 +1,30 @@
+---
+// 业务布局页的吸附栏：五大业务，随滚动高亮当前所在业务；点击可直接跳转
+import type { Page } from '../../content/zh';
+
+interface Props { items: Page[] }
+const { items } = Astro.props;
+---
+<nav class="subnav" aria-label="业务导航">
+  <div class="container row">
+    <div class="biz">
+      {items.map((s) => (
+        <a href={`#${s.key}`} data-spy={s.key} style={`--c1:${s.theme?.[0]};--c2:${s.theme?.[1]}`}>{s.title}</a>
+      ))}
+    </div>
+  </div>
+</nav>
+
+<style>
+  .subnav {
+    position: sticky; top: 76px; z-index: 40; padding: 10px 0;
+    background: rgba(246,248,252,.82); backdrop-filter: saturate(180%) blur(16px);
+  }
+  .row { display: flex; justify-content: center; overflow-x: auto; scrollbar-width: none; }
+  .row::-webkit-scrollbar { display: none; }
+  .biz { display: flex; gap: 4px; padding: 5px; border-radius: 999px; background: #fff; box-shadow: 0 8px 24px -14px rgba(10,22,48,.35); flex-shrink: 0; }
+  .biz a { padding: 8px 18px; border-radius: 999px; font-size: 14px; font-weight: 600; color: var(--muted); white-space: nowrap; transition: color .2s, background .35s, transform .4s var(--spring); }
+  .biz a:hover { color: var(--c1); transform: translateY(-1px); }
+  .biz a.active { background: linear-gradient(120deg, var(--c1), var(--c2)); color: #fff; }
+  @media (max-width: 768px) { .row { justify-content: flex-start; } }
+</style>

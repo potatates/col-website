@@ -1,0 +1,151 @@
+---
+// 页头：一级栏目直接链接；只有“业务布局”带下拉，列出五大业务
+import { u } from '../../lib/url';
+import { site, navOrder, businessPages } from '../../content/zh';
+
+interface Props {
+  current?: string; // 当前所在栏目 key，用于高亮
+}
+const { current = '' } = Astro.props;
+const businessKeys = ['business', ...businessPages.map((p) => p.key)];
+const isActive = (key: string) => key === current || (key === 'business' && businessKeys.includes(current));
+---
+<header class="site-header" id="site-header">
+  <div class="container bar">
+    <a href={u("/")} class="logo" aria-label={`${site.name} 首页`}>
+      <img src={u("/logo-white.png")} alt={site.name} width="144" height="33" class="on-dark" />
+      <img src={u("/logo.png")} alt="" width="144" height="33" class="on-light" aria-hidden="true" />
+    </a>
+
+    <nav class="nav" aria-label="主导航">
+      {navOrder.map((page) => (
+        <div class:list={['nav-item', { 'has-dd': page.key === 'business', ir: page.key === 'investors' }]}>
+          <a href={u(page.href)} class:list={['nav-link', { active: isActive(page.key) }]}>
+            {page.title}{page.key === 'business' && <span class="caret" aria-hidden="true">▾</span>}
+          </a>
+          {page.key === 'business' && (
+            <div class="dropdown">
+              <div class="dd">
+                {businessPages.map((bp) => (
+                  <a href={u(bp.href)} class="dd-link" style={`--c1:${bp.theme?.[0]};--c2:${bp.theme?.[1]}`}>
+                    <i aria-hidden="true"></i>{bp.title}
+                  </a>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      ))}
+    </nav>
+
+    <div class="tools">
+      <span class="lang">
+        <a href={u("/")} class="on">中</a>
+        <span class="sep">/</span>
+        <span class="off" title="英文版即将上线">EN</span>
+      </span>
+      <button class="menu-btn" aria-label="打开菜单" aria-expanded="false" id="menu-btn">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+  <div class="progress" id="progress" aria-hidden="true"></div>
+
+  <nav class="drawer" id="drawer" aria-label="移动端导航">
+    <a href={u("/")}>首页</a>
+    {navOrder.map((page) => (
+      <>
+        <a href={u(page.href)}>{page.title}</a>
+        {page.key === 'business' && businessPages.map((bp) => <a href={u(bp.href)} class="sub">{bp.title}</a>)}
+      </>
+    ))}
+  </nav>
+</header>
+
+<style>
+  .site-header {
+    position: fixed; inset: 0 0 auto 0; z-index: 50; color: #fff;
+    transition: background .35s, color .35s, box-shadow .35s;
+  }
+  .site-header.scrolled, .site-header.open {
+    background: rgba(255,255,255,.88); backdrop-filter: saturate(180%) blur(18px);
+    color: var(--text); box-shadow: 0 1px 0 rgba(10,22,48,.06);
+  }
+  .bar { display: flex; align-items: center; justify-content: space-between; height: 76px; gap: 24px; }
+  .logo { display: flex; align-items: center; flex-shrink: 0; transition: transform .4s var(--spring); }
+  .logo:hover { transform: rotate(-3deg) scale(1.04); }
+  .logo img { height: 33px; width: auto; }
+  .logo .on-light { display: none; }
+  .scrolled .logo .on-dark, .open .logo .on-dark { display: none; }
+  .scrolled .logo .on-light, .open .logo .on-light { display: block; }
+
+  .nav { display: flex; align-items: center; gap: 6px; padding: 5px; border-radius: 999px; background: rgba(255,255,255,.1); backdrop-filter: blur(10px); }
+  .scrolled .nav { background: rgba(10,22,48,.04); }
+  .nav-item { position: relative; }
+  .nav-link {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 8px 16px; border-radius: 999px; font-size: 15px; font-weight: 500;
+    transition: background .25s, color .25s;
+  }
+  .nav-link:hover, .nav-item:hover .nav-link { background: rgba(255,255,255,.18); }
+  .scrolled .nav-link:hover, .scrolled .nav-item:hover .nav-link { background: rgba(0,113,206,.08); color: var(--brand); }
+  .nav-link.active { background: #fff; color: var(--ink); }
+  .scrolled .nav-link.active { background: var(--ink); color: #fff; }
+  .caret { font-size: 10px; opacity: .7; transition: transform .3s var(--spring); }
+  .has-dd:hover .caret { transform: rotate(180deg); }
+  .ir .nav-link { background: linear-gradient(120deg, var(--brand), var(--brand-2)); color: #fff; }
+  .ir .nav-link:hover { filter: brightness(1.1); color: #fff !important; }
+
+  /* 业务布局下拉：五大业务 */
+  .dropdown {
+    position: absolute; top: 100%; left: 50%; padding-top: 12px;
+    opacity: 0; visibility: hidden; transform: translate(-50%, 10px) scale(.96); transform-origin: top center;
+    transition: opacity .2s, transform .35s var(--spring), visibility .2s;
+  }
+  .has-dd:hover .dropdown, .has-dd:focus-within .dropdown { opacity: 1; visibility: visible; transform: translate(-50%, 0) scale(1); }
+  .dd-off .dropdown { opacity: 0 !important; visibility: hidden !important; }
+  .dd {
+    background: #fff; color: var(--text); border-radius: 20px; padding: 8px; min-width: 200px;
+    box-shadow: 0 24px 60px -20px rgba(10,22,48,.35); display: flex; flex-direction: column;
+  }
+  .dd-link {
+    display: flex; align-items: center; gap: 12px; padding: 11px 14px; border-radius: 12px; font-size: 15px; font-weight: 500;
+    transition: background .2s, transform .3s var(--spring);
+  }
+  .dd-link i { width: 12px; height: 12px; border-radius: 50%; background: linear-gradient(135deg, var(--c1), var(--c2)); transition: transform .3s var(--spring); }
+  .dd-link:hover { background: var(--bg); transform: translateX(4px); }
+  .dd-link:hover i { transform: scale(1.5); }
+
+  .tools { display: flex; align-items: center; gap: 16px; }
+  .lang { font-size: 14px; display: flex; gap: 6px; align-items: center; }
+  .lang .on { font-weight: 700; }
+  .lang .off, .lang .sep { opacity: .45; cursor: not-allowed; }
+
+  .progress {
+    position: absolute; left: 0; right: 0; bottom: 0; height: 3px; transform-origin: left; transform: scaleX(0);
+    background: linear-gradient(90deg, var(--brand), var(--brand-2), #6c4dff, #ff5c9a);
+  }
+
+  .menu-btn { display: none; background: none; border: 0; width: 28px; height: 28px; cursor: pointer; position: relative; color: inherit; }
+  .menu-btn span { position: absolute; left: 3px; right: 3px; height: 2px; border-radius: 2px; background: currentColor; transition: transform .3s var(--spring), opacity .25s; }
+  .menu-btn span:nth-child(1) { top: 7px; }
+  .menu-btn span:nth-child(2) { top: 13px; }
+  .menu-btn span:nth-child(3) { top: 19px; }
+  .open .menu-btn span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+  .open .menu-btn span:nth-child(2) { opacity: 0; }
+  .open .menu-btn span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+
+  .drawer { display: none; }
+
+  @media (max-width: 1080px) {
+    .nav { display: none; }
+    .menu-btn { display: block; }
+    .drawer {
+      display: flex; flex-direction: column; background: #fff; color: var(--text);
+      max-height: 0; overflow: auto; transition: max-height .45s var(--ease);
+    }
+    .open .drawer { max-height: calc(100vh - 76px); }
+    .drawer a { padding: 16px 20px; font-size: 20px; font-weight: 700; border-top: 1px solid var(--line); }
+    .drawer a.sub { padding: 10px 20px 10px 40px; font-size: 15px; font-weight: 500; color: var(--muted); border-top: 0; }
+  }
+</style>

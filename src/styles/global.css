@@ -1,0 +1,204 @@
+/* ==========================================================================
+   设计系统：内容/文娱公司的气质
+   - 主色仍是 Logo 蓝与青；辅以紫、粉、橙作为“故事感”的点缀色
+   - 大字号粗体标题 + 背后的描边英文大字；圆润的形状；有弹性的动效
+   - 全站一种浅底，深色只出现在首屏与页脚，保持连贯
+   ========================================================================== */
+
+:root {
+  --brand: #0071ce;      /* Logo 主蓝 */
+  --brand-2: #00c1de;    /* Logo 青色 */
+  --violet: #6c4dff;
+  --pink: #ff5c9a;
+  --sun: #ffc53d;
+  --ink: #0b1430;
+  --text: #161c2e;
+  --muted: #5f6880;
+  --line: #e4e9f2;
+  --bg: #f6f8fc;
+  --surface: #ffffff;
+  --radius: 28px;
+  --maxw: 1240px;
+  --ease: cubic-bezier(.22, .61, .36, 1);
+  --spring: cubic-bezier(.34, 1.56, .64, 1);
+  --grad: linear-gradient(120deg, var(--brand) 0%, var(--brand-2) 45%, var(--violet) 100%);
+  --font: 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Noto Sans SC', system-ui, sans-serif;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+[id] { scroll-margin-top: 140px; }
+body {
+  font-family: var(--font);
+  color: var(--text);
+  background: var(--bg);
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+a { color: inherit; text-decoration: none; }
+img { max-width: 100%; display: block; }
+::selection { background: var(--violet); color: #fff; }
+
+/* 底层彩色柔光，跨板块连续 */
+.aura { position: fixed; inset: 0; z-index: -1; pointer-events: none; overflow: hidden; }
+.aura::before, .aura::after { content: ''; position: absolute; border-radius: 50%; filter: blur(130px); animation: aura 24s ease-in-out infinite; }
+.aura::before { width: 620px; height: 620px; background: var(--brand-2); right: -220px; top: 25vh; opacity: .16; }
+.aura::after { width: 560px; height: 560px; background: var(--violet); left: -240px; top: 65vh; opacity: .1; animation-delay: -12s; }
+@keyframes aura { 50% { transform: translate(60px, -80px) scale(1.15); } }
+
+.container { max-width: var(--maxw); margin: 0 auto; padding: 0 24px; }
+
+/* ---------- 板块 ---------- */
+.block-section { padding: 110px 0; position: relative; }
+.block-section + .block-section { padding-top: 40px; }
+
+/* 板块标题：背后是描边英文大字，前面是粗体中文 */
+.s-head { position: relative; margin-bottom: 48px; }
+.s-ghost {
+  display: block; font-size: clamp(56px, 10vw, 140px); font-weight: 900; line-height: .9; letter-spacing: -.02em;
+  color: transparent; -webkit-text-stroke: 1.5px rgba(0,113,206,.16); white-space: nowrap; user-select: none;
+  margin-bottom: -.42em; pointer-events: none;
+}
+.s-title { position: relative; font-size: clamp(30px, 4vw, 52px); font-weight: 800; line-height: 1.2; color: var(--ink); letter-spacing: .01em; }
+.s-title .hl { background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.s-intro { color: var(--muted); font-size: 17px; margin-top: 14px; max-width: 680px; }
+.s-body { display: flex; flex-direction: column; gap: 28px; }
+.s-head-row { display: flex; justify-content: space-between; align-items: flex-end; gap: 24px; flex-wrap: wrap; }
+
+/* ---------- 卡片 ---------- */
+.card {
+  position: relative; isolation: isolate;
+  background: var(--surface); border-radius: var(--radius);
+  padding: 30px; display: flex; flex-direction: column; gap: 10px;
+  box-shadow: 0 1px 0 rgba(10,22,48,.04), 0 12px 30px -18px rgba(10,22,48,.18);
+  transition: transform .5s var(--spring), box-shadow .4s var(--ease), opacity .8s var(--ease);
+}
+/* 悬停时出现渐变描边 + 跟随鼠标的彩色光斑 */
+.card::before {
+  content: ''; position: absolute; inset: 0; border-radius: inherit; padding: 2px; z-index: -1;
+  background: linear-gradient(120deg, var(--c1, var(--brand)), var(--c2, var(--brand-2)), var(--violet));
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask-composite: exclude;
+  opacity: 0; transition: opacity .35s;
+}
+.card::after {
+  content: ''; position: absolute; inset: 0; border-radius: inherit; z-index: -1; pointer-events: none;
+  background: radial-gradient(380px circle at var(--mx, 50%) var(--my, 50%), color-mix(in srgb, var(--c2, var(--brand-2)) 16%, transparent), transparent 70%);
+  opacity: 0; transition: opacity .35s;
+}
+.card:hover { transform: translateY(-8px) rotate(-.4deg); box-shadow: 0 30px 60px -28px rgba(10,22,48,.35); }
+.card:hover::before, .card:hover::after { opacity: 1; }
+.card-tag {
+  align-self: flex-start; font-size: 12px; font-weight: 700; letter-spacing: .06em;
+  padding: 4px 12px; border-radius: 999px; color: var(--c1, var(--brand));
+  background: color-mix(in srgb, var(--c1, var(--brand)) 10%, transparent);
+}
+.card-title { font-size: 20px; font-weight: 700; color: var(--ink); line-height: 1.45; }
+.card-text { font-size: 14px; color: var(--muted); line-height: 1.85; }
+.card-go { margin-top: auto; padding-top: 12px; font-size: 14px; font-weight: 600; color: var(--c1, var(--brand)); display: inline-flex; align-items: center; gap: 6px; }
+.card-go .arrow { display: inline-block; transition: transform .4s var(--spring); }
+.card:hover .card-go .arrow { transform: translateX(8px); }
+.card.is-target { box-shadow: 0 0 0 4px color-mix(in srgb, var(--brand) 30%, transparent); }
+
+/* ---------- 数字：渐变大字，不再用表格框 ---------- */
+.num { display: flex; align-items: baseline; gap: 4px; white-space: nowrap; }
+.num span {
+  font-size: clamp(44px, 5.4vw, 76px); font-weight: 900; line-height: 1; font-variant-numeric: tabular-nums; letter-spacing: -.03em;
+  background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+.num em { font-style: normal; color: var(--ink); font-weight: 700; font-size: 18px; }
+.num-label { color: var(--muted); margin-top: 8px; font-size: 14px; }
+
+/* ---------- 按钮 ---------- */
+.btn {
+  position: relative; overflow: hidden; isolation: isolate;
+  display: inline-flex; align-items: center; gap: 10px;
+  padding: 14px 28px; border-radius: 999px; font-size: 15px; font-weight: 600;
+  transition: color .3s, transform .4s var(--spring), box-shadow .3s;
+}
+.btn:hover { transform: translateY(-3px) scale(1.03); }
+.btn:active { transform: scale(.96); }
+.btn .arrow { display: inline-block; transition: transform .4s var(--spring); }
+.btn:hover .arrow { transform: translateX(5px) rotate(-8deg); }
+.btn-primary { background: var(--grad); background-size: 160% 100%; color: #fff; box-shadow: 0 12px 28px -12px rgba(0,113,206,.7); transition: background-position .5s, transform .4s var(--spring), box-shadow .3s; }
+.btn-primary:hover { background-position: 100% 0; box-shadow: 0 18px 34px -12px rgba(108,77,255,.6); }
+.btn-ghost { background: rgba(255,255,255,.14); color: #fff; backdrop-filter: blur(8px); border: 1px solid rgba(255,255,255,.3); }
+.btn-ghost:hover { background: #fff; color: var(--ink); }
+.btn-outline { background: var(--surface); color: var(--ink); box-shadow: 0 0 0 1.5px var(--ink) inset; }
+.btn-outline:hover { background: var(--ink); color: #fff; }
+
+.link-u { background: linear-gradient(currentColor, currentColor) 0 100% / 0 1.5px no-repeat; transition: background-size .35s var(--ease), color .2s; }
+.link-u:hover { background-size: 100% 1.5px; }
+
+/* ---------- 封面占位：海报感的多彩渐变（正式版替换为封面图） ---------- */
+.cover {
+  aspect-ratio: 3 / 4; border-radius: 18px; position: relative; overflow: hidden;
+  display: flex; align-items: flex-end; padding: 16px; color: #fff; font-weight: 800; font-size: 16px; line-height: 1.35;
+  background:
+    radial-gradient(90% 60% at 85% 10%, hsl(calc(var(--h) + 50) 95% 70% / .9), transparent 60%),
+    radial-gradient(70% 50% at 10% 90%, hsl(calc(var(--h) - 40) 90% 55% / .8), transparent 60%),
+    linear-gradient(160deg, hsl(var(--h) 75% 52%), hsl(calc(var(--h) + 25) 70% 22%));
+  box-shadow: 0 14px 30px -18px rgba(10,22,48,.45);
+  transition: transform .3s ease-out, box-shadow .4s;
+  will-change: transform;
+}
+.cover::before {
+  content: ''; position: absolute; width: 70%; aspect-ratio: 1; border-radius: 50%; right: -20%; top: 18%;
+  border: 2px solid rgba(255,255,255,.25);
+}
+.cover::after {
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+  background: radial-gradient(220px circle at var(--mx, 50%) var(--my, 0%), rgba(255,255,255,.4), transparent 60%);
+  opacity: 0; transition: opacity .3s;
+}
+.cover:hover { box-shadow: 0 30px 50px -20px rgba(10,22,48,.55); }
+.cover:hover::after { opacity: 1; }
+.cover span { position: relative; z-index: 1; text-shadow: 0 2px 12px rgba(0,0,0,.25); }
+
+/* ---------- 跑马灯大字 ---------- */
+.ticker { overflow: hidden; padding: 28px 0; user-select: none; }
+.ticker-track { display: flex; width: max-content; animation: ticker 40s linear infinite; }
+.ticker span { font-size: clamp(40px, 7vw, 96px); font-weight: 900; white-space: nowrap; padding-right: .5em; letter-spacing: -.01em; color: transparent; -webkit-text-stroke: 1.5px rgba(11,20,48,.18); }
+.ticker span:nth-child(even) { -webkit-text-stroke: 0; background: var(--grad); -webkit-background-clip: text; background-clip: text; }
+@keyframes ticker { to { transform: translateX(-50%); } }
+
+/* ---------- 滚动渐显 ---------- */
+.reveal { opacity: 0; transform: translateY(36px) scale(.98); transition: opacity .9s var(--ease), transform 1s var(--spring); transition-delay: var(--d, 0ms); }
+.reveal.in { opacity: 1; transform: none; }
+
+/* ---------- 光标跟随（仅鼠标设备） ---------- */
+.cursor {
+  position: fixed; left: 0; top: 0; z-index: 100; pointer-events: none; width: 14px; height: 14px; margin: -7px 0 0 -7px; border-radius: 50%;
+  background: var(--grad); opacity: 0; mix-blend-mode: multiply;
+  transition: width .35s var(--spring), height .35s var(--spring), margin .35s var(--spring), opacity .3s;
+}
+.cursor.on { opacity: .85; }
+.cursor.big { width: 56px; height: 56px; margin: -28px 0 0 -28px; opacity: .25; }
+@media (hover: none), (pointer: coarse) { .cursor { display: none; } }
+
+/* ---------- 回到顶部 ---------- */
+.to-top {
+  position: fixed; right: 24px; bottom: 24px; z-index: 45; width: 52px; height: 52px; border-radius: 50%;
+  background: var(--grad); color: #fff; border: 0; cursor: pointer; font-size: 20px; font-weight: 700;
+  box-shadow: 0 12px 28px -10px rgba(0,113,206,.6);
+  opacity: 0; transform: translateY(20px) scale(.6); pointer-events: none;
+  transition: opacity .3s, transform .5s var(--spring);
+}
+.to-top.show { opacity: 1; transform: none; pointer-events: auto; }
+.to-top:hover { transform: translateY(-4px) rotate(-10deg) scale(1.08); }
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal { opacity: 1; transform: none; transition: none; }
+  html { scroll-behavior: auto; }
+  .aura::before, .aura::after, .ticker-track { animation: none; }
+  .cursor { display: none; }
+}
+
+@media (max-width: 768px) {
+  .container { padding: 0 16px; }
+  .block-section { padding: 72px 0; }
+  .block-section + .block-section { padding-top: 24px; }
+  .s-head { margin-bottom: 32px; }
+  .card { padding: 24px; border-radius: 22px; }
+  .to-top { right: 16px; bottom: 16px; }
+}

@@ -1,0 +1,64 @@
+---
+// 页脚：跑马灯口号 + 简洁网站地图（一级栏目 + 五大业务）
+import { u } from '../../lib/url';
+import { site, navOrder, businessPages, contact } from '../../content/zh';
+const year = new Date().getFullYear();
+const words = ['更好内容', 'BETTER CONTENT', '更好生活', 'BETTER LIFE'];
+---
+<div class="ticker" aria-hidden="true">
+  <div class="ticker-track">
+    {[0, 1].map(() => words.map((w) => <span>{w}</span>))}
+  </div>
+</div>
+<footer class="footer">
+  <div class="blob b1" aria-hidden="true"></div>
+  <div class="blob b2" aria-hidden="true"></div>
+  <div class="container">
+    <div class="top">
+      <div class="brand">
+        <img src={u("/logo-white.png")} alt={site.name} class="logo" width="144" height="33" />
+        <p class="slogan">{site.slogan}</p>
+        <p class="muted">{site.fullName} · {site.stockCode}</p>
+      </div>
+      <div class="col">
+        {navOrder.map((p) => <a href={u(p.href)} class="big link-u">{p.title}</a>)}
+      </div>
+      <div class="col">
+        <span class="label">业务布局</span>
+        {businessPages.map((b) => (
+          <a href={u(b.href)} class="biz" style={`--c1:${b.theme?.[0]};--c2:${b.theme?.[1]}`}><i></i>{b.title}</a>
+        ))}
+      </div>
+      <div class="col">
+        <span class="label">联系我们</span>
+        <span>服务热线 {contact.phone}</span>
+        <span>传真 {contact.fax}</span>
+      </div>
+    </div>
+    <div class="bottom">
+      <span>© {year} {site.fullName} 版权所有</span>
+      <span>{contact.icp.join('　')}</span>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .footer { position: relative; overflow: hidden; isolation: isolate; background: var(--ink); color: rgba(255,255,255,.7); padding: 88px 0 32px; font-size: 14px; border-radius: 40px 40px 0 0; }
+  .blob { position: absolute; border-radius: 50%; filter: blur(90px); z-index: -1; }
+  .b1 { width: 480px; height: 480px; background: var(--brand); opacity: .45; right: -120px; top: -200px; }
+  .b2 { width: 360px; height: 360px; background: var(--violet); opacity: .3; left: 10%; bottom: -220px; }
+  .top { display: grid; grid-template-columns: 1.6fr 1fr 1fr 1fr; gap: 40px; padding-bottom: 56px; }
+  .logo { height: 33px; width: auto; margin-bottom: 20px; }
+  .slogan { font-size: clamp(28px, 3.4vw, 44px); font-weight: 900; color: #fff; line-height: 1.2; letter-spacing: .06em; }
+  .muted { color: rgba(255,255,255,.45); font-size: 13px; margin-top: 12px; }
+  .col { display: flex; flex-direction: column; gap: 10px; align-items: flex-start; }
+  .label { font-size: 12px; letter-spacing: .2em; color: rgba(255,255,255,.4); margin-bottom: 4px; }
+  .big { font-size: 18px; font-weight: 700; color: #fff; }
+  .biz { display: inline-flex; align-items: center; gap: 10px; transition: color .2s, transform .4s var(--spring); }
+  .biz i { width: 10px; height: 10px; border-radius: 50%; background: linear-gradient(135deg, var(--c1), var(--c2)); transition: transform .4s var(--spring); }
+  .biz:hover { color: #fff; transform: translateX(4px); }
+  .biz:hover i { transform: scale(1.6); }
+  .bottom { display: flex; justify-content: space-between; gap: 16px; padding-top: 24px; border-top: 1px solid rgba(255,255,255,.1); font-size: 12px; color: rgba(255,255,255,.4); flex-wrap: wrap; }
+  @media (max-width: 1080px) { .top { grid-template-columns: 1fr 1fr; } .brand { grid-column: 1 / -1; } }
+  @media (max-width: 640px) { .top { grid-template-columns: 1fr; } .footer { border-radius: 28px 28px 0 0; padding-top: 64px; } }
+</style>

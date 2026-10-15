@@ -1,0 +1,210 @@
+---
+import { u } from '../lib/url';
+import '../styles/global.css';
+import { ClientRouter } from 'astro:transitions';
+
+interface Props {
+  title: string;
+  description?: string;
+  lang?: 'zh-CN' | 'en';
+}
+const { title, description = '', lang = 'zh-CN' } = Astro.props;
+---
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="icon" href={u("/favicon.svg")} type="image/svg+xml" />
+    <!-- 页面之间平滑过渡，避免每次点击都“白屏重载” -->
+    <ClientRouter />
+  </head>
+  <body>
+    <div class="aura" aria-hidden="true"><div class="aura-grid"></div></div>
+    <slot />
+    <button class="to-top" id="to-top" aria-label="回到顶部">↑</button>
+    <div class="cursor" id="cursor" aria-hidden="true"></div>
+
+    <script>
+      // ------------------------------------------------------------------
+      // 全站交互。使用页面过渡后，每次进入新页面都会触发 astro:page-load。
+      // ------------------------------------------------------------------
+      const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+      let observers: IntersectionObserver[] = [];
+      let cleanups: (() => void)[] = [];
+
+      // 鼠标光斑：卡片与封面记录鼠标位置（事件委托，只绑定一次）
+      document.addEventListener('pointermove', (e) => {
+        const el = (e.target as HTMLElement).closest<HTMLElement>('.card, .cover, .spot');
+        if (!el) return;
+        const r = el.getBoundingClientRect();
+        el.style.setProperty('--mx', `${e.clientX - r.left}px`);
+        el.style.setProperty('--my', `${e.clientY - r.top}px`);
+        // 封面 3D 倾斜
+        if (!reduce && el.classList.contains('cover')) {
+          const px = (e.clientX - r.left) / r.width - 0.5;
+          const py = (e.clientY - r.top) / r.height - 0.5;
+          el.style.transform = `perspective(700px) rotateY(${px * 12}deg) rotateX(${-py * 12}deg) translateY(-4px)`;
+        }
+      });
+      // 光标跟随：经过可点击元素时放大
+      document.addEventListener('pointermove', (e) => {
+        if (e.pointerType !== 'mouse' || reduce) return;
+        const c = document.getElementById('cursor');
+        if (!c) return;
+        c.style.transform = `translate(${e.clientX}px, ${e.clientY}px)`;
+        c.classList.add('on');
+        c.classList.toggle('big', !!(e.target as HTMLElement).closest('a, button, .card, .cover, summary'));
+        // 首屏海报随鼠标轻微视差
+        document.querySelectorAll<HTMLElement>('[data-depth]').forEach((el) => {
+          const d = Number(el.dataset.depth);
+          const x = (e.clientX / innerWidth - 0.5) * d;
+          const y = (e.clientY / innerHeight - 0.5) * d;
+          el.style.translate = `${x}px ${y}px`;
+        });
+      });
+      document.addEventListener('pointerleave', () => document.getElementById('cursor')?.classList.remove('on'));
+
+      document.addEventListener('pointerout', (e) => {
+        const el = (e.target as HTMLElement).closest<HTMLElement>('.cover');
+        if (el && !el.contains(e.relatedTarget as Node)) el.style.transform = '';
+      });
+
+      // 点击下拉菜单里的链接后收起菜单（鼠标移出页头前不再弹出）
+      let fromDropdown = false;
+      document.addEventListener('click', (e) => {
+        const link = (e.target as HTMLElement).closest<HTMLAnchorElement>('.dropdown a');
+        if (!link) return;
+        fromDropdown = true;
+        link.blur();
+        closeDropdown();
+      });
+      function closeDropdown() {
+        const header = document.getElementById('site-header');
+        if (!header) return;
+        header.classList.add('dd-off');
+        header.addEventListener('mouseleave', () => header.classList.remove('dd-off'), { once: true });
+      }
+
+      // 数字滚动计数
+      function countUp(el: HTMLElement) {
+        const raw = el.dataset.count ?? '';
+        const target = Number(raw.replace(/,/g, ''));
+        if (!Number.isFinite(target) || reduce) return;
+        const comma = raw.includes(',');
+        const fmt = (n: number) => (comma ? Math.round(n).toLocaleString('en-US') : String(Math.round(n)));
+        const t0 = performance.now();
+        const dur = 1400;
+        const step = (t: number) => {
+          const p = Math.min(1, (t - t0) / dur);
+          el.textContent = fmt(target * (1 - Math.pow(1 - p, 3)));
+          if (p < 1) requestAnimationFrame(step);
+        };
+        el.textContent = fmt(0);
+        requestAnimationFrame(step);
+      }
+
+      function init() {
+        observers.forEach((o) => o.disconnect());
+        cleanups.forEach((f) => f());
+        observers = [];
+        cleanups = [];
+
+        // 页头：滚动后变白、进度条、移动端菜单
+        const header = document.getElementById('site-header');
+        const bar = document.getElementById('progress');
+        const toTop = document.getElementById('to-top');
+        const onScroll = () => {
+          const y = window.scrollY;
+          header?.classList.toggle('scrolled', y > 40);
+          const max = document.documentElement.scrollHeight - innerHeight;
+          if (bar) bar.style.transform = `scaleX(${max > 0 ? y / max : 0})`;
+          toTop?.classList.toggle('show', y > innerHeight);
+        };
+        onScroll();
+        addEventListener('scroll', onScroll, { passive: true });
+        cleanups.push(() => removeEventListener('scroll', onScroll));
+
+        const btn = document.getElementById('menu-btn');
+        btn?.addEventListener('click', () => {
+          const open = header!.classList.toggle('open');
+          btn.setAttribute('aria-expanded', String(open));
+        });
+        document.querySelectorAll('#drawer a').forEach((a) =>
+          a.addEventListener('click', () => header?.classList.remove('open'))
+        );
+        toTop?.addEventListener('click', () => scrollTo({ top: 0, behavior: reduce ? 'auto' : 'smooth' }));
+
+        // 滚动渐显（同组元素依次出现）
+        const io = new IntersectionObserver(
+          (entries) => entries.forEach((e) => {
+            if (!e.isIntersecting) return;
+            e.target.classList.add('in');
+            e.target.querySelectorAll<HTMLElement>('[data-count]').forEach(countUp);
+            io.unobserve(e.target);
+          }),
+          { threshold: 0.12 }
+        );
+        document.querySelectorAll<HTMLElement>('.reveal').forEach((el) => io.observe(el));
+        observers.push(io);
+
+        // 吸附导航随滚动高亮当前板块
+        // 做法：每次滚动时，找出顶部已越过屏幕上方 35% 位置的最后一个板块
+        const spyLinks = [...document.querySelectorAll<HTMLAnchorElement>('[data-spy]')];
+        const spyTargets = spyLinks
+          .map((a) => document.getElementById(a.dataset.spy!))
+          .filter((el): el is HTMLElement => !!el);
+        if (spyTargets.length) {
+          let current = '';
+          const update = () => {
+            const line = innerHeight * 0.35;
+            let id = '';
+            for (const t of spyTargets) if (t.getBoundingClientRect().top <= line) id = t.id;
+            if (id === current) return;
+            current = id;
+            spyLinks.forEach((a) => {
+              const on = a.dataset.spy === id;
+              a.classList.toggle('active', on);
+              if (on) a.parentElement?.scrollTo({ left: a.offsetLeft - 16, behavior: 'smooth' });
+            });
+          };
+          update();
+          addEventListener('scroll', update, { passive: true });
+          cleanups.push(() => removeEventListener('scroll', update));
+        }
+
+        if (fromDropdown) {
+          closeDropdown();
+          fromDropdown = false;
+        }
+
+        // 从别的页面跳到某个小板块（如 /business/ip#audio）：定位到该板块，卡片则短暂高亮
+        const hash = decodeURIComponent(location.hash.slice(1));
+        const target = hash ? document.getElementById(hash) : null;
+        if (target) {
+          requestAnimationFrame(() => target.scrollIntoView({ behavior: 'instant', block: 'start' }));
+          if (target.classList.contains('card')) {
+            target.classList.add('is-target');
+            setTimeout(() => target.classList.remove('is-target'), 2200);
+          }
+        }
+
+        // 首页业务导览：悬停/聚焦某项时切换右侧预览
+        const rows = [...document.querySelectorAll<HTMLElement>('[data-biz]')];
+        const panels = [...document.querySelectorAll<HTMLElement>('[data-biz-panel]')];
+        const activate = (key: string) => {
+          rows.forEach((r) => r.classList.toggle('active', r.dataset.biz === key));
+          panels.forEach((p) => p.classList.toggle('active', p.dataset.bizPanel === key));
+        };
+        rows.forEach((r) => {
+          r.addEventListener('mouseenter', () => activate(r.dataset.biz!));
+          r.addEventListener('focusin', () => activate(r.dataset.biz!));
+        });
+      }
+
+      document.addEventListener('astro:page-load', init);
+    </script>
+  </body>
+</html>

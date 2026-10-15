@@ -1,0 +1,71 @@
+---
+// 栏目页题图：用该栏目的主题色做渐变，配漂浮的几何形状，底部渐隐进全站浅底
+import { u } from '../../lib/url';
+interface Props {
+  title: string;
+  en: string;
+  intro: string;
+  theme?: [string, string];
+  crumbs?: { label: string; href: string }[];
+}
+const { title, en, intro, theme = ['#0071ce', '#00c1de'], crumbs = [] } = Astro.props;
+---
+<section class="page-hero" style={`--c1:${theme[0]};--c2:${theme[1]}`}>
+  <div class="mesh" aria-hidden="true">
+    <span class="blob b1"></span><span class="blob b2"></span><span class="blob b3"></span>
+  </div>
+  <div class="shapes" aria-hidden="true">
+    <span class="ring" data-depth="30"></span>
+    <span class="dot d1" data-depth="-24"></span>
+    <span class="dot d2" data-depth="40"></span>
+    <span class="pill" data-depth="-16"></span>
+  </div>
+  <div class="container inner">
+    <div class="text">
+      <nav class="crumbs" aria-label="面包屑">
+        <a href={u("/")} class="link-u">首页</a>
+        {crumbs.map((c) => <><span>/</span><a href={u(c.href)} class="link-u">{c.label}</a></>)}
+        <span>/</span><span class="here">{title}</span>
+      </nav>
+      <span class="en">{en}</span>
+      <h1>{title}</h1>
+      <p>{intro}</p>
+    </div>
+    <slot name="aside" />
+  </div>
+</section>
+
+<style>
+  .page-hero { position: relative; overflow: hidden; color: #fff; padding: 176px 0 180px; isolation: isolate; }
+  .mesh { position: absolute; inset: 0; z-index: -2; background: linear-gradient(135deg, var(--c1), color-mix(in srgb, var(--c1) 60%, #0b1430)); }
+  .mesh::after { content: ''; position: absolute; inset: auto 0 0 0; height: 45%; background: linear-gradient(180deg, transparent, var(--bg)); }
+  .blob { position: absolute; border-radius: 50%; filter: blur(70px); animation: drift 16s ease-in-out infinite; }
+  .b1 { width: 560px; height: 560px; background: var(--c2); right: -120px; top: -180px; opacity: .8; }
+  .b2 { width: 420px; height: 420px; background: #6c4dff; left: 30%; top: 20%; opacity: .45; animation-delay: -5s; }
+  .b3 { width: 320px; height: 320px; background: #ff5c9a; right: 20%; bottom: 10%; opacity: .3; animation-delay: -10s; }
+  @keyframes drift { 50% { transform: translate(-50px, 40px) scale(1.12); } }
+
+  .shapes { position: absolute; inset: 0; z-index: -1; pointer-events: none; }
+  .shapes > * { position: absolute; transition: translate .6s var(--ease); }
+  .ring { width: 220px; height: 220px; border-radius: 50%; border: 2px solid rgba(255,255,255,.35); right: 10%; top: 26%; animation: spin 30s linear infinite; }
+  .ring::after { content: ''; position: absolute; width: 18px; height: 18px; border-radius: 50%; background: #fff; top: -9px; left: 50%; }
+  .dot { border-radius: 50%; background: #fff; }
+  .d1 { width: 14px; height: 14px; right: 34%; top: 30%; opacity: .7; }
+  .d2 { width: 64px; height: 64px; right: 6%; bottom: 34%; background: var(--sun, #ffc53d); opacity: .9; }
+  .pill { width: 120px; height: 44px; border-radius: 999px; border: 2px solid rgba(255,255,255,.4); right: 26%; bottom: 30%; rotate: -18deg; }
+  @keyframes spin { to { rotate: 360deg; } }
+
+  .inner { position: relative; display: grid; grid-template-columns: 1.3fr 1fr; gap: 48px; align-items: end; }
+  .inner:not(:has(> :nth-child(2))) { grid-template-columns: 1fr; }
+  .crumbs { display: flex; gap: 8px; font-size: 13px; color: rgba(255,255,255,.75); margin-bottom: 28px; flex-wrap: wrap; }
+  .crumbs a:hover { color: #fff; }
+  .here { color: #fff; font-weight: 600; }
+  .en { display: inline-block; font-size: 13px; font-weight: 700; letter-spacing: .25em; padding: 6px 14px; border-radius: 999px; background: rgba(255,255,255,.16); backdrop-filter: blur(6px); }
+  h1 { font-size: clamp(48px, 8vw, 104px); font-weight: 900; letter-spacing: .02em; line-height: 1.05; margin: 20px 0 20px; animation: rise 1s var(--spring) both; }
+  p { font-size: 18px; color: rgba(255,255,255,.9); max-width: 620px; animation: rise 1s var(--spring) .12s both; }
+  @keyframes rise { from { opacity: 0; transform: translateY(40px); } }
+  @media (prefers-reduced-motion: reduce) { .blob, .ring, h1, p { animation: none; } }
+  @media (max-width: 1080px) { .inner { grid-template-columns: 1fr; } .shapes { display: none; } }
+  @media (max-width: 768px) { .page-hero { padding: 124px 0 120px; } p { font-size: 16px; } }
+
+</style>
