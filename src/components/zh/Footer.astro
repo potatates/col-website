@@ -34,16 +34,20 @@ const words = ['更好内容', 'BETTER CONTENT', '更好生活', 'BETTER LIFE'];
       <div class="col">
         <span class="label">关注我们</span>
         <div class="social">
-          {social.map((s) => (
-            <a href={s.href ?? '#'} class="soc" target={s.href ? '_blank' : undefined} rel={s.href ? 'noopener' : undefined} aria-label={`${s.platform}：${s.account}`}>
-              <span class="soc-name">{s.short}</span>
-              <span class="soc-pop" role="tooltip">
-                <span class="qr" aria-hidden="true">{s.qr ? '' : '二维码'}</span>
-                <strong>{s.platform}</strong>
-                <small>{s.account}</small>
-              </span>
-            </a>
-          ))}
+          {social.map((s) => {
+            // 有链接的账号可点击；账号未提供时只显示图标与说明（悬停/聚焦弹出），不做成空链接
+            const Tag = s.href ? 'a' : 'span';
+            return (
+              <Tag href={s.href} class:list={['soc', { pending: !s.href }]} target={s.href ? '_blank' : undefined} rel={s.href ? 'noopener' : undefined} tabindex={s.href ? undefined : 0} aria-label={`${s.platform}：${s.account}`}>
+                <span class="soc-name">{s.short}</span>
+                <span class="soc-pop" role="tooltip">
+                  <span class="qr" aria-hidden="true">{s.qr ? '' : '二维码'}</span>
+                  <strong>{s.platform}</strong>
+                  <small>{s.account}</small>
+                </span>
+              </Tag>
+            );
+          })}
         </div>
       </div>
     </div>
@@ -54,7 +58,7 @@ const words = ['更好内容', 'BETTER CONTENT', '更好生活', 'BETTER LIFE'];
         <a href={u('/about#licenses')} class="link-u">资质证照</a>
       </div>
       <div class="links">
-        {legal.map((l) => <a href={u(l.href)} class="link-u">{l.label}</a>)}
+        {legal.map((l) => (l.href === '#' ? <span class="soon" title="文件待提供">{l.label}</span> : <a href={u(l.href)} class="link-u">{l.label}</a>))}
       </div>
     </div>
     <div class="bottom">
@@ -101,6 +105,9 @@ const words = ['更好内容', 'BETTER CONTENT', '更好生活', 'BETTER LIFE'];
   .licenses, .links { display: flex; flex-wrap: wrap; gap: 6px 16px; }
   .links a, .licenses a { color: rgba(255,255,255,.65); }
   .links a:hover, .licenses a:hover { color: #fff; }
+  .soon { color: rgba(255,255,255,.35); cursor: default; }
+  .soc.pending { opacity: .55; cursor: default; }
+  .soc.pending:hover, .soc.pending:focus-visible { background: rgba(255,255,255,.14); transform: none; }
   .bottom { padding-top: 12px; font-size: 12px; color: rgba(255,255,255,.4); }
   @media (max-width: 1080px) { .top { grid-template-columns: 1fr 1fr; } .brand { grid-column: 1 / -1; } }
   @media (max-width: 640px) { .top { grid-template-columns: 1fr; } .footer { border-radius: 28px 28px 0 0; padding-top: 64px; } .social { grid-template-columns: repeat(5, 44px); } }

@@ -203,3 +203,12 @@ a.cover:hover::after { opacity: 1; }
   .card { padding: 24px; border-radius: 22px; }
   .to-top { right: 16px; bottom: 16px; }
 }
+
+/* ---------- 栏目页：左侧页面内导航 + 右侧内容 ---------- */
+.page-grid { display: grid; grid-template-columns: 196px minmax(0, 1fr); gap: 56px; align-items: start; }
+.page-body { min-width: 0; }
+.page-body > .block-section:first-child, .page-body > .chapter:first-child { padding-top: 56px; }
+@media (max-width: 1080px) {
+  .page-grid { display: block; }
+  .page-body > .block-section:first-child, .page-body > .chapter:first-child { padding-top: 40px; }
+}

@@ -96,6 +96,18 @@ const news = home.news;
             <a href={u(pages.ip.href)} class="btn btn-outline">作品&IP <span class="arrow">→</span></a>
           </div>
         </div>
+        <div class="ip-feature">
+          {home.ip.map((x, n) => (
+            <a href={u('/ip#wall')} class="ipf reveal" style={`--d:${n * 80}ms`}>
+              <div class="cover" style={`--h:${hue(x.title)}`}><span>{x.title}</span></div>
+              <div class="ipf-body">
+                <strong>{x.title}</strong>
+                <small>{x.genre} · {x.forms.join(' / ')}</small>
+                <span class="ipf-tags">{x.tags.slice(0, 2).map((t) => <em>#{t}</em>)}</span>
+              </div>
+            </a>
+          ))}
+        </div>
       </div>
       <div class="marquee reveal" aria-label="代表作品">
         {rows.map((row, r) => (
@@ -273,6 +285,18 @@ const news = home.news;
   .stat { position: relative; padding: 8px 0; }
   .stat::before { content: ''; position: absolute; left: -12px; top: 0; width: 56px; height: 56px; border-radius: 50%; background: var(--grad); opacity: .14; transition: transform .6s var(--spring); }
 
+
+  /* ---------- IP 精选 ---------- */
+  .ip-feature { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 8px; }
+  .ipf { display: flex; flex-direction: column; gap: 12px; padding: 14px; border-radius: 28px; background: var(--surface); box-shadow: 0 12px 30px -20px rgba(10,22,48,.3); transition: transform .5s var(--spring), box-shadow .4s, opacity .8s var(--ease); }
+  .ipf:hover { transform: translateY(-8px) rotate(-.6deg); box-shadow: 0 30px 50px -26px rgba(10,22,48,.4); }
+  .ipf .cover { aspect-ratio: 16 / 10; }
+  .ipf-body { display: flex; flex-direction: column; gap: 4px; padding: 0 6px 6px; }
+  .ipf-body strong { font-size: 18px; color: var(--ink); }
+  .ipf-body small { font-size: 13px; color: var(--muted); }
+  .ipf-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
+  .ipf-tags em { font-style: normal; font-size: 12px; font-weight: 700; color: var(--violet); background: color-mix(in srgb, var(--violet) 9%, transparent); padding: 2px 8px; border-radius: 6px; }
+
   /* ---------- 作品滚动 ---------- */
   .marquee { display: flex; flex-direction: column; gap: 24px; overflow: hidden; padding: 20px 0 40px; mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent); }
   .track { display: flex; gap: 22px; width: max-content; animation: scroll 60s linear infinite; }
@@ -366,6 +390,7 @@ const news = home.news;
     .stats { grid-template-columns: repeat(2, 1fr); row-gap: 36px; }
     .ir { grid-template-columns: 1fr; }
     .news { grid-template-columns: 1fr 1fr; }
+    .ip-feature { grid-template-columns: 1fr 1fr; }
     .data-panel { grid-template-columns: 1fr; }
     .d-go { justify-self: start; }
   }

@@ -1,0 +1,79 @@
+---
+// 页面内导航（侧边栏）：列出本页所有小板块，滚动时高亮当前所在板块，点击可跳转。
+// 桌面端：左侧竖向吸附；手机端：页头下方的横向吸附条（只显示一级条目）。
+// 支持二级条目（业务与产品：各业务下的小板块，只在当前业务展开）。
+export type NavItem = { id: string; label: string; color?: [string, string]; children?: { id: string; label: string }[] };
+
+interface Props {
+  title: string;
+  items: NavItem[];
+}
+const { title, items } = Astro.props;
+---
+<nav class="rail" aria-label={`${title}·本页导航`}>
+  <span class="rail-title">{title}</span>
+  <ol class="rail-list">
+    {items.map((it) => (
+      <li class="rail-item" data-spy-group={it.children ? it.id : undefined} style={it.color ? `--c1:${it.color[0]};--c2:${it.color[1]}` : undefined}>
+        <a href={`#${it.id}`} data-spy={it.id} class="rail-link"><i aria-hidden="true"></i>{it.label}</a>
+        {it.children && (
+          <ol class="rail-sub">
+            {it.children.map((c) => <li><a href={`#${c.id}`} data-spy={c.id}>{c.label}</a></li>)}
+          </ol>
+        )}
+      </li>
+    ))}
+  </ol>
+</nav>
+
+<style>
+  .rail {
+    position: sticky; top: 112px; align-self: start; z-index: 30;
+    max-height: calc(100vh - 136px); overflow-y: auto; scrollbar-width: none;
+    padding: 18px 0 18px 4px;
+  }
+  .rail::-webkit-scrollbar { display: none; }
+  .rail-title { display: block; font-size: 12px; font-weight: 800; letter-spacing: .15em; color: var(--muted); margin: 0 0 14px 22px; }
+  .rail-list { list-style: none; position: relative; }
+  /* 竖线：串起所有条目，像一条阅读进度轨道 */
+  .rail-list::before { content: ''; position: absolute; left: 7px; top: 10px; bottom: 10px; width: 2px; border-radius: 2px; background: var(--line); }
+  .rail-item { position: relative; }
+  .rail-link {
+    position: relative; display: flex; align-items: center; gap: 12px; padding: 8px 10px 8px 0;
+    font-size: 15px; color: var(--muted); border-radius: 12px; transition: color .2s, transform .35s var(--spring);
+  }
+  .rail-link i {
+    flex-shrink: 0; width: 16px; height: 16px; border-radius: 50%; background: var(--bg); border: 2px solid var(--line);
+    transition: background .3s, border-color .3s, transform .4s var(--spring);
+  }
+  .rail-link:hover { color: var(--ink); transform: translateX(3px); }
+  .rail-link:hover i { border-color: var(--c1, var(--brand)); }
+  .rail-link.active, .rail-item.open > .rail-link { color: var(--ink); font-weight: 700; }
+  .rail-link.active i, .rail-item.open > .rail-link i {
+    border-color: transparent; background: linear-gradient(135deg, var(--c1, var(--brand)), var(--c2, var(--brand-2)));
+    transform: scale(1.15); box-shadow: 0 0 0 4px color-mix(in srgb, var(--c1, var(--brand)) 18%, transparent);
+  }
+  /* 二级条目：只在当前分组展开 */
+  .rail-sub { list-style: none; display: flex; flex-direction: column; margin-left: 28px; overflow: hidden; max-height: 0; transition: max-height .45s var(--ease); }
+  .rail-item.open .rail-sub { max-height: 400px; }
+  .rail-sub a { display: block; padding: 5px 0; font-size: 13px; color: var(--muted); transition: color .2s; }
+  .rail-sub a:hover { color: var(--ink); }
+  .rail-sub a.active { color: var(--c1, var(--brand)); font-weight: 700; }
+
+  /* 手机/平板：变成页头下方的横向吸附条 */
+  @media (max-width: 1080px) {
+    .rail {
+      top: 76px; max-height: none; overflow: visible; padding: 8px 0; margin: 0 -24px;
+      background: rgba(246,248,252,.88); backdrop-filter: saturate(180%) blur(16px);
+      box-shadow: 0 1px 0 var(--line);
+    }
+    .rail-title, .rail-sub, .rail-list::before { display: none; }
+    .rail-list { display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; padding: 0 24px; scroll-behavior: smooth; }
+    .rail-list::-webkit-scrollbar { display: none; }
+    .rail-link { padding: 7px 14px; border-radius: 999px; font-size: 14px; white-space: nowrap; background: var(--surface); box-shadow: 0 4px 12px -8px rgba(10,22,48,.3); }
+    .rail-link i { display: none; }
+    .rail-link:hover { transform: none; }
+    .rail-link.active, .rail-item.open > .rail-link { color: #fff; background: linear-gradient(120deg, var(--c1, var(--brand)), var(--c2, var(--brand-2))); }
+  }
+  @media (max-width: 768px) { .rail { margin: 0 -16px; } .rail-list { padding: 0 16px; } }
+</style>

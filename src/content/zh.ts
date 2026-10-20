@@ -84,8 +84,9 @@ export const legal = [
 
 const cninfo = 'http://irm.cninfo.com.cn/ircs/search?keyword=300364';
 
-// 跳到“合作”页的 IP 授权卡片，并带上授权类型（合作页据此高亮卡片、预填表单）
-const lic = (type: string) => `/partner?type=${encodeURIComponent(type)}#license`;
+// 跳到“合作”页的某张合作卡片，并带上具体需求（合作页据此高亮卡片、显示“您选择的：…”、预填表单）
+export const toPartner = (card: string, type: string) => `/partner?type=${encodeURIComponent(type)}#${card}`;
+const lic = (type: string) => toPartner('license', type);
 const cninfoAnnouncements = 'https://www.cninfo.com.cn/new/disclosure/stock?stockCode=300364&orgId=9900023871';
 
 /* ============ 关于我们 /about ============ */
@@ -337,7 +338,10 @@ const global: Page = {
           { name: 'Rick Yan', role: '美国 · COL MEDIA', text: '洛杉矶影视工作室，国际影视项目开发与投资。', email: 'yanxiaodong2@col.com' },
           { name: '武川基', role: '日本 · COL JAPAN', text: '日本漫画、电影、动画与短剧合作。', email: 'takekawa@col.com' },
         ] },
-        { type: 'text', paras: ['海外 toC 产品：FlareFlow（短剧）、UniReel（日本短剧）、RocNovel（英文网文），详见本页各章节。'] },
+        { type: 'cards', cols: 2, items: [
+          { tag: 'Global BD', title: '洽谈海外合作', text: '内容引进、发行与IP合作，直达海外负责人。', href: toPartner('overseas', '海外合作') },
+          { tag: '产品', title: '海外产品', text: 'FlareFlow、UniReel、RocNovel，见“产品一览”。', href: '/business#products' },
+        ] },
       ],
     },
   ],
@@ -440,6 +444,24 @@ const businessIndex: Page = {
     },
   ],
 };
+
+// 产品一览：业务与产品页总览后的第二个板块，读者与观众从首页入口直达这里
+businessIndex.sections.push({
+  id: 'products', label: '产品一览', en: 'PRODUCTS', title: '产品一览',
+  intro: '旗下阅读、短剧、AI与版权服务产品，点击访问或下载。',
+  blocks: [
+    { type: 'cards', cols: 4, items: [
+      { tag: '海外短剧', title: 'FlareFlow', text: '覆盖200+国家和地区，注册用户超5,200万。', href: 'https://apps.apple.com/app/id6744237126', external: true },
+      { tag: '日本短剧', title: 'UniReel', text: 'COL JAPAN推出的日本短剧App。', href: '#', external: true },
+      { tag: '海外网文', title: 'RocNovel', text: '英文网文平台，主攻美英加市场。', href: 'https://www.rocnovel.com', external: true },
+      { tag: '网络文学', title: '17K小说网', text: '核心原创内容平台，全品类。', href: 'https://www.17k.com', external: true },
+      { tag: '网络文学', title: '四月天', text: '古风女频原创小说网站。', href: 'https://www.4yt.net', external: true },
+      { tag: '网络文学', title: '海狸故事', text: '悬疑“谜想计划”、科幻“奇想宇宙”。', href: 'https://haili.chineseall.net', external: true },
+      { tag: 'AI', title: '逍遥AI', text: '自研大模型，支持14种语言创作。', href: 'https://xiaoyao.ai', external: true },
+      { tag: '版权服务', title: '权哨', text: '知识产权一站式服务平台。', href: 'https://www.qshao.net', external: true },
+    ] },
+  ],
+});
 
 /* ============ IP与作品 /ip ============ */
 
@@ -630,7 +652,9 @@ const news: Page = {
         { title: '公司简介', meta: 'PDF · 待提供' },
         { title: '高管简介与照片', meta: 'PDF · 待提供' },
       ] },
-      { type: 'contact', items: [{ k: '媒体联系', v: '媒体邮箱待提供' }] },
+      { type: 'cards', cols: 2, items: [
+        { tag: '媒体', title: '采访与报道需求', text: '联系品牌公关团队。', href: toPartner('media', '媒体采访') },
+      ] },
     ] },
   ],
 };
@@ -710,7 +734,9 @@ const investors: Page = {
         { tag: '战略直投', title: '投资赋能合作伙伴', text: '围绕上市公司的产业布局及细分领域，通过投资赋能合作伙伴，实现共赢式发展。' },
         { tag: '产业基金', title: '聚焦下一代科技创新', text: '人工智能、下一代互联网技术等，及其与优质内容结合的产业投资机会。' },
       ] },
-      { type: 'contact', items: [{ k: '投资业务合作', v: 'gaoyzh@col.com' }] },
+      { type: 'cards', cols: 2, items: [
+        { tag: '投资合作', title: '洽谈投资合作', text: '投资业务邮箱：gaoyzh@col.com', href: toPartner('investment', '投资合作') },
+      ] },
     ] },
     { id: 'faq', label: '常见问题', en: 'FAQ', title: '投资者常见问题', blocks: [
       { type: 'faq', items: [
@@ -870,9 +896,10 @@ export const home = {
   audiences: [
     { label: '合作伙伴', hint: '内容 · 授权 · 海外', href: '/partner' },
     { label: '数商客户', hint: 'AI 数据与语料', href: '/data' },
+    { label: '创作者', hint: '投稿 · 签约 · 培训', href: '/business#literature-writers' },
     { label: '投资者', hint: '报告 · 公告 · 联系', href: '/investors' },
     { label: '求职者', hint: '活动 · 福利 · 职位', href: '/join' },
-    { label: '读者与观众', hint: '产品与下载', href: '/business' },
+    { label: '读者与观众', hint: '产品与下载', href: '/business#products' },
   ],
   data: {
     title: '正版、可溯源的数据服务',
@@ -886,5 +913,7 @@ export const home = {
     '妖怪公寓', '长津湖', '女儿来自银河系', '烽烟尽处', '大乾憨婿', 'The Final Bell',
   ],
   news: news.sections[0].blocks[0].type === 'news' ? news.sections[0].blocks[0].items.slice(0, 3) : [],
+  // IP 精选：取 IP 墙前 4 个，带数据标签
+  ip: ipPage.sections.find((x) => x.id === 'wall')!.blocks[0].type === 'ipwall' ? (ipPage.sections.find((x) => x.id === 'wall')!.blocks[0] as Extract<Block, { type: 'ipwall' }>).items.slice(0, 4) : [],
   letterLead: '中文在线不再只是一家IP内容公司，而是一家具备全球内容供给能力、AI技术驱动的、全产业链运营的新型数字内容科技公司。',
 };

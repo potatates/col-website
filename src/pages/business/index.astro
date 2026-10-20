@@ -1,69 +1,73 @@
 ---
 // 业务与产品：一整页连续滚动。先是业务总览，然后各业务依次展开，每项业务以一张主题色“章节卡”开场，
-// 接着是它的产品与各个小板块。吸附栏只用来提示当前位置和快速跳转，不需要点也能一路看完。
+// 接着是它的产品与各个小板块。左侧导航提示当前位置、可快速跳转（当前业务的小板块会展开），不需要点也能一路看完。
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Header from '../../components/zh/Header.astro';
 import Footer from '../../components/zh/Footer.astro';
 import PageHero from '../../components/zh/PageHero.astro';
-import SubNav from '../../components/zh/SubNav.astro';
+import SideNav, { type NavItem } from '../../components/zh/SideNav.astro';
 import Blocks from '../../components/zh/Blocks.astro';
 import NextPage from '../../components/zh/NextPage.astro';
 import CtaBand from '../../components/zh/CtaBand.astro';
 import { site, pages, businessPages, nextOf } from '../../content/zh';
 
 const page = pages.business;
+const navItems: NavItem[] = [
+  ...page.sections.map((s) => ({ id: s.id, label: s.label })),
+  ...businessPages.map((b) => ({
+    id: b.key, label: b.title, color: b.theme,
+    children: b.sections.map((s) => ({ id: `${b.key}-${s.id}`, label: s.label })),
+  })),
+];
 ---
 <BaseLayout title={`${page.title}_${site.name}`} description={page.intro}>
   <Header current="business" />
   <main>
     <PageHero title={page.title} en={page.en} intro={page.intro} theme={page.theme} />
-    <SubNav items={businessPages} />
-
-    {page.sections.map((s) => (
-      <section id={s.id} class="block-section">
-        <div class="container">
-          <div class="s-head reveal">
-            <span class="s-ghost" aria-hidden="true">{s.en}</span>
-            <h2 class="s-title">{s.title ?? s.label}</h2>
-            {s.intro && <p class="s-intro">{s.intro}</p>}
-          </div>
-          <div class="s-body"><Blocks blocks={s.blocks} /></div>
-        </div>
-      </section>
-    ))}
-
-    {businessPages.map((b, i) => (
-      <article id={b.key} class="chapter" style={`--c1:${b.theme?.[0]};--c2:${b.theme?.[1]}`}>
-        <div class="container">
-          <header class="ch-head reveal">
-            <span class="ch-shape s1" aria-hidden="true"></span>
-            <span class="ch-shape s2" aria-hidden="true"></span>
-            <span class="ch-no">{String(i + 1).padStart(2, '0')} / {String(businessPages.length).padStart(2, '0')}</span>
-            <span class="ch-en">{b.en}</span>
-            <h2 class="ch-title">{b.title}</h2>
-            <p class="ch-intro">{b.intro}</p>
-            <ul class="ch-toc">
-              {b.sections.map((s) => <li><a href={`#${b.key}-${s.id}`}>{s.label}</a></li>)}
-            </ul>
-          </header>
-        </div>
-
-        {b.sections.map((s) => (
-          <section id={`${b.key}-${s.id}`} class="block-section">
-            <div class="container">
-              <div class="s-head reveal">
-                <span class="s-ghost" aria-hidden="true">{s.en}</span>
-                <h3 class="s-title">{s.title ?? s.label}</h3>
-                {s.intro && <p class="s-intro">{s.intro}</p>}
-              </div>
-              <div class="s-body">
-                <Blocks blocks={s.blocks} />
-              </div>
+    <div class="container page-grid">
+      <SideNav title={page.title} items={navItems} />
+      <div class="page-body">
+        {page.sections.map((s) => (
+          <section id={s.id} class="block-section">
+            <div class="s-head reveal">
+              <span class="s-ghost" aria-hidden="true">{s.en}</span>
+              <h2 class="s-title">{s.title ?? s.label}</h2>
+              {s.intro && <p class="s-intro">{s.intro}</p>}
             </div>
+            <div class="s-body"><Blocks blocks={s.blocks} /></div>
           </section>
         ))}
-      </article>
-    ))}
+
+        {businessPages.map((b, i) => (
+          <article id={b.key} class="chapter" style={`--c1:${b.theme?.[0]};--c2:${b.theme?.[1]}`}>
+            <header class="ch-head reveal">
+              <span class="ch-shape s1" aria-hidden="true"></span>
+              <span class="ch-shape s2" aria-hidden="true"></span>
+              <span class="ch-no">{String(i + 1).padStart(2, '0')} / {String(businessPages.length).padStart(2, '0')}</span>
+              <span class="ch-en">{b.en}</span>
+              <h2 class="ch-title">{b.title}</h2>
+              <p class="ch-intro">{b.intro}</p>
+              <ul class="ch-toc">
+                {b.sections.map((s) => <li><a href={`#${b.key}-${s.id}`}>{s.label}</a></li>)}
+              </ul>
+            </header>
+
+            {b.sections.map((s) => (
+              <section id={`${b.key}-${s.id}`} class="block-section">
+                <div class="s-head reveal">
+                  <span class="s-ghost" aria-hidden="true">{s.en}</span>
+                  <h3 class="s-title">{s.title ?? s.label}</h3>
+                  {s.intro && <p class="s-intro">{s.intro}</p>}
+                </div>
+                <div class="s-body">
+                  <Blocks blocks={s.blocks} />
+                </div>
+              </section>
+            ))}
+          </article>
+        ))}
+      </div>
+    </div>
 
     <NextPage next={nextOf.business} />
     <CtaBand />
@@ -75,7 +79,7 @@ const page = pages.business;
   .chapter { padding-top: 72px; }
   .chapter + .chapter { padding-top: 40px; }
   .ch-head {
-    position: relative; overflow: hidden; isolation: isolate; border-radius: 40px; padding: 64px; color: #fff;
+    position: relative; overflow: hidden; isolation: isolate; border-radius: 36px; padding: 52px; color: #fff;
     background: linear-gradient(130deg, var(--c1), var(--c2));
     box-shadow: 0 30px 60px -34px color-mix(in srgb, var(--c1) 90%, transparent);
     display: flex; flex-direction: column; gap: 10px;

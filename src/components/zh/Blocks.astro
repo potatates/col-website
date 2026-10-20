@@ -39,20 +39,22 @@ const isNum = (v: string) => /^[\d,]+$/.test(v);
       return (
         <div class:list={['b-cards', `c${b.cols ?? 3}`]}>
           {b.items.map((c, i) => {
-            const Tag = c.href ? 'a' : 'div';
+            const live = !!c.href && c.href !== '#';
+            const Tag = live ? 'a' : 'div';
             return (
               <Tag
                 class="card reveal"
                 id={c.id}
-                href={u(c.href)}
-                target={c.external ? '_blank' : undefined}
-                rel={c.external ? 'noopener' : undefined}
+                href={live ? u(c.href) : undefined}
+                target={live && c.external ? '_blank' : undefined}
+                rel={live && c.external ? 'noopener' : undefined}
                 style={`--d:${(i % 4) * 70}ms`}
               >
                 {c.tag && <span class="card-tag">{c.tag}</span>}
                 <span class="card-title">{c.title}</span>
                 {c.text && <span class="card-text">{c.text}</span>}
-                {c.href && <span class="card-go">{c.external ? '访问官网' : '了解更多'} <span class="arrow">{c.external ? '↗' : '→'}</span></span>}
+                {live && <span class="card-go">{c.external ? '访问官网' : '了解更多'} <span class="arrow">{c.external ? '↗' : '→'}</span></span>}
+                {c.href === '#' && <span class="card-soon">链接待提供</span>}
               </Tag>
             );
           })}
@@ -150,21 +152,32 @@ const isNum = (v: string) => /^[\d,]+$/.test(v);
         </article>
       );
 
-    case 'news':
+    case 'news': {
+      // 新闻列表：按标签筛选（不跳页）；详情页上线前条目不可点击
+      const tags = [...new Set(b.items.map((n) => n.tag).filter(Boolean))] as string[];
       return (
-        <ul class="b-news">
-          {b.items.map((n, i) => (
-            <li class="reveal" style={`--d:${i * 60}ms`}>
-              <a href="#">
-                <time>{n.date}</time>
-                {n.tag && <span class="news-tag">{n.tag}</span>}
-                <span class="news-title">{n.title}</span>
-                <span class="arrow">→</span>
-              </a>
-            </li>
-          ))}
-        </ul>
+        <div class="b-newswrap" data-filterable>
+          {tags.length > 1 && (
+            <div class="filters reveal">
+              <button class="chip on" data-filter-key="all" data-filter-value="all">全部</button>
+              {tags.map((t) => <button class="chip" data-filter-key="tag" data-filter-value={t}>{t}</button>)}
+            </div>
+          )}
+          <ul class="b-news">
+            {b.items.map((n, i) => (
+              <li class="reveal" data-tag={n.tag} style={`--d:${i * 60}ms`}>
+                <div class="news-row">
+                  <time>{n.date}</time>
+                  {n.tag && <span class="news-tag">{n.tag}</span>}
+                  <span class="news-title">{n.title}</span>
+                  <span class="news-soon">详情页待上线</span>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </div>
       );
+    }
 
     case 'docs':
       return (
@@ -197,7 +210,7 @@ const isNum = (v: string) => /^[\d,]+$/.test(v);
           </div>
           <div class="ip-grid">
             {b.items.map((x, i) => (
-              <article class="ip-card reveal" data-genre={x.genre} data-status={x.status} style={`--d:${(i % 4) * 60}ms`}>
+              <a class="ip-card reveal" href={u(`/partner?type=${encodeURIComponent(x.title)}#license`)} data-genre={x.genre} data-status={x.status} style={`--d:${(i % 4) * 60}ms`}>
                 <div class="cover" style={`--h:${hue(x.title)}`}>
                   <span class:list={['status', `s-${['可授权', '改编中', '已授权'].indexOf(x.status)}`]}>{x.status}</span>
                   <span>{x.title}</span>
@@ -206,7 +219,8 @@ const isNum = (v: string) => /^[\d,]+$/.test(v);
                   <span class="ip-genre">{x.genre}{x.forms.length > 0 && ` · ${x.forms.join(' / ')}`}</span>
                   {x.tags.map((t) => <span class="ip-tag">#{t}</span>)}
                 </div>
-              </article>
+                <span class="ip-go">洽谈授权 <span class="arrow">→</span></span>
+              </a>
             ))}
           </div>
           {b.note && <p class="b-note">{b.note}</p>}
@@ -346,11 +360,11 @@ const isNum = (v: string) => /^[\d,]+$/.test(v);
       return (
         <div class="b-downloads">
           {b.items.map((d, i) => (
-            <a href="#" class="dl card reveal" style={`--d:${(i % 4) * 60}ms`} title="文件待提供">
+            <div class="dl card reveal" style={`--d:${(i % 4) * 60}ms`}>
               <span class="dl-icon" aria-hidden="true">↓</span>
               <span class="card-title">{d.title}</span>
               <span class="card-text">{d.meta}</span>
-            </a>
+            </div>
           ))}
         </div>
       );
@@ -494,6 +508,17 @@ const isNum = (v: string) => /^[\d,]+$/.test(v);
 
   .b-subtitle { font-size: 18px; font-weight: 800; color: var(--ink); margin-top: 8px; }
 
+
+  .card-soon { margin-top: auto; padding-top: 12px; font-size: 12px; color: var(--muted); }
+  .ip-card { display: block; }
+  .ip-go { display: inline-flex; gap: 6px; margin-top: 10px; font-size: 13px; font-weight: 700; color: var(--c1, var(--brand)); }
+  .ip-go .arrow { transition: transform .4s var(--spring); }
+  .ip-card:hover .ip-go .arrow { transform: translateX(6px); }
+  .ip-card:hover .cover { box-shadow: 0 30px 50px -20px rgba(10,22,48,.55); }
+  .b-news li.hide { display: none; }
+  .news-row { display: grid; grid-template-columns: 110px 72px 1fr auto; align-items: center; gap: 20px; padding: 22px 24px; border-radius: 22px; background: var(--surface); box-shadow: 0 8px 20px -16px rgba(10,22,48,.3); }
+  .news-soon { font-size: 12px; color: var(--muted); white-space: nowrap; }
+
   /* IP 墙 */
   .filters { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 24px; align-items: center; }
   .filters .sep { width: 1px; height: 22px; background: var(--line); margin: 0 6px; }
@@ -611,7 +636,8 @@ const isNum = (v: string) => /^[\d,]+$/.test(v);
     .ip-grid, .b-downloads { grid-template-columns: repeat(2, 1fr); gap: 14px; }
     .b-videos { grid-template-columns: 1fr 1fr; }
     .video { grid-column: span 2; }
-    .b-people.c2, .b-people.c3, .b-people.c4, .b-contacts { grid-template-columns: 1fr; }
+    .b-people.c2, .b-people.c3, .b-contacts { grid-template-columns: 1fr; }
+    .b-people.c4 { grid-template-columns: 1fr 1fr; gap: 12px; }
     .f-row { grid-template-columns: 1fr; }
     .b-form { padding: 24px; }
     .g-grid { grid-template-columns: repeat(2, 1fr); grid-auto-rows: 140px; }
@@ -629,7 +655,8 @@ const isNum = (v: string) => /^[\d,]+$/.test(v);
     .b-timeline li:nth-child(even) { margin-top: 0; }
     .b-honors { columns: 1; }
     .b-quote, .b-letter { padding: 28px 24px; border-radius: 26px; }
-    .b-news a { grid-template-columns: 1fr auto; gap: 8px 12px; padding: 18px; }
+    .b-news a, .news-row { grid-template-columns: 1fr auto; gap: 8px 12px; padding: 18px; }
+    .news-soon { display: none; }
     .news-title { grid-column: 1 / -1; }
     .b-news .arrow { display: none; }
     .b-docs { grid-template-columns: 1fr; }

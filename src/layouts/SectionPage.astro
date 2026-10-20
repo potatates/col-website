@@ -1,9 +1,10 @@
 ---
-// 栏目页共用版式：页头 → 主题色题图 → 连续的各板块 → 下一章 → 合作咨询横幅（合作页除外）→ 页脚
+// 栏目页共用版式：页头 → 主题色题图 → [左侧页面内导航 | 连续的各板块] → 下一章 → 合作咨询横幅（合作页除外）→ 页脚
 import BaseLayout from './BaseLayout.astro';
 import Header from '../components/zh/Header.astro';
 import Footer from '../components/zh/Footer.astro';
 import PageHero from '../components/zh/PageHero.astro';
+import SideNav from '../components/zh/SideNav.astro';
 import Blocks from '../components/zh/Blocks.astro';
 import NextPage from '../components/zh/NextPage.astro';
 import CtaBand from '../components/zh/CtaBand.astro';
@@ -24,20 +25,23 @@ const theme = page.theme ?? ['#0071ce', '#00c1de'];
       <slot name="aside" slot="aside" />
     </PageHero>
 
-    {page.sections.map((s) => (
-      <section id={s.id} class="block-section">
-        <div class="container">
-          <div class="s-head reveal">
-            <span class="s-ghost" aria-hidden="true">{s.en}</span>
-            <h2 class="s-title">{s.title ?? s.label}</h2>
-            {s.intro && <p class="s-intro">{s.intro}</p>}
-          </div>
-          <div class="s-body">
-            <Blocks blocks={s.blocks} />
-          </div>
-        </div>
-      </section>
-    ))}
+    <div class="container page-grid">
+      <SideNav title={page.title} items={page.sections.map((s) => ({ id: s.id, label: s.label }))} />
+      <div class="page-body">
+        {page.sections.map((s) => (
+          <section id={s.id} class="block-section">
+            <div class="s-head reveal">
+              <span class="s-ghost" aria-hidden="true">{s.en}</span>
+              <h2 class="s-title">{s.title ?? s.label}</h2>
+              {s.intro && <p class="s-intro">{s.intro}</p>}
+            </div>
+            <div class="s-body">
+              <Blocks blocks={s.blocks} />
+            </div>
+          </section>
+        ))}
+      </div>
+    </div>
 
     <slot />
     {next && <NextPage next={next} />}

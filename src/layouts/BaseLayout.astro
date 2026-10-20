@@ -203,7 +203,23 @@ const { title, description = '', lang = 'zh-CN' } = Astro.props;
             spyLinks.forEach((a) => {
               const on = a.dataset.spy === id;
               a.classList.toggle('active', on);
-              if (on) a.parentElement?.scrollTo({ left: a.offsetLeft - 16, behavior: 'smooth' });
+              if (!on) return;
+              // 让当前条目在导航里可见：手机横向条左右滚动，桌面侧栏上下滚动
+              const list = a.closest<HTMLElement>('.rail-list');
+              if (list && list.scrollWidth > list.clientWidth) {
+                const dx = a.getBoundingClientRect().left - list.getBoundingClientRect().left;
+                list.scrollTo({ left: list.scrollLeft + dx - 16, behavior: 'smooth' });
+              }
+              const rail = a.closest<HTMLElement>('.rail');
+              if (rail && rail.scrollHeight > rail.clientHeight) {
+                const delta = a.getBoundingClientRect().top - rail.getBoundingClientRect().top;
+                rail.scrollTo({ top: rail.scrollTop + delta - 120, behavior: 'smooth' });
+              }
+            });
+            // 分组（如业务与产品的各业务）：当前位置在该组内时展开其小板块
+            document.querySelectorAll<HTMLElement>('[data-spy-group]').forEach((g) => {
+              const key = g.dataset.spyGroup!;
+              g.classList.toggle('open', id === key || id.startsWith(`${key}-`));
             });
           };
           update();
