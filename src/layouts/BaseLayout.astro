@@ -43,7 +43,7 @@ const { title, description = '', lang = 'zh-CN' } = Astro.props;
         el.style.setProperty('--mx', `${e.clientX - r.left}px`);
         el.style.setProperty('--my', `${e.clientY - r.top}px`);
         // 封面 3D 倾斜
-        if (!reduce && el.classList.contains('cover')) {
+        if (!reduce && el.classList.contains('cover') && el.closest('a')) {
           const px = (e.clientX - r.left) / r.width - 0.5;
           const py = (e.clientY - r.top) / r.height - 0.5;
           el.style.transform = `perspective(700px) rotateY(${px * 12}deg) rotateX(${-py * 12}deg) translateY(-4px)`;
@@ -56,7 +56,7 @@ const { title, description = '', lang = 'zh-CN' } = Astro.props;
         if (!c) return;
         c.style.transform = `translate(${e.clientX}px, ${e.clientY}px)`;
         c.classList.add('on');
-        c.classList.toggle('big', !!(e.target as HTMLElement).closest('a, button, .card, .cover, summary'));
+        c.classList.toggle('big', !!(e.target as HTMLElement).closest('a, button, summary'));
         // 首屏海报随鼠标轻微视差
         document.querySelectorAll<HTMLElement>('[data-depth]').forEach((el) => {
           const d = Number(el.dataset.depth);
@@ -87,6 +87,42 @@ const { title, description = '', lang = 'zh-CN' } = Astro.props;
         header.classList.add('dd-off');
         header.addEventListener('mouseleave', () => header.classList.remove('dd-off'), { once: true });
       }
+
+      // 筛选标签（IP 墙、活动墙）：在当前列表内显示/隐藏，不跳页
+      document.addEventListener('click', (e) => {
+        const btn = (e.target as HTMLElement).closest<HTMLButtonElement>('[data-filter-key]');
+        if (!btn) return;
+        const box = btn.closest('[data-filterable]');
+        if (!box) return;
+        box.querySelectorAll('[data-filter-key]').forEach((b) => b.classList.toggle('on', b === btn));
+        const key = btn.dataset.filterKey!;
+        const val = btn.dataset.filterValue!;
+        box.querySelectorAll<HTMLElement>('[data-genre], [data-status], [data-tag]').forEach((item) => {
+          item.classList.toggle('hide', key !== 'all' && item.dataset[key] !== val);
+        });
+      });
+
+      // 合作页：点某类合作卡片的“发送咨询”，预选表单里的合作类型并滚动到表单
+      document.addEventListener('click', (e) => {
+        const btn = (e.target as HTMLElement).closest<HTMLButtonElement>('[data-topic]');
+        if (!btn) return;
+        const form = document.querySelector<HTMLFormElement>('[data-proto-form]');
+        if (!form) return;
+        const select = form.querySelector<HTMLSelectElement>('select[name=topic]');
+        if (select) select.value = btn.dataset.topic!;
+        form.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
+        form.querySelector<HTMLInputElement>('input[name=name]')?.focus({ preventScroll: true });
+      });
+
+      // 原型阶段的表单：不提交到后台，只给出提示（捕获阶段处理，先于页面过渡路由拦截）
+      document.addEventListener('submit', (e) => {
+        const form = (e.target as HTMLElement).closest<HTMLFormElement>('[data-proto-form]');
+        if (!form) return;
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        const msg = form.querySelector('.f-msg');
+        if (msg) msg.textContent = '原型阶段：表单尚未接入后台。正式版提交后会按合作类型自动分派给对应负责人。';
+      }, true);
 
       // 数字滚动计数
       function countUp(el: HTMLElement) {
@@ -183,7 +219,31 @@ const { title, description = '', lang = 'zh-CN' } = Astro.props;
         // 从别的页面跳到某个小板块（如 /business/ip#audio）：定位到该板块，卡片则短暂高亮
         const hash = decodeURIComponent(location.hash.slice(1));
         const target = hash ? document.getElementById(hash) : null;
-        if (target) {
+        if (target && target.classList.contains('contact-card')) {
+          // 合作页：高亮对应的合作卡片（例如从 IP 授权按钮过来 → IP授权卡片），其余卡片淡出，并预填表单
+          const type = new URLSearchParams(location.search).get('type');
+          const grid = target.closest('.b-contacts');
+          grid?.classList.add('has-focus');
+          grid?.querySelectorAll('.contact-card').forEach((c) => c.classList.toggle('is-focus', c === target));
+          target.classList.add('in');
+          const badge = target.querySelector('.cc-badge');
+          if (badge) badge.textContent = type ? `您选择的：${type}` : '您要找的在这里';
+          const form = document.querySelector<HTMLFormElement>('[data-proto-form]');
+          const topic = target.querySelector<HTMLElement>('[data-topic]')?.dataset.topic;
+          const select = form?.querySelector<HTMLSelectElement>('select[name=topic]');
+          if (topic && select) select.value = topic;
+          const msg = form?.querySelector<HTMLTextAreaElement>('textarea[name=message]');
+          if (type && msg && !msg.value) msg.value = `我想洽谈：${type}`;
+          requestAnimationFrame(() => target.scrollIntoView({ behavior: 'instant', block: 'center' }));
+          // 用户点开别的卡片或开始填写表单后，取消淡出效果
+          const clear = (e: Event) => {
+            if ((e.target as HTMLElement).closest('.is-focus')) return;
+            grid?.classList.remove('has-focus');
+            document.removeEventListener('click', clear);
+          };
+          setTimeout(() => document.addEventListener('click', clear), 0);
+          cleanups.push(() => document.removeEventListener('click', clear));
+        } else if (target) {
           requestAnimationFrame(() => target.scrollIntoView({ behavior: 'instant', block: 'start' }));
           if (target.classList.contains('card')) {
             target.classList.add('is-target');

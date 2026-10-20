@@ -5,6 +5,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import Header from '../components/zh/Header.astro';
 import Footer from '../components/zh/Footer.astro';
 import BizPosters from '../components/zh/BizPosters.astro';
+import CtaBand from '../components/zh/CtaBand.astro';
 import { site, pages, home, irHighlights } from '../content/zh';
 
 // 海报色板：以蓝青为主，夹杂紫、粉、橙，像一面海报墙
@@ -17,8 +18,8 @@ const rows = [home.marquee.slice(0, half), home.marquee.slice(half)];
 // 首屏漂浮的海报（位置、角度、视差深度）
 const floaters = [
   { t: '罗小黑战记', x: 62, y: 16, r: -8, d: 30, w: 170 },
-  { t: '岛上书店', x: 80, y: 8, r: 6, d: -20, w: 150 },
-  { t: '大明王朝', x: 74, y: 46, r: -4, d: 45, w: 190 },
+  { t: '一品布衣', x: 80, y: 8, r: 6, d: -20, w: 150 },
+  { t: '修罗武神', x: 74, y: 46, r: -4, d: 45, w: 190 },
   { t: '破夜', x: 90, y: 40, r: 10, d: -35, w: 140 },
   { t: '永徽迷局', x: 60, y: 58, r: 7, d: 25, w: 150 },
 ];
@@ -51,11 +52,80 @@ const news = home.news;
         </h1>
         <p class="hero-sub">{site.tagline}，用好故事连接世界。</p>
         <div class="hero-actions">
-          <a href={u("/about")} class="btn btn-light">认识中文在线 <span class="arrow">→</span></a>
-          <a href={u("/works")} class="btn btn-ghost">看看我们的作品 <span class="arrow">→</span></a>
+          <a href={u("/partner")} class="btn btn-light">合作咨询 <span class="arrow">→</span></a>
+          <a href={u("/ip")} class="btn btn-ghost">看看我们的作品 <span class="arrow">→</span></a>
         </div>
       </div>
       <a href="#about" class="scroll-hint" aria-label="向下滚动"><span>SCROLL</span></a>
+    </section>
+
+    <!-- 你是来……：可选的受众入口条，不强制选择（决策 D8） -->
+    <nav class="container audience reveal" aria-label="按身份快速进入">
+      <span class="aud-label">你是来……</span>
+      {home.audiences.map((a) => (
+        <a href={u(a.href)} class="aud"><strong>{a.label}</strong><small>{a.hint}</small><span class="arrow">→</span></a>
+      ))}
+    </nav>
+
+    <!-- 首页顺序按受众优先级：业务 → IP → 数商（第一顺位的海外合作方与数商）→ 关于（信任）→ 投资者 → 新闻 → 加入我们 -->
+    <!-- 业务与产品：海报 + 合作伙伴 -->
+    <section class="block-section" id="business">
+      <div class="container">
+        <div class="s-head reveal">
+          <span class="s-ghost" aria-hidden="true">BUSINESS</span>
+          <div class="s-head-row">
+            <h2 class="s-title">一个故事，<span class="hl">无限可能</span></h2>
+            <a href={u(pages.business.href)} class="btn btn-outline">全部业务 <span class="arrow">→</span></a>
+          </div>
+        </div>
+        <BizPosters />
+        <div class="partners reveal" aria-label="合作伙伴">
+          <span class="p-label">合作伙伴</span>
+          {home.partners.map((p) => <span class="p-logo">{p}</span>)}
+        </div>
+      </div>
+    </section>
+
+    <!-- 作品&IP：海报自动滚动，悬停暂停 -->
+    <section class="block-section" id="works">
+      <div class="container">
+        <div class="s-head reveal">
+          <span class="s-ghost" aria-hidden="true">WORKS & IP</span>
+          <div class="s-head-row">
+            <h2 class="s-title">这些故事，<span class="hl">来自这里</span></h2>
+            <a href={u(pages.ip.href)} class="btn btn-outline">作品&IP <span class="arrow">→</span></a>
+          </div>
+        </div>
+      </div>
+      <div class="marquee reveal" aria-label="代表作品">
+        {rows.map((row, r) => (
+          <div class:list={['track', { rev: r === 1 }]}>
+            {[...row, ...row].map((t, i) => (
+              <a href={u("/ip")} class="cover m-cover" style={`--h:${hue(t)};--tilt:${(i % 3) - 1}deg`}><span>{t}</span></a>
+            ))}
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- 数商服务预告 -->
+    <section class="block-section" id="data">
+      <div class="container">
+        <div class="s-head reveal">
+          <span class="s-ghost" aria-hidden="true">DATA</span>
+          <div class="s-head-row">
+            <h2 class="s-title">{home.data.title}</h2>
+            <a href={u(pages.data.href)} class="btn btn-outline">数商服务 <span class="arrow">→</span></a>
+          </div>
+          <p class="s-intro">{home.data.intro}</p>
+        </div>
+        <a href={u(pages.data.href)} class="data-panel spot reveal">
+          {home.data.services.map((d, i) => (
+            <span class="d-item" style={`--d:${i * 80}ms`}><em>0{i + 1}</em><strong>{d.title}</strong><small>{d.text}</small></span>
+          ))}
+          <span class="d-go">找数商对接人 <span class="arrow">→</span></span>
+        </a>
+      </div>
     </section>
 
     <!-- 关于我们 -->
@@ -80,42 +150,6 @@ const news = home.news;
       </div>
     </section>
 
-    <!-- 业务布局：五张海报 -->
-    <section class="block-section" id="business">
-      <div class="container">
-        <div class="s-head reveal">
-          <span class="s-ghost" aria-hidden="true">BUSINESS</span>
-          <div class="s-head-row">
-            <h2 class="s-title">一个故事，<span class="hl">无限可能</span></h2>
-            <a href={u(pages.business.href)} class="btn btn-outline">全部业务 <span class="arrow">→</span></a>
-          </div>
-        </div>
-        <BizPosters />
-      </div>
-    </section>
-
-    <!-- 作品&IP：海报自动滚动，悬停暂停 -->
-    <section class="block-section" id="works">
-      <div class="container">
-        <div class="s-head reveal">
-          <span class="s-ghost" aria-hidden="true">WORKS & IP</span>
-          <div class="s-head-row">
-            <h2 class="s-title">这些故事，<span class="hl">来自这里</span></h2>
-            <a href={u(pages.works.href)} class="btn btn-outline">作品&IP <span class="arrow">→</span></a>
-          </div>
-        </div>
-      </div>
-      <div class="marquee reveal" aria-label="代表作品">
-        {rows.map((row, r) => (
-          <div class:list={['track', { rev: r === 1 }]}>
-            {[...row, ...row].map((t, i) => (
-              <a href={u("/works")} class="cover m-cover" style={`--h:${hue(t)};--tilt:${(i % 3) - 1}deg`}><span>{t}</span></a>
-            ))}
-          </div>
-        ))}
-      </div>
-    </section>
-
     <!-- 投资者关系 -->
     <section class="block-section" id="investors">
       <div class="container">
@@ -134,7 +168,7 @@ const news = home.news;
           </a>
           <div class="ir-stats">
             {irHighlights.slice(0, 4).map((s, i) => (
-              <div class="ir-stat reveal spot" style={`--d:${i * 80}ms`}>
+              <div class="ir-stat reveal" style={`--d:${i * 80}ms`}>
                 <div class="num"><span data-count={isNum(s.value) ? s.value : undefined}>{s.value}</span><em>{s.unit}</em></div>
                 <div class="num-label">{s.label}</div>
               </div>
@@ -185,6 +219,7 @@ const news = home.news;
     </section>
   </main>
 
+  <CtaBand />
   <Footer />
 </BaseLayout>
 
@@ -237,7 +272,6 @@ const news = home.news;
   .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-top: 56px; }
   .stat { position: relative; padding: 8px 0; }
   .stat::before { content: ''; position: absolute; left: -12px; top: 0; width: 56px; height: 56px; border-radius: 50%; background: var(--grad); opacity: .14; transition: transform .6s var(--spring); }
-  .stat:hover::before { transform: scale(2); }
 
   /* ---------- 作品滚动 ---------- */
   .marquee { display: flex; flex-direction: column; gap: 24px; overflow: hidden; padding: 20px 0 40px; mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent); }
@@ -263,7 +297,6 @@ const news = home.news;
   .q-by { font-size: 14px; font-weight: 600; opacity: .9; }
   .ir-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
   .ir-stat { position: relative; overflow: hidden; padding: 28px; border-radius: 28px; background: var(--surface); box-shadow: 0 12px 30px -20px rgba(10,22,48,.3); transition: transform .5s var(--spring), opacity .8s var(--ease); }
-  .ir-stat:hover { transform: translateY(-6px) rotate(1deg); }
   .ir-stat .num span { font-size: clamp(38px, 4vw, 56px); }
 
   /* ---------- 新闻 ---------- */
@@ -296,6 +329,35 @@ const news = home.news;
   .j-go .arrow { transition: transform .4s var(--spring); }
   .join:hover .j-go .arrow { transform: translateX(6px); }
 
+
+  /* ---------- 受众入口条 ---------- */
+  .audience { position: relative; z-index: 2; margin-top: -64px; display: flex; flex-wrap: wrap; align-items: stretch; gap: 10px; padding: 14px; border-radius: 28px; background: rgba(255,255,255,.85); backdrop-filter: blur(16px); box-shadow: 0 24px 50px -30px rgba(10,22,48,.4); }
+  .aud-label { align-self: center; font-size: 13px; font-weight: 700; color: var(--muted); padding: 0 8px; }
+  .aud { flex: 1 1 150px; display: grid; grid-template-columns: 1fr auto; column-gap: 8px; padding: 12px 16px; border-radius: 18px; transition: background .25s, transform .4s var(--spring); }
+  .aud strong { font-size: 16px; color: var(--ink); }
+  .aud small { grid-column: 1; font-size: 12px; color: var(--muted); }
+  .aud .arrow { grid-row: 1 / span 2; grid-column: 2; align-self: center; color: var(--brand); transition: transform .4s var(--spring); }
+  .aud:hover { background: var(--bg); transform: translateY(-2px); }
+  .aud:hover .arrow { transform: translateX(4px); }
+
+  /* ---------- 数商预告 ---------- */
+  .data-panel { position: relative; overflow: hidden; isolation: isolate; display: grid; grid-template-columns: repeat(3, 1fr) auto; gap: 16px; align-items: stretch; padding: 28px; border-radius: 36px; color: #fff; background: linear-gradient(130deg, #0b1f55, #1b3a8c 50%, #00a7c4); transition: transform .6s var(--spring), opacity .8s var(--ease); }
+  .data-panel::after { content: ''; position: absolute; inset: 0; z-index: -1; opacity: 0; transition: opacity .3s; background: radial-gradient(360px circle at var(--mx, 50%) var(--my, 50%), rgba(255,255,255,.2), transparent 65%); }
+  .data-panel:hover { transform: translateY(-6px); }
+  .data-panel:hover::after { opacity: 1; }
+  .d-item { display: flex; flex-direction: column; gap: 6px; padding: 22px; border-radius: 24px; background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.14); }
+  .d-item em { font-style: normal; font-size: 12px; font-weight: 800; color: var(--brand-2); }
+  .d-item strong { font-size: 20px; }
+  .d-item small { font-size: 14px; opacity: .8; line-height: 1.7; }
+  .d-go { align-self: center; display: inline-flex; gap: 8px; padding: 14px 24px; border-radius: 999px; background: #fff; color: var(--ink); font-weight: 700; white-space: nowrap; }
+  .d-go .arrow { transition: transform .4s var(--spring); }
+  .data-panel:hover .d-go .arrow { transform: translateX(6px); }
+
+  /* ---------- 合作伙伴 ---------- */
+  .partners { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-top: 28px; }
+  .p-label { font-size: 13px; font-weight: 700; color: var(--muted); margin-right: 6px; }
+  .p-logo { padding: 10px 18px; border-radius: 14px; background: var(--surface); font-weight: 800; color: var(--muted); box-shadow: 0 6px 16px -12px rgba(10,22,48,.3); transition: color .25s, transform .4s var(--spring); }
+
   @media (prefers-reduced-motion: reduce) {
     .blob, .floater, .ring, .track, .l2, .scroll-hint span { animation: none !important; }
   }
@@ -304,6 +366,8 @@ const news = home.news;
     .stats { grid-template-columns: repeat(2, 1fr); row-gap: 36px; }
     .ir { grid-template-columns: 1fr; }
     .news { grid-template-columns: 1fr 1fr; }
+    .data-panel { grid-template-columns: 1fr; }
+    .d-go { justify-self: start; }
   }
   @media (max-width: 768px) {
     .hero { padding: 110px 0 120px; }
@@ -315,5 +379,8 @@ const news = home.news;
     .news { grid-template-columns: 1fr; }
     .news-card { min-height: 0; }
     .join { padding: 40px 26px; border-radius: 30px; }
+    .audience { margin-top: -40px; border-radius: 22px; }
+    .aud-label { width: 100%; }
+    .data-panel { padding: 18px; border-radius: 28px; }
   }
 </style>

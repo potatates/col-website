@@ -1,11 +1,12 @@
 ---
-// 栏目页共用版式：页头 → 主题色题图 → 连续的各板块 → 下一章 → 页脚
+// 栏目页共用版式：页头 → 主题色题图 → 连续的各板块 → 下一章 → 合作咨询横幅（合作页除外）→ 页脚
 import BaseLayout from './BaseLayout.astro';
 import Header from '../components/zh/Header.astro';
 import Footer from '../components/zh/Footer.astro';
 import PageHero from '../components/zh/PageHero.astro';
 import Blocks from '../components/zh/Blocks.astro';
 import NextPage from '../components/zh/NextPage.astro';
+import CtaBand from '../components/zh/CtaBand.astro';
 import { site, nextOf, type Page } from '../content/zh';
 
 interface Props {
@@ -40,6 +41,7 @@ const theme = page.theme ?? ['#0071ce', '#00c1de'];
 
     <slot />
     {next && <NextPage next={next} />}
+    {page.key !== 'partner' && <CtaBand />}
   </main>
   <Footer />
 </BaseLayout>

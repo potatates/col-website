@@ -86,8 +86,9 @@ img { max-width: 100%; display: block; }
   background: radial-gradient(380px circle at var(--mx, 50%) var(--my, 50%), color-mix(in srgb, var(--c2, var(--brand-2)) 16%, transparent), transparent 70%);
   opacity: 0; transition: opacity .35s;
 }
-.card:hover { transform: translateY(-8px) rotate(-.4deg); box-shadow: 0 30px 60px -28px rgba(10,22,48,.35); }
-.card:hover::before, .card:hover::after { opacity: 1; }
+/* 悬停效果只给可点击的卡片（链接），纯展示卡片保持静止 */
+a.card:hover { transform: translateY(-8px) rotate(-.4deg); box-shadow: 0 30px 60px -28px rgba(10,22,48,.35); }
+a.card:hover::before, a.card:hover::after { opacity: 1; }
 .card-tag {
   align-self: flex-start; font-size: 12px; font-weight: 700; letter-spacing: .06em;
   padding: 4px 12px; border-radius: 999px; color: var(--c1, var(--brand));
@@ -97,7 +98,7 @@ img { max-width: 100%; display: block; }
 .card-text { font-size: 14px; color: var(--muted); line-height: 1.85; }
 .card-go { margin-top: auto; padding-top: 12px; font-size: 14px; font-weight: 600; color: var(--c1, var(--brand)); display: inline-flex; align-items: center; gap: 6px; }
 .card-go .arrow { display: inline-block; transition: transform .4s var(--spring); }
-.card:hover .card-go .arrow { transform: translateX(8px); }
+a.card:hover .card-go .arrow { transform: translateX(8px); }
 .card.is-target { box-shadow: 0 0 0 4px color-mix(in srgb, var(--brand) 30%, transparent); }
 
 /* ---------- 数字：渐变大字，不再用表格框 ---------- */
@@ -151,8 +152,8 @@ img { max-width: 100%; display: block; }
   background: radial-gradient(220px circle at var(--mx, 50%) var(--my, 0%), rgba(255,255,255,.4), transparent 60%);
   opacity: 0; transition: opacity .3s;
 }
-.cover:hover { box-shadow: 0 30px 50px -20px rgba(10,22,48,.55); }
-.cover:hover::after { opacity: 1; }
+a.cover:hover { box-shadow: 0 30px 50px -20px rgba(10,22,48,.55); }
+a.cover:hover::after { opacity: 1; }
 .cover span { position: relative; z-index: 1; text-shadow: 0 2px 12px rgba(0,0,0,.25); }
 
 /* ---------- 跑马灯大字 ---------- */

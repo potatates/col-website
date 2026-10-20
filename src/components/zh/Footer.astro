@@ -1,7 +1,7 @@
 ---
-// 页脚：跑马灯口号 + 简洁网站地图（一级栏目 + 五大业务）
+// 页脚：网站地图（一级栏目 + 各业务）+ 社媒矩阵 + 资质公示 + 法务链接
 import { u } from '../../lib/url';
-import { site, navOrder, businessPages, contact } from '../../content/zh';
+import { site, navOrder, businessPages, contact, social, legal } from '../../content/zh';
 const year = new Date().getFullYear();
 const words = ['更好内容', 'BETTER CONTENT', '更好生活', 'BETTER LIFE'];
 ---
@@ -19,46 +19,89 @@ const words = ['更好内容', 'BETTER CONTENT', '更好生活', 'BETTER LIFE'];
         <img src={u("/logo-white.png")} alt={site.name} class="logo" width="144" height="33" />
         <p class="slogan">{site.slogan}</p>
         <p class="muted">{site.fullName} · {site.stockCode}</p>
+        <p class="muted">服务热线 {contact.phone} · 传真 {contact.fax}</p>
+        {contact.address && <p class="muted">{contact.address}</p>}
       </div>
       <div class="col">
         {navOrder.map((p) => <a href={u(p.href)} class="big link-u">{p.title}</a>)}
       </div>
       <div class="col">
-        <span class="label">业务布局</span>
+        <span class="label">业务与产品</span>
         {businessPages.map((b) => (
           <a href={u(b.href)} class="biz" style={`--c1:${b.theme?.[0]};--c2:${b.theme?.[1]}`}><i></i>{b.title}</a>
         ))}
       </div>
       <div class="col">
-        <span class="label">联系我们</span>
-        <span>服务热线 {contact.phone}</span>
-        <span>传真 {contact.fax}</span>
+        <span class="label">关注我们</span>
+        <div class="social">
+          {social.map((s) => (
+            <a href={s.href ?? '#'} class="soc" target={s.href ? '_blank' : undefined} rel={s.href ? 'noopener' : undefined} aria-label={`${s.platform}：${s.account}`}>
+              <span class="soc-name">{s.short}</span>
+              <span class="soc-pop" role="tooltip">
+                <span class="qr" aria-hidden="true">{s.qr ? '' : '二维码'}</span>
+                <strong>{s.platform}</strong>
+                <small>{s.account}</small>
+              </span>
+            </a>
+          ))}
+        </div>
+      </div>
+    </div>
+
+    <div class="legal">
+      <div class="licenses">
+        {contact.icp.map((t) => <span>{t}</span>)}
+        <a href={u('/about#licenses')} class="link-u">资质证照</a>
+      </div>
+      <div class="links">
+        {legal.map((l) => <a href={u(l.href)} class="link-u">{l.label}</a>)}
       </div>
     </div>
     <div class="bottom">
       <span>© {year} {site.fullName} 版权所有</span>
-      <span>{contact.icp.join('　')}</span>
     </div>
   </div>
 </footer>
 
 <style>
-  .footer { position: relative; overflow: hidden; isolation: isolate; background: var(--ink); color: rgba(255,255,255,.7); padding: 88px 0 32px; font-size: 14px; border-radius: 40px 40px 0 0; }
-  .blob { position: absolute; border-radius: 50%; filter: blur(90px); z-index: -1; }
-  .b1 { width: 480px; height: 480px; background: var(--brand); opacity: .45; right: -120px; top: -200px; }
-  .b2 { width: 360px; height: 360px; background: var(--violet); opacity: .3; left: 10%; bottom: -220px; }
-  .top { display: grid; grid-template-columns: 1.6fr 1fr 1fr 1fr; gap: 40px; padding-bottom: 56px; }
+  .footer { position: relative; isolation: isolate; background: var(--ink); color: rgba(255,255,255,.7); padding: 88px 0 32px; font-size: 14px; border-radius: 40px 40px 0 0; }
+  .blob { position: absolute; border-radius: 50%; filter: blur(90px); z-index: -1; pointer-events: none; }
+  .b1 { width: 480px; height: 480px; background: var(--brand); opacity: .45; right: 0; top: -100px; }
+  .b2 { width: 360px; height: 360px; background: var(--violet); opacity: .3; left: 10%; bottom: 0; }
+  .footer { overflow: hidden; }
+  .top { display: grid; grid-template-columns: 1.6fr 1fr 1fr 1.3fr; gap: 40px; padding-bottom: 48px; }
   .logo { height: 33px; width: auto; margin-bottom: 20px; }
   .slogan { font-size: clamp(28px, 3.4vw, 44px); font-weight: 900; color: #fff; line-height: 1.2; letter-spacing: .06em; }
-  .muted { color: rgba(255,255,255,.45); font-size: 13px; margin-top: 12px; }
+  .muted { color: rgba(255,255,255,.45); font-size: 13px; margin-top: 10px; }
   .col { display: flex; flex-direction: column; gap: 10px; align-items: flex-start; }
   .label { font-size: 12px; letter-spacing: .2em; color: rgba(255,255,255,.4); margin-bottom: 4px; }
-  .big { font-size: 18px; font-weight: 700; color: #fff; }
+  .big { font-size: 17px; font-weight: 700; color: #fff; }
   .biz { display: inline-flex; align-items: center; gap: 10px; transition: color .2s, transform .4s var(--spring); }
   .biz i { width: 10px; height: 10px; border-radius: 50%; background: linear-gradient(135deg, var(--c1), var(--c2)); transition: transform .4s var(--spring); }
   .biz:hover { color: #fff; transform: translateX(4px); }
   .biz:hover i { transform: scale(1.6); }
-  .bottom { display: flex; justify-content: space-between; gap: 16px; padding-top: 24px; border-top: 1px solid rgba(255,255,255,.1); font-size: 12px; color: rgba(255,255,255,.4); flex-wrap: wrap; }
+
+  /* 社媒矩阵：悬停弹出二维码 */
+  .social { display: grid; grid-template-columns: repeat(4, 44px); gap: 10px; }
+  .soc { position: relative; width: 44px; height: 44px; border-radius: 14px; display: grid; place-items: center; background: rgba(255,255,255,.08); color: #fff; font-size: 12px; font-weight: 700; transition: background .25s, transform .4s var(--spring); }
+  .soc:hover, .soc:focus-visible { background: linear-gradient(135deg, var(--brand), var(--brand-2)); transform: translateY(-3px); }
+  .soc-pop {
+    position: absolute; bottom: calc(100% + 10px); left: 50%; z-index: 5; width: 150px; padding: 12px; border-radius: 16px;
+    background: #fff; color: var(--ink); display: flex; flex-direction: column; align-items: center; gap: 4px; text-align: center;
+    opacity: 0; visibility: hidden; transform: translate(-50%, 8px) scale(.95); transition: opacity .2s, transform .35s var(--spring), visibility .2s;
+    box-shadow: 0 20px 40px -16px rgba(0,0,0,.5);
+  }
+  .soc:hover .soc-pop, .soc:focus-visible .soc-pop { opacity: 1; visibility: visible; transform: translate(-50%, 0) scale(1); }
+  .qr { width: 96px; height: 96px; border-radius: 10px; display: grid; place-items: center; font-size: 11px; color: var(--muted);
+    background: repeating-conic-gradient(var(--line) 0 25%, #fff 0 50%) 0 0 / 12px 12px; }
+  .soc-pop strong { font-size: 13px; }
+  .soc-pop small { font-size: 11px; color: var(--muted); }
+
+  .legal { display: flex; justify-content: space-between; gap: 16px 32px; flex-wrap: wrap; padding: 20px 0; border-top: 1px solid rgba(255,255,255,.1); font-size: 12px; color: rgba(255,255,255,.45); }
+  .licenses, .links { display: flex; flex-wrap: wrap; gap: 6px 16px; }
+  .links a, .licenses a { color: rgba(255,255,255,.65); }
+  .links a:hover, .licenses a:hover { color: #fff; }
+  .bottom { padding-top: 12px; font-size: 12px; color: rgba(255,255,255,.4); }
   @media (max-width: 1080px) { .top { grid-template-columns: 1fr 1fr; } .brand { grid-column: 1 / -1; } }
-  @media (max-width: 640px) { .top { grid-template-columns: 1fr; } .footer { border-radius: 28px 28px 0 0; padding-top: 64px; } }
+  @media (max-width: 640px) { .top { grid-template-columns: 1fr; } .footer { border-radius: 28px 28px 0 0; padding-top: 64px; } .social { grid-template-columns: repeat(5, 44px); } }
 </style>

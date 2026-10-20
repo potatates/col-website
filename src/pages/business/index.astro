@@ -1,6 +1,6 @@
 ---
-// 业务布局：一整页连续滚动。五大业务依次展开，每项业务以一张主题色“章节卡”开场，
-// 接着是它的各个小板块。吸附栏只用来提示当前位置和快速跳转，不需要点也能一路看完。
+// 业务与产品：一整页连续滚动。先是业务总览，然后各业务依次展开，每项业务以一张主题色“章节卡”开场，
+// 接着是它的产品与各个小板块。吸附栏只用来提示当前位置和快速跳转，不需要点也能一路看完。
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Header from '../../components/zh/Header.astro';
 import Footer from '../../components/zh/Footer.astro';
@@ -8,6 +8,7 @@ import PageHero from '../../components/zh/PageHero.astro';
 import SubNav from '../../components/zh/SubNav.astro';
 import Blocks from '../../components/zh/Blocks.astro';
 import NextPage from '../../components/zh/NextPage.astro';
+import CtaBand from '../../components/zh/CtaBand.astro';
 import { site, pages, businessPages, nextOf } from '../../content/zh';
 
 const page = pages.business;
@@ -18,10 +19,23 @@ const page = pages.business;
     <PageHero title={page.title} en={page.en} intro={page.intro} theme={page.theme} />
     <SubNav items={businessPages} />
 
+    {page.sections.map((s) => (
+      <section id={s.id} class="block-section">
+        <div class="container">
+          <div class="s-head reveal">
+            <span class="s-ghost" aria-hidden="true">{s.en}</span>
+            <h2 class="s-title">{s.title ?? s.label}</h2>
+            {s.intro && <p class="s-intro">{s.intro}</p>}
+          </div>
+          <div class="s-body"><Blocks blocks={s.blocks} /></div>
+        </div>
+      </section>
+    ))}
+
     {businessPages.map((b, i) => (
       <article id={b.key} class="chapter" style={`--c1:${b.theme?.[0]};--c2:${b.theme?.[1]}`}>
         <div class="container">
-          <header class="ch-head reveal spot">
+          <header class="ch-head reveal">
             <span class="ch-shape s1" aria-hidden="true"></span>
             <span class="ch-shape s2" aria-hidden="true"></span>
             <span class="ch-no">{String(i + 1).padStart(2, '0')} / {String(businessPages.length).padStart(2, '0')}</span>
@@ -52,6 +66,7 @@ const page = pages.business;
     ))}
 
     <NextPage next={nextOf.business} />
+    <CtaBand />
   </main>
   <Footer />
 </BaseLayout>
@@ -69,12 +84,9 @@ const page = pages.business;
     content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none; opacity: 0; transition: opacity .3s;
     background: radial-gradient(420px circle at var(--mx, 50%) var(--my, 50%), rgba(255,255,255,.25), transparent 65%);
   }
-  .ch-head:hover::after { opacity: 1; }
   .ch-shape { position: absolute; z-index: -1; transition: transform 1.2s var(--spring); }
   .s1 { width: 380px; height: 380px; border-radius: 50%; border: 2px solid rgba(255,255,255,.3); right: -90px; top: -150px; }
   .s2 { width: 170px; height: 170px; border-radius: 40% 60% 55% 45%; background: rgba(255,255,255,.18); right: 12%; bottom: -50px; }
-  .ch-head:hover .s1 { transform: scale(1.12) rotate(30deg); }
-  .ch-head:hover .s2 { transform: rotate(70deg) translateY(-16px); }
   .ch-no { font-size: 13px; font-weight: 700; opacity: .8; font-variant-numeric: tabular-nums; }
   .ch-en { font-size: 13px; font-weight: 800; letter-spacing: .25em; opacity: .85; }
   .ch-title { font-size: clamp(44px, 7vw, 92px); font-weight: 900; line-height: 1.05; }

@@ -5,7 +5,7 @@ import { pages, site } from '../content/zh';
 ---
 <SectionPage page={pages.investors}>
   <!-- 行情卡片：原型中为静态占位，正式版接入行情接口 -->
-  <div class="quote spot" slot="aside">
+  <div class="quote" slot="aside">
     <div class="q-top">
       <div>
         <div class="q-name">{site.name}</div>
@@ -29,8 +29,6 @@ import { pages, site } from '../content/zh';
     content: ''; position: absolute; inset: 0; pointer-events: none; opacity: 0; transition: opacity .3s;
     background: radial-gradient(300px circle at var(--mx, 50%) var(--my, 50%), rgba(0,193,222,.25), transparent 70%);
   }
-  .quote:hover { border-color: rgba(0,193,222,.6); transform: translateY(-4px); }
-  .quote:hover::before { opacity: 1; }
   .q-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
   .q-name { font-size: 20px; font-weight: 600; }
   .q-code { font-size: 13px; opacity: .65; margin-top: 2px; }

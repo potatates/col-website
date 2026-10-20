@@ -6,7 +6,6 @@ import type { Block } from '../../content/zh';
 interface Props { blocks: Block[] }
 const { blocks } = Astro.props;
 
-// 封面占位色：按标题生成稳定的蓝青色调
 // 海报色板：以蓝青为主，夹杂紫、粉、橙，像一面海报墙
 const palette = [205, 250, 190, 330, 275, 215, 20, 300, 230, 175, 345, 40];
 const hue = (s: string) => palette[[...s].reduce((a, c) => a + c.charCodeAt(0), 0) % palette.length];
@@ -26,7 +25,7 @@ const isNum = (v: string) => /^[\d,]+$/.test(v);
         <div class="reveal">
           <div class:list={['b-stats', `n${Math.min(b.items.length, 4)}`]}>
             {b.items.map((s) => (
-              <div class="b-stat spot">
+              <div class="b-stat">
                 <div class="num"><span data-count={isNum(s.value) ? s.value : undefined}>{s.value}</span>{s.unit && <em>{s.unit}</em>}</div>
                 <div class="num-label">{s.label}</div>
               </div>
@@ -62,6 +61,8 @@ const isNum = (v: string) => /^[\d,]+$/.test(v);
 
     case 'covers':
       return (
+        <>
+        {b.title && <h4 class="b-subtitle reveal">{b.title}</h4>}
         <div class="b-covers">
           {b.items.map((c, i) => (
             <div class="b-cover reveal" style={`--d:${(i % 6) * 50}ms`}>
@@ -70,6 +71,7 @@ const isNum = (v: string) => /^[\d,]+$/.test(v);
             </div>
           ))}
         </div>
+        </>
       );
 
     case 'tags':
@@ -84,7 +86,7 @@ const isNum = (v: string) => /^[\d,]+$/.test(v);
       return (
         <ol class="b-steps reveal">
           {b.items.map((s, i) => (
-            <li class="step spot" style={`--d:${i * 80}ms`}>
+            <li class="step" style={`--d:${i * 80}ms`}>
               <span class="step-no">{String(i + 1).padStart(2, '0')}</span>
               <strong>{s.title}</strong>
               {s.text && <span>{s.text}</span>}
@@ -181,6 +183,178 @@ const isNum = (v: string) => /^[\d,]+$/.test(v);
         </div>
       );
 
+    case 'ipwall': {
+      // IP 墙：卡片 = 封面 + 数据标签 + 题材 + 开发状态；顶部按题材/状态筛选（不跳页）
+      const genres = [...new Set(b.items.map((x) => x.genre))];
+      const statuses = [...new Set(b.items.map((x) => x.status))];
+      return (
+        <div class="b-ipwall" data-filterable>
+          <div class="filters reveal">
+            <button class="chip on" data-filter-key="all" data-filter-value="all">全部</button>
+            {genres.map((g) => <button class="chip" data-filter-key="genre" data-filter-value={g}>{g}</button>)}
+            <span class="sep" aria-hidden="true"></span>
+            {statuses.map((t) => <button class="chip" data-filter-key="status" data-filter-value={t}>{t}</button>)}
+          </div>
+          <div class="ip-grid">
+            {b.items.map((x, i) => (
+              <article class="ip-card reveal" data-genre={x.genre} data-status={x.status} style={`--d:${(i % 4) * 60}ms`}>
+                <div class="cover" style={`--h:${hue(x.title)}`}>
+                  <span class:list={['status', `s-${['可授权', '改编中', '已授权'].indexOf(x.status)}`]}>{x.status}</span>
+                  <span>{x.title}</span>
+                </div>
+                <div class="ip-meta">
+                  <span class="ip-genre">{x.genre}{x.forms.length > 0 && ` · ${x.forms.join(' / ')}`}</span>
+                  {x.tags.map((t) => <span class="ip-tag">#{t}</span>)}
+                </div>
+              </article>
+            ))}
+          </div>
+          {b.note && <p class="b-note">{b.note}</p>}
+        </div>
+      );
+    }
+
+    case 'videos':
+      // 预告片 / 样片墙：原型为占位，正式版接入视频文件或视频平台
+      return (
+        <div class="b-videos">
+          {b.items.map((v, i) => (
+            <figure class:list={['video reveal', { vertical: v.vertical }]} style={`--d:${(i % 4) * 70}ms;--h:${hue(v.title)}`}>
+              <button class="play" aria-label={`播放 ${v.title}（待接入）`} title="视频待接入">▶</button>
+              <figcaption><strong>{v.title}</strong>{v.sub && <small>{v.sub}</small>}</figcaption>
+            </figure>
+          ))}
+          {b.note && <p class="b-note">{b.note}</p>}
+        </div>
+      );
+
+    case 'people':
+      return (
+        <div class:list={['b-people', `c${b.cols ?? 3}`]}>
+          {b.items.map((p, i) => (
+            <div class="person card reveal" style={`--d:${(i % 4) * 70}ms`}>
+              <span class="p-avatar" aria-hidden="true">{p.name.replace(/[（(].*$/, '').slice(-2)}</span>
+              <span class="card-title">{p.name}</span>
+              <span class="card-tag">{p.role}</span>
+              {p.text && <span class="card-text">{p.text}</span>}
+              {(p.email || p.phone) && (
+                <span class="p-contact">
+                  {p.email && <a href={`mailto:${p.email}`}>✉ {p.email}</a>}
+                  {p.phone && <span>☏ {p.phone}</span>}
+                </span>
+              )}
+            </div>
+          ))}
+        </div>
+      );
+
+    case 'contacts':
+      // 合作页：每类合作一张卡（负责人 + 说明），点“发送咨询”会预选下方表单的合作类型
+      return (
+        <div class="b-contacts">
+          {b.items.map((c, i) => (
+            <div class="contact-card card reveal" id={c.id} style={`--d:${(i % 3) * 70}ms`}>
+              <span class="cc-badge" aria-live="polite"></span>
+              <span class="card-tag">{c.tag}</span>
+              <span class="card-title">{c.title}</span>
+              <span class="card-text">{c.text}</span>
+              <div class="cc-people">
+                {c.people.map((p) => (
+                  <div class="cc-person">
+                    <span class="p-avatar sm" aria-hidden="true">{p.name.replace(/[（(].*$/, '').slice(-2)}</span>
+                    <span>
+                      <strong>{p.name}</strong><small>{p.role}</small>
+                      {p.email && <a href={`mailto:${p.email}`}>{p.email}</a>}
+                      {p.phone && <small>{p.phone}</small>}
+                    </span>
+                  </div>
+                ))}
+              </div>
+              <button class="card-go cc-go" data-topic={c.title}>发送咨询 <span class="arrow">→</span></button>
+            </div>
+          ))}
+        </div>
+      );
+
+    case 'form':
+      // 留资表单：原型阶段不提交到后台，提交后提示；正式版接入表单服务并按合作类型自动分派
+      return (
+        <form class="b-form reveal" id={b.id ?? 'inquiry'} data-proto-form data-astro-reload>
+          <div class="f-row">
+            <label>合作类型<select name="topic" required>{b.topics.map((t) => <option>{t}</option>)}</select></label>
+            <label>姓名<input name="name" required placeholder="您的姓名" /></label>
+          </div>
+          <div class="f-row">
+            <label>公司 / 机构<input name="company" placeholder="公司名称" /></label>
+            <label>职务<input name="title" placeholder="您的职务" /></label>
+          </div>
+          <div class="f-row">
+            <label>邮箱<input name="email" type="email" required placeholder="name@company.com" /></label>
+            <label>电话 / 微信<input name="phone" placeholder="便于我们联系您" /></label>
+          </div>
+          <label>需求描述<textarea name="message" rows="4" placeholder="简单介绍您的需求，我们会尽快安排对应负责人联系您"></textarea></label>
+          <div class="f-foot">
+            <button class="btn btn-primary" type="submit">提交咨询 <span class="arrow">→</span></button>
+            <p class="f-msg" role="status" aria-live="polite"></p>
+          </div>
+          {b.note && <p class="b-note">{b.note}</p>}
+        </form>
+      );
+
+    case 'gallery': {
+      const tags = [...new Set(b.items.map((x) => x.tag))];
+      return (
+        <div class="b-gallery" data-filterable>
+          <div class="filters reveal">
+            <button class="chip on" data-filter-key="all" data-filter-value="all">全部</button>
+            {tags.map((t) => <button class="chip" data-filter-key="tag" data-filter-value={t}>{t}</button>)}
+          </div>
+          <div class="g-grid">
+            {b.items.map((x, i) => (
+              <figure class:list={['g-item reveal', `g${i % 5}`]} data-tag={x.tag} style={`--d:${(i % 4) * 60}ms;--h:${hue(x.caption)}`}>
+                <span class="g-ph" aria-hidden="true">照片待提供</span>
+                <figcaption><em>{x.tag}</em>{x.caption}</figcaption>
+              </figure>
+            ))}
+          </div>
+          {b.note && <p class="b-note">{b.note}</p>}
+        </div>
+      );
+    }
+
+    case 'faq':
+      return (
+        <div class="b-faq reveal">
+          {b.items.map((f) => (
+            <details class="faq">
+              <summary>{f.q}</summary>
+              <p>{f.a}</p>
+            </details>
+          ))}
+        </div>
+      );
+
+    case 'logos':
+      return (
+        <div class="reveal">
+          <div class="b-logos">{b.items.map((l) => <span class="logo-tile">{l}</span>)}</div>
+          {b.note && <p class="b-note">{b.note}</p>}
+        </div>
+      );
+
+    case 'downloads':
+      return (
+        <div class="b-downloads">
+          {b.items.map((d, i) => (
+            <a href="#" class="dl card reveal" style={`--d:${(i % 4) * 60}ms`} title="文件待提供">
+              <span class="dl-icon" aria-hidden="true">↓</span>
+              <span class="card-title">{d.title}</span>
+              <span class="card-text">{d.meta}</span>
+            </a>
+          ))}
+        </div>
+      );
+
     case 'contact':
       return (
         <div class="b-contact reveal">
@@ -205,7 +379,6 @@ const isNum = (v: string) => /^[\d,]+$/.test(v);
     background: linear-gradient(135deg, var(--c1, var(--brand)), var(--c2, var(--brand-2))); opacity: .14; z-index: -1;
     transition: transform .6s var(--spring);
   }
-  .b-stat:hover::before { transform: scale(1.8); }
   .b-stats .num span { background: linear-gradient(120deg, var(--c1, var(--brand)), var(--c2, var(--brand-2))); -webkit-background-clip: text; background-clip: text; }
   .b-note { font-size: 12px; color: var(--muted); margin-top: 14px; }
 
@@ -227,10 +400,6 @@ const isNum = (v: string) => /^[\d,]+$/.test(v);
     padding: 10px 18px; border-radius: 999px; background: var(--surface); font-size: 15px; font-weight: 500; cursor: default;
     box-shadow: 0 6px 16px -10px rgba(10,22,48,.25); transition: transform .4s var(--spring), background .25s, color .25s;
   }
-  .tag:nth-child(3n+1):hover { transform: rotate(-4deg) translateY(-3px); }
-  .tag:nth-child(3n+2):hover { transform: rotate(3deg) translateY(-3px); }
-  .tag:nth-child(3n):hover { transform: rotate(-2deg) translateY(-3px); }
-  .tag:hover { background: linear-gradient(120deg, var(--c1, var(--brand)), var(--c2, var(--brand-2))); color: #fff; }
 
   /* 步骤：彩色圆形编号 + 连线 */
   .b-steps { list-style: none; display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 16px; position: relative; }
@@ -241,7 +410,6 @@ const isNum = (v: string) => /^[\d,]+$/.test(v);
     background: linear-gradient(135deg, var(--c1, var(--brand)), var(--c2, var(--brand-2))); margin-bottom: 10px;
     box-shadow: 0 10px 20px -10px var(--c1, var(--brand)); transition: transform .5s var(--spring);
   }
-  .step:hover .step-no { transform: scale(1.15) rotate(-12deg); }
   .step strong { font-size: 19px; font-weight: 800; color: var(--ink); }
   .step span:last-child:not(.step-no) { font-size: 14px; color: var(--muted); }
 
@@ -249,7 +417,6 @@ const isNum = (v: string) => /^[\d,]+$/.test(v);
   .b-timeline { list-style: none; display: grid; grid-template-columns: repeat(6, 1fr); gap: 16px; }
   .b-timeline li { position: relative; padding: 24px 20px; border-radius: 24px; background: var(--surface); box-shadow: 0 10px 24px -18px rgba(10,22,48,.3); transition: transform .5s var(--spring); cursor: default; }
   .b-timeline li:nth-child(even) { margin-top: 36px; }
-  .b-timeline li:hover { transform: translateY(-6px) rotate(-1deg); }
   .tl-year { font-size: 36px; font-weight: 900; display: block; line-height: 1.1; background: linear-gradient(120deg, var(--c1, var(--brand)), var(--c2, var(--brand-2))); -webkit-background-clip: text; background-clip: text; color: transparent; }
   .tl-dot { display: none; }
   .b-timeline p { font-size: 14px; color: var(--muted); margin-top: 8px; }
@@ -257,7 +424,6 @@ const isNum = (v: string) => /^[\d,]+$/.test(v);
   /* 荣誉 */
   .b-honors { columns: 3; column-gap: 20px; }
   .honor { break-inside: avoid; margin-bottom: 20px; padding: 24px; border-radius: 24px; background: var(--surface); box-shadow: 0 10px 24px -18px rgba(10,22,48,.3); transition: transform .5s var(--spring); }
-  .honor:hover { transform: translateY(-4px) rotate(.6deg); }
   .honor-year { display: inline-block; font-size: 14px; font-weight: 800; color: #fff; padding: 3px 14px; border-radius: 999px; background: linear-gradient(120deg, var(--c1, var(--brand)), var(--c2, var(--brand-2))); }
   .honor ul { list-style: none; margin-top: 12px; }
   .honor li { font-size: 14px; color: var(--text); line-height: 1.7; margin-bottom: 8px; padding-left: 18px; position: relative; }
@@ -284,7 +450,6 @@ const isNum = (v: string) => /^[\d,]+$/.test(v);
   .b-letter blockquote { margin: 22px 0 28px; padding: 24px 28px; border-radius: 22px; background: linear-gradient(120deg, color-mix(in srgb, var(--c2, var(--brand-2)) 12%, transparent), color-mix(in srgb, var(--violet) 10%, transparent)); font-size: 18px; line-height: 1.9; font-weight: 600; }
   .themes { list-style: none; display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
   .theme { display: flex; flex-direction: column; gap: 6px; padding: 20px; border-radius: 20px; background: var(--bg); transition: transform .5s var(--spring), background .3s; }
-  .theme:hover { transform: translateY(-4px) rotate(-1deg); background: color-mix(in srgb, var(--c2, var(--brand-2)) 12%, var(--bg)); }
   .theme em { font-style: normal; width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg, var(--c1, var(--brand)), var(--c2, var(--brand-2))); color: #fff; display: grid; place-items: center; font-size: 14px; font-weight: 800; }
   .theme strong { font-size: 16px; color: var(--ink); }
   .theme span { color: var(--muted); font-size: 14px; }
@@ -326,7 +491,116 @@ const isNum = (v: string) => /^[\d,]+$/.test(v);
   .b-contact strong { font-size: 22px; font-weight: 800; color: var(--ink); }
   .b-contact .btn { margin-left: auto; }
 
+
+  .b-subtitle { font-size: 18px; font-weight: 800; color: var(--ink); margin-top: 8px; }
+
+  /* IP 墙 */
+  .filters { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 24px; align-items: center; }
+  .filters .sep { width: 1px; height: 22px; background: var(--line); margin: 0 6px; }
+  .chip { border: 0; cursor: pointer; font: inherit; font-size: 14px; font-weight: 600; padding: 8px 16px; border-radius: 999px; background: var(--surface); color: var(--muted); box-shadow: 0 4px 12px -8px rgba(10,22,48,.3); transition: background .25s, color .25s, transform .3s var(--spring); }
+  .chip:hover { color: var(--c1, var(--brand)); transform: translateY(-2px); }
+  .chip.on { background: linear-gradient(120deg, var(--c1, var(--brand)), var(--c2, var(--brand-2))); color: #fff; }
+  .ip-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 22px; }
+  .ip-card.hide, .g-item.hide { display: none; }
+  .ip-card .cover { aspect-ratio: 4 / 5; }
+  .status { position: absolute; top: 12px; left: 12px; z-index: 2; font-size: 12px; font-weight: 700; padding: 3px 10px; border-radius: 999px; background: rgba(255,255,255,.92); color: var(--ink); }
+  .status.s-0 { background: #3ddc97; color: #06351f; }
+  .status.s-1 { background: var(--sun); color: #4a3200; }
+  .ip-meta { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+  .ip-genre { width: 100%; font-size: 13px; color: var(--muted); }
+  .ip-tag { font-size: 12px; font-weight: 600; color: var(--c1, var(--brand)); background: color-mix(in srgb, var(--c1, var(--brand)) 9%, transparent); padding: 2px 8px; border-radius: 6px; }
+
+  /* 视频墙 */
+  .b-videos { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; align-items: start; }
+  .video { position: relative; aspect-ratio: 16 / 9; border-radius: 20px; overflow: hidden; color: #fff; grid-column: span 2;
+    background: radial-gradient(80% 60% at 80% 20%, hsl(calc(var(--h) + 40) 90% 65% / .8), transparent 60%), linear-gradient(150deg, hsl(var(--h) 70% 40%), hsl(calc(var(--h) + 30) 60% 14%)); }
+  .video.vertical { grid-column: span 1; aspect-ratio: 9 / 16; }
+  .play { position: absolute; left: 50%; top: 50%; translate: -50% -50%; width: 64px; height: 64px; border-radius: 50%; border: 0; cursor: not-allowed; background: rgba(255,255,255,.92); color: var(--ink); font-size: 20px; transition: transform .4s var(--spring); }
+  .video figcaption { position: absolute; left: 16px; right: 16px; bottom: 14px; display: flex; flex-direction: column; text-shadow: 0 2px 10px rgba(0,0,0,.3); }
+  .video small { opacity: .85; font-size: 12px; }
+
+  /* 人物卡 */
+  .b-people { display: grid; gap: 20px; }
+  .b-people.c2 { grid-template-columns: repeat(2, 1fr); }
+  .b-people.c3 { grid-template-columns: repeat(3, 1fr); }
+  .b-people.c4 { grid-template-columns: repeat(4, 1fr); }
+  .p-avatar { width: 64px; height: 64px; border-radius: 50%; display: grid; place-items: center; font-weight: 800; color: #fff; background: linear-gradient(135deg, var(--c1, var(--brand)), var(--c2, var(--brand-2))); margin-bottom: 6px; flex-shrink: 0; }
+  .p-avatar.sm { width: 40px; height: 40px; font-size: 13px; margin: 0; }
+  .p-contact { display: flex; flex-direction: column; gap: 2px; font-size: 13px; color: var(--muted); margin-top: auto; padding-top: 8px; }
+  .p-contact a { color: var(--c1, var(--brand)); }
+
+  /* 合作联系卡 */
+  .b-contacts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  .cc-people { display: flex; flex-direction: column; gap: 10px; margin-top: 8px; padding-top: 12px; border-top: 1px dashed var(--line); }
+  .cc-person { display: flex; gap: 10px; align-items: flex-start; }
+  .cc-person > span:last-child { display: flex; flex-direction: column; font-size: 13px; line-height: 1.5; }
+  .cc-person small { color: var(--muted); }
+  .cc-person a { color: var(--c1, var(--brand)); word-break: break-all; }
+  .cc-go { background: none; border: 0; cursor: pointer; font: inherit; font-weight: 600; text-align: left; padding-left: 0; }
+  .cc-go:hover .arrow { transform: translateX(6px); }
+  /* 从其他页面（如 IP 授权按钮）跳转过来时，高亮对应的合作卡片，其余卡片淡出 */
+  .b-contacts.has-focus .contact-card:not(.is-focus) { opacity: .45; filter: saturate(.6); transition: opacity .4s, filter .4s; }
+  .b-contacts.has-focus .contact-card:not(.is-focus):hover { opacity: 1; filter: none; }
+  .contact-card.is-focus {
+    transform: translateY(-8px) scale(1.03); z-index: 2;
+    background: linear-gradient(var(--surface), var(--surface)) padding-box, linear-gradient(120deg, var(--c1, var(--brand)), var(--c2, var(--brand-2)), var(--violet)) border-box;
+    border: 3px solid transparent;
+    animation: focus-pulse 1.8s ease-out 3;
+  }
+  @keyframes focus-pulse {
+    0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--c1, var(--brand)) 45%, transparent), 0 30px 60px -28px rgba(10,22,48,.45); }
+    100% { box-shadow: 0 0 0 22px transparent, 0 30px 60px -28px rgba(10,22,48,.45); }
+  }
+  .cc-badge { display: none; }
+  .is-focus .cc-badge {
+    display: inline-flex; align-self: flex-start; align-items: center; gap: 6px; margin: -4px 0 4px;
+    padding: 6px 14px; border-radius: 999px; font-size: 13px; font-weight: 800; color: #fff;
+    background: linear-gradient(120deg, var(--c1, var(--brand)), var(--c2, var(--brand-2)));
+    box-shadow: 0 8px 18px -8px var(--c1, var(--brand));
+  }
+  .is-focus .cc-badge::before { content: '★'; }
+  .is-focus .cc-go { color: #fff; background: linear-gradient(120deg, var(--c1, var(--brand)), var(--c2, var(--brand-2))); padding: 10px 18px; border-radius: 999px; margin-top: 12px; align-self: flex-start; }
+  @media (prefers-reduced-motion: reduce) { .contact-card.is-focus { animation: none; } }
+
+  /* 表单 */
+  .b-form { background: var(--surface); border-radius: 28px; padding: 36px; box-shadow: 0 16px 40px -24px rgba(10,22,48,.3); display: flex; flex-direction: column; gap: 16px; scroll-margin-top: 160px; }
+  .f-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .b-form label { display: flex; flex-direction: column; gap: 6px; font-size: 13px; font-weight: 600; color: var(--muted); }
+  .b-form input, .b-form select, .b-form textarea { font: inherit; font-size: 15px; color: var(--text); padding: 12px 14px; border-radius: 12px; border: 1.5px solid var(--line); background: var(--bg); transition: border-color .2s, box-shadow .2s; }
+  .b-form input:focus, .b-form select:focus, .b-form textarea:focus { outline: none; border-color: var(--c1, var(--brand)); box-shadow: 0 0 0 4px color-mix(in srgb, var(--c1, var(--brand)) 15%, transparent); }
+  .b-form button[type=submit] { border: 0; cursor: pointer; font: inherit; font-weight: 600; }
+  .f-foot { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+  .f-msg { font-size: 14px; color: var(--c1, var(--brand)); font-weight: 600; }
+
+  /* 照片墙 */
+  .g-grid { display: grid; grid-template-columns: repeat(4, 1fr); grid-auto-rows: 180px; gap: 16px; }
+  .g-item { position: relative; border-radius: 20px; overflow: hidden; color: #fff; background: linear-gradient(150deg, hsl(var(--h) 60% 55%), hsl(calc(var(--h) + 30) 55% 30%)); transition: transform .5s var(--spring); }
+  .g0 { grid-row: span 2; } .g3 { grid-column: span 2; }
+  .g-ph { position: absolute; top: 12px; right: 12px; font-size: 11px; padding: 2px 8px; border-radius: 999px; background: rgba(0,0,0,.25); }
+  .g-item figcaption { position: absolute; left: 14px; right: 14px; bottom: 12px; font-size: 14px; font-weight: 600; display: flex; flex-direction: column; text-shadow: 0 2px 10px rgba(0,0,0,.3); }
+  .g-item em { font-style: normal; font-size: 11px; opacity: .85; }
+
+  /* FAQ */
+  .b-faq { display: flex; flex-direction: column; gap: 10px; }
+  .faq { background: var(--surface); border-radius: 18px; padding: 18px 22px; box-shadow: 0 8px 20px -16px rgba(10,22,48,.3); }
+  .faq summary { cursor: pointer; font-weight: 700; list-style: none; display: flex; justify-content: space-between; gap: 12px; }
+  .faq summary::after { content: '+'; color: var(--c1, var(--brand)); font-size: 20px; line-height: 1; transition: transform .3s var(--spring); }
+  .faq[open] summary::after { transform: rotate(45deg); }
+  .faq p { margin-top: 10px; color: var(--muted); font-size: 15px; }
+
+  /* Logo 墙 */
+  .b-logos { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; }
+  .logo-tile { display: grid; place-items: center; height: 84px; border-radius: 18px; background: var(--surface); font-weight: 800; color: var(--muted); font-size: 15px; text-align: center; padding: 8px; box-shadow: 0 6px 16px -12px rgba(10,22,48,.3); filter: grayscale(1); transition: color .25s, transform .4s var(--spring); }
+
+  /* 下载 */
+  .b-downloads { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+  .dl-icon { width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center; font-weight: 800; color: #fff; background: linear-gradient(135deg, var(--c1, var(--brand)), var(--c2, var(--brand-2))); }
   @media (max-width: 1080px) {
+    .ip-grid, .b-downloads { grid-template-columns: repeat(3, 1fr); }
+    .b-videos { grid-template-columns: repeat(2, 1fr); }
+    .b-people.c3, .b-people.c4, .b-contacts { grid-template-columns: repeat(2, 1fr); }
+    .g-grid { grid-template-columns: repeat(3, 1fr); }
+    .b-logos { grid-template-columns: repeat(4, 1fr); }
     .b-cards.c4, .b-cards.c3 { grid-template-columns: repeat(2, 1fr); }
     .b-covers { grid-template-columns: repeat(4, 1fr); }
     .b-timeline { grid-template-columns: repeat(3, 1fr); }
@@ -334,6 +608,15 @@ const isNum = (v: string) => /^[\d,]+$/.test(v);
     .themes { grid-template-columns: 1fr; }
   }
   @media (max-width: 768px) {
+    .ip-grid, .b-downloads { grid-template-columns: repeat(2, 1fr); gap: 14px; }
+    .b-videos { grid-template-columns: 1fr 1fr; }
+    .video { grid-column: span 2; }
+    .b-people.c2, .b-people.c3, .b-people.c4, .b-contacts { grid-template-columns: 1fr; }
+    .f-row { grid-template-columns: 1fr; }
+    .b-form { padding: 24px; }
+    .g-grid { grid-template-columns: repeat(2, 1fr); grid-auto-rows: 140px; }
+    .g3 { grid-column: span 1; }
+    .b-logos { grid-template-columns: repeat(3, 1fr); }
     .b-cards.c2, .b-cards.c3, .b-cards.c4 { grid-template-columns: 1fr; }
     .b-stats { gap: 24px 32px; }
     .b-stat { min-width: 130px; }
