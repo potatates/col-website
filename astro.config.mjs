@@ -7,6 +7,8 @@ const base = process.env.BASE_PATH || '/';
 export default defineConfig({
   site: process.env.SITE_URL || 'https://www.col.com',
   base,
+  // 数商已并入“业务与产品”，旧链接跳转到对应章节
+  redirects: { '/data': '/business#data' },
   i18n: {
     defaultLocale: 'zh',
     locales: ['zh', 'en'],

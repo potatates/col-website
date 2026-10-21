@@ -48,8 +48,9 @@ const isNum = (v: string) => /^[\d,]+$/.test(v);
                 href={live ? u(c.href) : undefined}
                 target={live && c.external ? '_blank' : undefined}
                 rel={live && c.external ? 'noopener' : undefined}
-                style={`--d:${(i % 4) * 70}ms`}
+                style={`--d:${(i % 4) * 70}ms;${c.color ? `--c1:${c.color[0]};--c2:${c.color[1]}` : ''}`}
               >
+                {c.color && <span class="card-stripe" aria-hidden="true"></span>}
                 {c.tag && <span class="card-tag">{c.tag}</span>}
                 <span class="card-title">{c.title}</span>
                 {c.text && <span class="card-text">{c.text}</span>}
@@ -88,7 +89,7 @@ const isNum = (v: string) => /^[\d,]+$/.test(v);
       return (
         <ol class="b-steps reveal">
           {b.items.map((s, i) => (
-            <li class="step" style={`--d:${i * 80}ms`}>
+            <li class:list={['step', { colored: !!s.color }]} style={`--d:${i * 80}ms;${s.color ? `--c1:${s.color[0]};--c2:${s.color[1]}` : ''}`}>
               <span class="step-no">{String(i + 1).padStart(2, '0')}</span>
               <strong>{s.title}</strong>
               {s.text && <span>{s.text}</span>}
@@ -519,6 +520,14 @@ const isNum = (v: string) => /^[\d,]+$/.test(v);
   .news-row { display: grid; grid-template-columns: 110px 72px 1fr auto; align-items: center; gap: 20px; padding: 22px 24px; border-radius: 22px; background: var(--surface); box-shadow: 0 8px 20px -16px rgba(10,22,48,.3); }
   .news-soon { font-size: 12px; color: var(--muted); white-space: nowrap; }
 
+
+  /* 带业务颜色的卡片：顶部一条渐变色带；带颜色的步骤：各自的渐变圆点与连线 */
+  .card-stripe { position: absolute; left: 0; right: 0; top: 0; height: 6px; background: linear-gradient(90deg, var(--c1), var(--c2)); }
+  .b-steps:has(.step.colored)::before { display: none; }
+  .step.colored::after { content: ''; position: absolute; left: 60px; right: -12px; top: 27px; height: 3px; border-radius: 3px; background: linear-gradient(90deg, var(--c2), transparent); opacity: .5; }
+  .step.colored:last-child::after { display: none; }
+  .step.colored strong { color: var(--c1); }
+
   /* IP 墙 */
   .filters { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 24px; align-items: center; }
   .filters .sep { width: 1px; height: 22px; background: var(--line); margin: 0 6px; }
@@ -651,6 +660,7 @@ const isNum = (v: string) => /^[\d,]+$/.test(v);
     .b-covers .cover { font-size: 12px; padding: 10px; border-radius: 14px; }
     .b-steps { grid-auto-flow: row; }
     .b-steps::before { display: none; }
+    .step.colored::after { display: none; }
     .b-timeline { grid-template-columns: 1fr 1fr; }
     .b-timeline li:nth-child(even) { margin-top: 0; }
     .b-honors { columns: 1; }

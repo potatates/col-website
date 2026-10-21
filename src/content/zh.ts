@@ -10,7 +10,7 @@
 /* ============ 类型 ============ */
 
 export type Stat = { value: string; unit?: string; label: string };
-export type Card = { id?: string; title: string; text?: string; meta?: string; tag?: string; href?: string; external?: boolean };
+export type Card = { id?: string; title: string; text?: string; meta?: string; tag?: string; href?: string; external?: boolean; color?: [string, string] };
 export type Cover = { title: string; sub?: string };
 export type Person = { name: string; role: string; text?: string; email?: string; phone?: string };
 export type IP = { title: string; genre: string; status: '可授权' | '改编中' | '已授权'; forms: string[]; tags: string[] };
@@ -21,7 +21,7 @@ export type Block =
   | { type: 'cards'; items: Card[]; cols?: 2 | 3 | 4 }
   | { type: 'covers'; items: Cover[]; title?: string }
   | { type: 'tags'; title?: string; items: string[] }
-  | { type: 'steps'; items: { title: string; text?: string }[] }
+  | { type: 'steps'; items: { title: string; text?: string; color?: [string, string] }[] }
   | { type: 'timeline'; items: { year: string; text: string }[] }
   | { type: 'honors'; items: { year: string; items: string[] }[] }
   | { type: 'quote'; text: string; author?: string; role?: string; href?: string; hrefLabel?: string }
@@ -81,6 +81,20 @@ export const legal = [
   { label: '行为准则', href: '#' },
   { label: '举报与合规通道', href: '#' },
 ];
+
+
+/* ============ 业务色板 ============ */
+// 一条连续的光谱：每条业务的渐变终点接上下一条的起点，像一整道渐变被切成六块，所以放在一起自然协调。
+// 黄 → 橙（海外）｜ 玫红 → 紫（影视·短剧）→ 靛（数商）→ 蓝（版权保护）→ 青（AI）→ 绿（网络文学）
+// 海外取 FlareFlow 的黄橙火焰；AI 为品牌蓝 → 青。所有业务相关的颜色都从这里取。
+export const bizColor: Record<string, [string, string]> = {
+  global: ['#ffc53d', '#ff7a3d'],     // 海外：黄橙 → 橙（FlareFlow 火焰）
+  drama: ['#f0569b', '#a95cff'],      // 影视·短剧：玫红 → 紫（去掉橙色段）
+  data: ['#9b5cff', '#5b5ff5'],       // 数商：紫 → 靛（数据/科技）
+  ipr: ['#5b5ff5', '#2f86ff'],        // 版权保护：靛 → 蓝（守护、可信）
+  ai: ['#0071ce', '#00c1de'],         // AI与创作工具：品牌蓝 → 青
+  literature: ['#00c1de', '#3ddc97'], // 网络文学：青 → 绿（阅读）
+};
 
 const cninfo = 'http://irm.cninfo.com.cn/ircs/search?keyword=300364';
 
@@ -199,7 +213,7 @@ const about: Page = {
 
 const literature: Page = {
   key: 'literature',
-  theme: ['#0071ce', '#00c1de'],
+  theme: bizColor.literature,
   href: '/business#literature',
   title: '网络文学',
   en: 'ONLINE LITERATURE',
@@ -246,7 +260,7 @@ const literature: Page = {
 
 const drama: Page = {
   key: 'drama',
-  theme: ['#6c4dff', '#ff5c9a'],
+  theme: bizColor.drama,
   href: '/business#drama',
   title: '影视·短剧',
   en: 'FILM & SHORT DRAMA',
@@ -291,7 +305,7 @@ const drama: Page = {
 
 const global: Page = {
   key: 'global',
-  theme: ['#00a7c4', '#3ddc97'],
+  theme: bizColor.global,
   href: '/business#global',
   title: '海外',
   en: 'GLOBAL',
@@ -349,7 +363,7 @@ const global: Page = {
 
 const ai: Page = {
   key: 'ai',
-  theme: ['#ff7a45', '#ffc53d'],
+  theme: bizColor.ai,
   href: '/business#ai',
   title: 'AI与创作工具',
   en: 'AI & TOOLS',
@@ -381,7 +395,7 @@ const ai: Page = {
 
 const ipr: Page = {
   key: 'ipr',
-  theme: ['#1b3a8c', '#4f7dff'],
+  theme: bizColor.ipr,
   href: '/business#ipr',
   title: '版权保护',
   en: 'IP PROTECTION',
@@ -415,12 +429,13 @@ const ipr: Page = {
   ],
 };
 
-// 章节顺序按信息重要性：海外与短剧是增长主线、服务第一顺位的海外合作方；网文是IP源头；AI与版权保护为支撑
-export const businessPages = [global, drama, literature, ai, ipr];
+// 章节顺序按信息重要性：先服务两个第一顺位受众（海外合作方 → 海外；数商客户 → 数商），再到短剧、网文（IP源头），AI与版权保护为支撑
+// 颜色贴合各业务的产品与概念：海外红橙（FlareFlow）、数商靛紫、短剧玫红、网文绿、AI 蓝、版权金
+export const businessPages: Page[] = [];
 
 const businessIndex: Page = {
   key: 'business',
-  theme: ['#0071ce', '#6c4dff'],
+  theme: [bizColor.global[0], bizColor.data[1]],
   href: '/business',
   title: '业务与产品',
   en: 'BUSINESS & PRODUCTS',
@@ -431,14 +446,16 @@ const businessIndex: Page = {
       intro: '出海与短剧是增长主线，网络文学是IP的源头，AI与版权保护贯穿全流程。',
       blocks: [
         { type: 'steps', items: [
-          { title: '海外', text: '200+ 国家和地区 · 海外收入40%+' },
-          { title: '影视·短剧', text: 'FlareFlow · 动画 · 影视' },
-          { title: '网络文学', text: '17K · 四月天 · 海狸故事' },
-          { title: 'AI与创作工具', text: '逍遥AI · 次元神笔' },
+          { title: '海外', text: '200+ 国家和地区 · 海外收入40%+', color: bizColor.global },
+          { title: '数商', text: '600TB 数据 · 数十家大模型合作', color: bizColor.data },
+          { title: '影视·短剧', text: 'FlareFlow · 动画 · 影视', color: bizColor.drama },
+          { title: '网络文学', text: '17K · 四月天 · 海狸故事', color: bizColor.literature },
+          { title: 'AI与创作工具', text: '逍遥AI · 次元神笔', color: bizColor.ai },
+          { title: '版权保护', text: '近万起维权 · 区块链存证', color: bizColor.ipr },
         ] },
         { type: 'cards', cols: 2, items: [
-          { tag: '数商', title: '数据与语料服务', text: '面向AI与大模型企业的数据服务，见“数商服务”。', href: '/data' },
-          { tag: 'IP', title: '明星IP与授权', text: 'IP墙、预告片与授权合作，见“IP与作品”。', href: '/ip' },
+          { tag: '数商', title: '数据与语料服务', text: '面向AI与大模型企业的数据服务，见本页“数商服务”。', href: '/business#data', color: bizColor.data },
+          { tag: 'IP', title: '明星IP与授权', text: 'IP墙、预告片与授权合作，见“IP与作品”。', href: '/ip', color: bizColor.drama },
         ] },
       ],
     },
@@ -451,14 +468,14 @@ businessIndex.sections.push({
   intro: '旗下阅读、短剧、AI与版权服务产品，点击访问或下载。',
   blocks: [
     { type: 'cards', cols: 4, items: [
-      { tag: '海外短剧', title: 'FlareFlow', text: '覆盖200+国家和地区，注册用户超5,200万。', href: 'https://apps.apple.com/app/id6744237126', external: true },
-      { tag: '日本短剧', title: 'UniReel', text: 'COL JAPAN推出的日本短剧App。', href: '#', external: true },
-      { tag: '海外网文', title: 'RocNovel', text: '英文网文平台，主攻美英加市场。', href: 'https://www.rocnovel.com', external: true },
-      { tag: '网络文学', title: '17K小说网', text: '核心原创内容平台，全品类。', href: 'https://www.17k.com', external: true },
-      { tag: '网络文学', title: '四月天', text: '古风女频原创小说网站。', href: 'https://www.4yt.net', external: true },
-      { tag: '网络文学', title: '海狸故事', text: '悬疑“谜想计划”、科幻“奇想宇宙”。', href: 'https://haili.chineseall.net', external: true },
-      { tag: 'AI', title: '逍遥AI', text: '自研大模型，支持14种语言创作。', href: 'https://xiaoyao.ai', external: true },
-      { tag: '版权服务', title: '权哨', text: '知识产权一站式服务平台。', href: 'https://www.qshao.net', external: true },
+      { tag: '海外短剧', title: 'FlareFlow', text: '覆盖200+国家和地区，注册用户超5,200万。', href: 'https://apps.apple.com/app/id6744237126', external: true, color: bizColor.global },
+      { tag: '日本短剧', title: 'UniReel', text: 'COL JAPAN推出的日本短剧App。', href: '#', external: true, color: bizColor.global },
+      { tag: '海外网文', title: 'RocNovel', text: '英文网文平台，主攻美英加市场。', href: 'https://www.rocnovel.com', external: true, color: bizColor.global },
+      { tag: '网络文学', title: '17K小说网', text: '核心原创内容平台，全品类。', href: 'https://www.17k.com', external: true, color: bizColor.literature },
+      { tag: '网络文学', title: '四月天', text: '古风女频原创小说网站。', href: 'https://www.4yt.net', external: true, color: bizColor.literature },
+      { tag: '网络文学', title: '海狸故事', text: '悬疑“谜想计划”、科幻“奇想宇宙”。', href: 'https://haili.chineseall.net', external: true, color: bizColor.literature },
+      { tag: 'AI', title: '逍遥AI', text: '自研大模型，支持14种语言创作。', href: 'https://xiaoyao.ai', external: true, color: bizColor.ai },
+      { tag: '版权服务', title: '权哨', text: '知识产权一站式服务平台。', href: 'https://www.qshao.net', external: true, color: bizColor.ipr },
     ] },
   ],
 });
@@ -547,12 +564,12 @@ const ipPage: Page = {
   ],
 };
 
-/* ============ 数商服务 /data（决策 D7：沿用“数商”这一受众原称） ============ */
+/* ============ 数商服务（业务与产品页的一个章节，/business#data；决策 D7 沿用“数商”原称、D17 并入业务） ============ */
 
 const dataPage: Page = {
   key: 'data',
-  theme: ['#1b3a8c', '#00a7c4'],
-  href: '/data',
+  theme: bizColor.data,
+  href: '/business#data',
   title: '数商服务',
   en: 'DATA SOLUTIONS',
   intro: '面向AI与大模型企业，提供正版、可溯源、合规的数据与语料服务。',
@@ -624,6 +641,8 @@ const dataPage: Page = {
     },
   ],
 };
+
+businessPages.push(global, dataPage, drama, literature, ai, ipr);
 
 /* ============ 新闻中心 /news ============ */
 
@@ -872,13 +891,13 @@ reorder(investors, ['highlights', 'filings', 'strategy', 'letter', 'governance',
 /* ============ 导航 ============ */
 
 export const pages = { about, business: businessIndex, ip: ipPage, data: dataPage, news, investors, join, partner };
-// 导航顺序按受众优先级（T1）：先服务第一顺位的海外合作方与数商（业务、IP、数商），再到投资者（第二顺位），
+// 导航顺序按受众优先级（T1）：先服务第一顺位的海外合作方与数商（业务与产品含数商、IP），再到投资者（第二顺位），
 // 然后是建立信任的关于我们与新闻，再到求职者（第三顺位）；“合作”作为转化按钮固定在最右
-export const navOrder: Page[] = [businessIndex, ipPage, dataPage, investors, about, news, join, partner];
+export const navOrder: Page[] = [businessIndex, ipPage, investors, about, news, join, partner];
 
 // 每个页面的“下一章”，用于页面底部的连续导航
 export const nextOf: Record<string, Page> = {
-  business: ipPage, ip: dataPage, data: investors, investors: about,
+  business: ipPage, ip: investors, investors: about,
   about: news, news: join, join: partner, partner: businessIndex,
 };
 
@@ -895,7 +914,7 @@ export const home = {
   // 决策 D8：可选的受众入口条
   audiences: [
     { label: '合作伙伴', hint: '内容 · 授权 · 海外', href: '/partner' },
-    { label: '数商客户', hint: 'AI 数据与语料', href: '/data' },
+    { label: '数商客户', hint: 'AI 数据与语料', href: '/business#data' },
     { label: '创作者', hint: '投稿 · 签约 · 培训', href: '/business#literature-writers' },
     { label: '投资者', hint: '报告 · 公告 · 联系', href: '/investors' },
     { label: '求职者', hint: '活动 · 福利 · 职位', href: '/join' },
@@ -916,4 +935,36 @@ export const home = {
   // IP 精选：取 IP 墙前 4 个，带数据标签
   ip: ipPage.sections.find((x) => x.id === 'wall')!.blocks[0].type === 'ipwall' ? (ipPage.sections.find((x) => x.id === 'wall')!.blocks[0] as Extract<Block, { type: 'ipwall' }>).items.slice(0, 4) : [],
   letterLead: '中文在线不再只是一家IP内容公司，而是一家具备全球内容供给能力、AI技术驱动的、全产业链运营的新型数字内容科技公司。',
+};
+
+/* ============ AI 助手（右下角） ============ */
+// 原型阶段未接入大模型：按关键词匹配预设问答，答案附带站内链接。正式版接入模型后替换。
+export const aiAssistant = {
+  title: '中文在线 AI 助手',
+  greeting: '你好！我可以帮你快速找到中文在线的业务、IP、财报和合作入口。试试下面的问题：',
+  fallback: '这个问题我暂时回答不了（原型阶段尚未接入大模型）。你可以试试下面的问题，或直接联系我们。',
+  suggestions: ['中文在线是做什么的？', '怎么洽谈IP授权？', '你们提供哪些AI训练数据？', '在哪里看财报和公告？'],
+  faq: [
+    { q: '中文在线是做什么的？', keywords: ['做什么', '介绍', '公司', '是谁', '业务', '简介'],
+      a: '中文在线是国内领先的数字文化内容产业集团，2000年成立于清华大学，2015年在深交所创业板上市（300364）。业务覆盖海外短剧（FlareFlow）、数商（AI数据服务）、影视·短剧、网络文学、AI创作工具与版权保护。',
+      link: { label: '看业务与产品', href: '/business' } },
+    { q: '怎么洽谈IP授权？', keywords: ['授权', 'ip', '改编', '版权合作', '罗小黑', '一品布衣'],
+      a: '在「IP与作品」浏览IP墙，点任意IP就能直达授权负责人；也可以在「合作」页选择“IP授权”直接留言。',
+      link: { label: '去洽谈IP授权', href: toPartner('license', 'IP授权') } },
+    { q: '你们提供哪些AI训练数据？', keywords: ['数据', '数商', '语料', '训练', '大模型', '标注'],
+      a: '我们为AI与大模型企业提供主产数据、高端定制数据与训练数据标注服务，数据总量600TB，覆盖文字、音频、图片、视频，已与数十家大模型建立合作。',
+      link: { label: '看数商服务', href: '/business#data' } },
+    { q: '在哪里看财报和公告？', keywords: ['财报', '公告', '年报', '季报', '投资', '股价', '股票', '300364'],
+      a: '定期报告与公告在「投资者关系」页，PDF原文直链巨潮资讯。公司A股代码300364。',
+      link: { label: '看报告与公告', href: '/investors#filings' } },
+    { q: 'FlareFlow 是什么？', keywords: ['flareflow', '短剧', '海外', '出海'],
+      a: 'FlareFlow是中文在线的海外短剧平台，覆盖200多个国家和地区，截至2026年6月注册用户超5,200万。',
+      link: { label: '看海外业务', href: '/business#global' } },
+    { q: '有哪些招聘岗位？', keywords: ['招聘', '工作', '岗位', '实习', '校招', '社招', '应聘', '简历'],
+      a: '社会招聘与校园招聘入口都在「加入我们」页，也可以先看看我们的活动墙和员工故事。',
+      link: { label: '看职位', href: '/join#positions' } },
+    { q: '怎么联系你们？', keywords: ['联系', '电话', '邮箱', '合作', '商务', '咨询'],
+      a: '商务合作请到「合作」页选择合作类型，会显示对应负责人；服务热线 010-51667567。',
+      link: { label: '去合作页', href: '/partner' } },
+  ],
 };

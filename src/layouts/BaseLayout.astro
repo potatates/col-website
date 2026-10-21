@@ -2,6 +2,7 @@
 import { u } from '../lib/url';
 import '../styles/global.css';
 import { ClientRouter } from 'astro:transitions';
+import AiChat from '../components/zh/AiChat.astro';
 
 interface Props {
   title: string;
@@ -24,7 +25,7 @@ const { title, description = '', lang = 'zh-CN' } = Astro.props;
   <body>
     <div class="aura" aria-hidden="true"><div class="aura-grid"></div></div>
     <slot />
-    <button class="to-top" id="to-top" aria-label="回到顶部">↑</button>
+    <AiChat />
     <div class="cursor" id="cursor" aria-hidden="true"></div>
 
     <script>
@@ -124,6 +125,70 @@ const { title, description = '', lang = 'zh-CN' } = Astro.props;
         if (msg) msg.textContent = '原型阶段：表单尚未接入后台。正式版提交后会按合作类型自动分派给对应负责人。';
       }, true);
 
+      // ---------------- AI 助手（原型：关键词匹配预设问答） ----------------
+      type Faq = { q: string; keywords: string[]; a: string; link?: { label: string; href: string } };
+      const aiData = () => JSON.parse(document.getElementById('ai-data')?.textContent || '{}') as { faq: Faq[]; suggestions: string[]; fallback: string };
+      const aiBox = () => document.getElementById('ai-chat');
+      function aiToggle(open?: boolean) {
+        const box = aiBox();
+        if (!box) return;
+        const on = open ?? !box.classList.contains('open');
+        box.classList.toggle('open', on);
+        box.querySelector('#ai-panel')?.setAttribute('aria-hidden', String(!on));
+        box.querySelector('[data-ai-open]')?.setAttribute('aria-expanded', String(on));
+        if (on) setTimeout(() => box.querySelector<HTMLInputElement>('.ai-form input')?.focus(), 250);
+      }
+      function aiAdd(cls: string, html: string) {
+        const log = document.getElementById('ai-log');
+        if (!log) return null;
+        const el = document.createElement('div');
+        el.className = `msg ${cls}`;
+        el.innerHTML = html;
+        log.appendChild(el);
+        log.scrollTop = log.scrollHeight;
+        return el;
+      }
+      const esc = (t: string) => t.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]!);
+      function aiAsk(q: string) {
+        const text = q.trim();
+        if (!text) return;
+        const { faq, suggestions, fallback } = aiData();
+        aiAdd('user', esc(text));
+        const typing = aiAdd('bot', '<span class="typing"><i></i><i></i><i></i></span>');
+        const low = text.toLowerCase();
+        const hit = faq.find((f) => f.q === text) ?? faq.find((f) => f.keywords.some((k) => low.includes(k.toLowerCase())));
+        const base = aiBox()?.dataset.base ?? '';
+        setTimeout(() => {
+          if (!typing) return;
+          if (hit) {
+            const link = hit.link ? `<br><a href="${base}${hit.link.href}" data-ai-link>${esc(hit.link.label)} →</a>` : '';
+            typing.innerHTML = esc(hit.a) + link;
+          } else {
+            const chips = suggestions.map((s) => `<button class="ai-chip" data-ai-q="${esc(s)}">${esc(s)}</button>`).join('');
+            typing.innerHTML = `${esc(fallback)}<div class="ai-chips" style="margin-top:10px">${chips}</div>`;
+          }
+          const log = document.getElementById('ai-log');
+          if (log) log.scrollTop = log.scrollHeight;
+        }, reduce ? 0 : 650);
+      }
+      document.addEventListener('click', (e) => {
+        const t = e.target as HTMLElement;
+        if (t.closest('[data-ai-open]')) { aiToggle(); return; }
+        if (t.closest('[data-ai-close]')) { aiToggle(false); return; }
+        const chip = t.closest<HTMLElement>('[data-ai-q]');
+        if (chip) { aiAsk(chip.dataset.aiQ!); return; }
+        if (t.closest('[data-ai-link]')) aiToggle(false);
+      });
+      document.addEventListener('submit', (e) => {
+        const form = (e.target as HTMLElement).closest<HTMLFormElement>('[data-ai-form]');
+        if (!form) return;
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        const input = form.querySelector<HTMLInputElement>('input[name=q]');
+        if (input) { aiAsk(input.value); input.value = ''; }
+      }, true);
+      document.addEventListener('keydown', (e) => { if (e.key === 'Escape') aiToggle(false); });
+
       // 数字滚动计数
       function countUp(el: HTMLElement) {
         const raw = el.dataset.count ?? '';
@@ -151,13 +216,11 @@ const { title, description = '', lang = 'zh-CN' } = Astro.props;
         // 页头：滚动后变白、进度条、移动端菜单
         const header = document.getElementById('site-header');
         const bar = document.getElementById('progress');
-        const toTop = document.getElementById('to-top');
         const onScroll = () => {
           const y = window.scrollY;
           header?.classList.toggle('scrolled', y > 40);
           const max = document.documentElement.scrollHeight - innerHeight;
           if (bar) bar.style.transform = `scaleX(${max > 0 ? y / max : 0})`;
-          toTop?.classList.toggle('show', y > innerHeight);
         };
         onScroll();
         addEventListener('scroll', onScroll, { passive: true });
@@ -171,7 +234,6 @@ const { title, description = '', lang = 'zh-CN' } = Astro.props;
         document.querySelectorAll('#drawer a').forEach((a) =>
           a.addEventListener('click', () => header?.classList.remove('open'))
         );
-        toTop?.addEventListener('click', () => scrollTo({ top: 0, behavior: reduce ? 'auto' : 'smooth' }));
 
         // 滚动渐显（同组元素依次出现）
         const io = new IntersectionObserver(
