@@ -387,7 +387,10 @@ const docTitle = lang === 'en' ? title.replace('_', ' | ') : title;
           setTimeout(() => document.addEventListener('click', clear), 0);
           cleanups.push(() => document.removeEventListener('click', clear));
         } else if (target) {
-          requestAnimationFrame(() => target.scrollIntoView({ behavior: 'instant', block: 'start' }));
+          // 定位两次：页面切换后立即一次，图片等加载、布局稳定后再校正一次
+          const go = () => target.scrollIntoView({ behavior: 'instant', block: 'start' });
+          setTimeout(go, 0);
+          setTimeout(go, 400);
           if (target.classList.contains('card')) {
             target.classList.add('is-target');
             setTimeout(() => target.classList.remove('is-target'), 2200);
