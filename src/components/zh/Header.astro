@@ -82,7 +82,7 @@ const isActive = (key: string) => key === current || (key === 'business' && busi
   }
   .bar { display: flex; align-items: center; justify-content: space-between; height: 76px; gap: 24px; }
   .logo { display: flex; align-items: center; flex-shrink: 0; transition: transform .4s var(--spring); }
-  .logo:hover { transform: rotate(-3deg) scale(1.04); }
+  .logo:hover { transform: scale(1.03); } /* 品牌手册不允许改动标识比例/角度，悬停只做轻微放大 */
   .logo img { height: 24px; width: auto; }
   .logo .on-light { display: none; }
   .scrolled .logo .on-dark, .open .logo .on-dark { display: none; }
