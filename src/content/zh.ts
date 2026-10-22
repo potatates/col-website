@@ -32,7 +32,7 @@ export type Block =
   | { type: 'docs'; cols: { title: string; items: { date: string; title: string; href?: string }[] }[]; href: string }
   | { type: 'contact'; items: { k: string; v: string }[]; cta?: { label: string; href: string } }
   | { type: 'ipwall'; items: IP[]; note?: string }
-  | { type: 'videos'; items: { title: string; sub?: string; vertical?: boolean }[]; note?: string }
+  | { type: 'videos'; items: { title: string; sub?: string; vertical?: boolean; src?: string }[]; note?: string }
   | { type: 'people'; items: Person[]; cols?: 2 | 3 | 4 }
   | { type: 'contacts'; items: { id: string; tag: string; title: string; text: string; people: Person[] }[] }
   | { type: 'form'; topics: string[]; note?: string; id?: string }
@@ -467,7 +467,7 @@ const ipPage: Page = {
       intro: '面向合作方的样片与面向观众的预告片。',
       blocks: [
         { type: 'videos', note: '视频文件待提供；样片可通过“合作”页留资索取。', items: [
-          { title: '罗小黑战记2', sub: '动画电影' },
+          { title: '罗小黑战记2', sub: '动画电影 · 预告片', src: 'luoxiaohei2-trailer' },
           { title: 'Raising His Mistress\'s Child', sub: 'FlareFlow · 海外短剧' },
           { title: '一品布衣', sub: '微短剧', vertical: true },
           { title: 'The Final Bell', sub: 'UniReel · 日本短剧', vertical: true },

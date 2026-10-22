@@ -292,10 +292,18 @@ const isNum = (v: string) => /^[\d,]+$/.test(v);
       return (
         <div class="b-videos">
           {b.items.map((v, i) => (
-            <figure class:list={['video reveal', { vertical: v.vertical }]} style={`--d:${(i % 4) * 70}ms;--h:${hue(v.title)}`}>
+            v.src ? (
+              // 有视频文件：直接播放（public/videos/ 下的 mp4 与封面图）
+              <figure class="video has-video reveal" style={`--d:${(i % 4) * 70}ms`}>
+                <video controls preload="none" playsinline poster={asset(`/videos/${v.src}.jpg`)} src={asset(`/videos/${v.src}.mp4`)}></video>
+                <figcaption><strong>{v.title}</strong>{v.sub && <small>{v.sub}</small>}</figcaption>
+              </figure>
+            ) : (
+              <figure class:list={['video reveal', { vertical: v.vertical }]} style={`--d:${(i % 4) * 70}ms;--h:${hue(v.title)}`}>
               <button class="play" aria-label={`${ui.play} ${v.title}`} title={ui.videoSoon}>▶</button>
               <figcaption><strong>{v.title}</strong>{v.sub && <small>{v.sub}</small>}</figcaption>
             </figure>
+            )
           ))}
           {b.note && <p class="b-note">{b.note}</p>}
         </div>
@@ -667,6 +675,10 @@ const isNum = (v: string) => /^[\d,]+$/.test(v);
   .play { position: absolute; left: 50%; top: 50%; translate: -50% -50%; width: 64px; height: 64px; border-radius: 50%; border: 0; cursor: not-allowed; background: rgba(255,255,255,.92); color: var(--ink); font-size: 20px; transition: transform .4s var(--spring); }
   .video figcaption { position: absolute; left: 16px; right: 16px; bottom: 14px; display: flex; flex-direction: column; text-shadow: 0 2px 10px rgba(0,0,0,.3); }
   .video small { opacity: .85; font-size: 12px; }
+  .video.has-video { aspect-ratio: auto; overflow: visible; color: var(--ink); background: none; }
+  .video.has-video video { display: block; width: 100%; aspect-ratio: 16 / 9; object-fit: cover; border-radius: 20px; background: #000; }
+  .video.has-video figcaption { position: static; margin-top: 12px; text-shadow: none; }
+  .video.has-video small { color: var(--muted); opacity: 1; }
 
   /* 人物卡 */
   .b-people { display: grid; gap: 20px; }

@@ -19,7 +19,6 @@ const words = ui.footerWords;
     <div class="top">
       <div class="brand">
         <img src={asset("/logo-white.png")} alt={site.name} class="logo" width="177" height="24" />
-        <p class="slogan">{site.slogan}</p>
         <p class="muted">{site.fullName} · {site.stockCode}</p>
         <p class="muted">{ui.hotline} {contact.phone} · {ui.fax} {contact.fax}</p>
         {contact.address && <p class="muted">{contact.address}</p>}
@@ -77,7 +76,6 @@ const words = ui.footerWords;
   .footer { overflow: hidden; }
   .top { display: grid; grid-template-columns: 1.6fr 1fr 1fr 1.3fr; gap: 40px; padding-bottom: 48px; }
   .logo { height: 24px; width: auto; margin-bottom: 20px; }
-  .slogan { font-size: clamp(28px, 3.4vw, 44px); font-weight: 900; color: #fff; line-height: 1.2; letter-spacing: .06em; }
   .muted { color: rgba(255,255,255,.45); font-size: 13px; margin-top: 10px; }
   .col { display: flex; flex-direction: column; gap: 10px; align-items: flex-start; }
   .label { font-size: 12px; letter-spacing: .2em; color: rgba(255,255,255,.4); margin-bottom: 4px; }
