@@ -8,27 +8,39 @@ export type Lang = 'zh' | 'en';
 type Content = typeof zh;
 
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const PREFIXES = ['/en'];
+
+// 当前网址的语言前缀：'' | '/en'
+function prefixOf(url: URL): string {
+  const p = url.pathname.slice(base.length);
+  return PREFIXES.find((x) => p === x || p.startsWith(`${x}/`)) ?? '';
+}
 
 export function langOf(url: URL): Lang {
-  const p = url.pathname.slice(base.length);
-  return p === '/en' || p.startsWith('/en/') ? 'en' : 'zh';
+  return prefixOf(url) ? 'en' : 'zh';
 }
 
 // 站内路径加语言前缀与部署子路径；外链、页内锚点原样返回
+function withPrefix(path: string | undefined, prefix: string): string | undefined {
+  if (!path || !path.startsWith('/') || !prefix) return u(path);
+  return u(path === '/' ? `${prefix}/` : `${prefix}${path}`);
+}
+
 export function localize(path: string | undefined, lang: Lang): string | undefined {
-  if (!path || !path.startsWith('/') || lang === 'zh') return u(path);
-  return u(path === '/' ? '/en/' : `/en${path}`);
+  return withPrefix(path, lang === 'en' ? '/en' : '');
 }
 
 // 当前页面在另一种语言下的地址（语言切换用）
 export function switchPath(url: URL, to: Lang): string {
+  const prefix = prefixOf(url);
   let p = url.pathname.slice(base.length) || '/';
-  if (p === '/en' || p.startsWith('/en/')) p = p.slice(3) || '/';
-  return localize(p, to)!;
+  if (prefix) p = p.slice(prefix.length) || '/';
+  return withPrefix(p, to === 'zh' ? '' : prefix || '/en')!;
 }
 
 export function useLang(url: URL) {
   const lang = langOf(url);
+  const prefix = prefixOf(url);
   const c = (lang === 'en' ? en : zh) as unknown as Content;
-  return { lang, c, ui: c.ui, l: (p: string | undefined) => localize(p, lang) };
+  return { lang, c, ui: c.ui, l: (p: string | undefined) => withPrefix(p, prefix) };
 }

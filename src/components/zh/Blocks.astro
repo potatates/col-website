@@ -273,7 +273,7 @@ const isNum = (v: string) => /^[\d,]+$/.test(v);
                 <strong class="ip-title">{x.title}</strong>
                 <div class="ip-meta">
                   <span class="ip-genre">{x.genre}{x.forms.length > 0 && ` · ${x.forms.join(' / ')}`}</span>
-                  {x.tags.map((t) => <span class="ip-tag">#{t}</span>)}
+                  {x.tags.map((t) => <span class="ip-tag">{t}</span>)}
                 </div>
                 <span class="ip-go">{ui.talkLicense} <span class="arrow">→</span></span>
               </a>

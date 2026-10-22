@@ -637,8 +637,7 @@ const join: Page = {
       ] },
       { type: 'text', paras: ['Employee photos and names will be added once consent is obtained.'] },
     ] },
-    { id: 'benefits', label: 'Benefits', en: 'BENEFITS', title: 'Benefits & workplace', blocks: [
-      { type: 'tags', title: 'Employee benefits', items: ['Social insurance & housing fund', 'Supplementary medical insurance', 'Annual health check', 'Paid annual leave', 'Flexible hours', 'Lunch allowance', 'Computer allowance', 'Phone allowance', 'Holiday gifts', 'Gym', 'Afternoon tea', 'Coffee machines', 'Local dining and hotel discounts'] },
+    { id: 'workplace', label: 'Workplace', en: 'WORKPLACE', title: 'Where we work', blocks: [
       { type: 'gallery', items: [
         { tag: 'Workplace', caption: 'Beijing · Yonghe Plaza' },
         { tag: 'Workplace', caption: 'Hengqin international short-drama production base' },

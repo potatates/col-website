@@ -22,15 +22,10 @@ const docTitle = lang === 'en' ? title.replace('_', ' | ') : title;
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{docTitle}</title>
     <meta name="description" content={description} />
-    <link rel="icon" href={u("/favicon.svg")} type="image/svg+xml" />
-    {lang === 'en' && (
-      <>
-        <!-- 英文版字体：Inter（正式上线若在国内托管，需换成自托管字体文件） -->
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;650;700;800&display=swap" />
-      </>
-    )}
+    <!-- 网站图标：Logo 中的太极“O” -->
+    <link rel="icon" href={u("/favicon.png")} type="image/png" sizes="64x64" />
+    <link rel="icon" href={u("/favicon-32.png")} type="image/png" sizes="32x32" />
+    <link rel="apple-touch-icon" href={u("/apple-touch-icon.png")} />
     <!-- 页面之间平滑过渡，避免每次点击都“白屏重载” -->
     <ClientRouter />
     <!-- 深色模式：首帧前就设置好，避免闪白；页面过渡后重新应用 -->

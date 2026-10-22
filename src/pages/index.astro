@@ -130,8 +130,8 @@ const news = home.news;
               <div class="cover has-poster">{x.poster && <PosterImg name={x.poster} wide={x.wide} alt={x.title} />}</div>
               <div class="ipf-body">
                 <strong>{x.title}</strong>
-                <small>{x.genre} · {x.forms.join(' / ')}</small>
-                <span class="ipf-tags">{x.tags.slice(0, 2).map((t) => <em>#{t}</em>)}</span>
+                <small><span class="g">{x.genre}</span><span class="f"> · {x.forms.join(' / ')}</span></small>
+                <span class="ipf-tags">{x.tags.slice(0, 2).map((t) => <em>{t}</em>)}</span>
               </div>
             </a>
           ))}

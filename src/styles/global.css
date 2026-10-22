@@ -222,32 +222,65 @@ a.cover:hover::after { opacity: 1; }
   .page-body > .block-section:first-child, .page-body > .chapter:first-child { padding-top: 40px; }
 }
 
-/* ---------- 英文版排版 ----------
-   中文版式里的“描边英文大字 + 加宽字距的大写小标签 + 900 粗体”放到英文里会变成重复和别扭：
-   英文版去掉与标题重复的英文装饰字，用 Inter、收紧字距、降低字重，按西文习惯排版 */
-html[lang='en'] body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, 'PingFang SC', sans-serif; line-height: 1.6; font-feature-settings: 'cv11', 'ss01'; }
-/* 与标题重复的英文装饰：背后描边大字、题图/章节/海报上的大写小标签 */
-html[lang='en'] .s-ghost, html[lang='en'] .page-hero .en, html[lang='en'] .ch-en, html[lang='en'] .p-en { display: none; }
-html[lang='en'] .s-head { margin-bottom: 36px; }
-/* 标题：更紧的字距、较低的字重 */
+/* 中文版的数据标签前加“#”（话题感）；英文版不用 */
+html:not([lang='en']) .ip-tag::before, html:not([lang='en']) .ipf-tags em::before { content: '#'; }
+
+/* 组件内的样式带作用域、优先级更高，英文覆盖统一加 !important
+   ---------- 英文版排版：按英文网站的习惯来做（参考 Vogue / Stripe） ----------
+   - 系统自带无衬线字体，不额外加载
+   - 标题用常规 / 中等字重，靠字号和留白建立层级，不靠加粗
+   - 分类标签改成小号大写加字距的纯文字（不用彩色胶囊）
+   - 去掉与标题重复的英文装饰字（描边大字、大写小标签）
+   - 链接用主题色 + “›”，正文常规字重、灰色 */
+html[lang='en'] body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, 'PingFang SC', 'Microsoft YaHei', sans-serif !important; line-height: 1.55 !important; -webkit-font-smoothing: antialiased !important; }
+html[lang='en'] .s-ghost, html[lang='en'] .page-hero .en, html[lang='en'] .ch-en, html[lang='en'] .p-en { display: none !important; }
+html[lang='en'] .s-head { margin-bottom: 40px !important; }
+
+/* 标题：轻字重、略收字距 */
 html[lang='en'] h1, html[lang='en'] h2, html[lang='en'] h3, html[lang='en'] .s-title, html[lang='en'] .ch-title, html[lang='en'] .p-title,
-html[lang='en'] .next .title, html[lang='en'] .slogan, html[lang='en'] .c-text strong, html[lang='en'] .j-title { letter-spacing: -.025em; font-weight: 700; }
-html[lang='en'] .hero h1 { font-weight: 800; letter-spacing: -.035em; line-height: 1; }
-html[lang='en'] .s-title { font-size: clamp(28px, 3vw, 42px); line-height: 1.15; }
-html[lang='en'] .page-hero h1 { font-size: clamp(40px, 5.2vw, 72px); line-height: 1.05; margin-top: 8px; }
-html[lang='en'] .ch-title { font-size: clamp(34px, 4.6vw, 60px); line-height: 1.05; }
-html[lang='en'] .p-title { font-size: clamp(24px, 2.3vw, 32px); line-height: 1.1; }
-html[lang='en'] .p1 .p-title, html[lang='en'] .p3 .p-title { font-size: clamp(30px, 3vw, 42px); }
-html[lang='en'] .next .title { font-size: clamp(32px, 4.2vw, 54px); }
-html[lang='en'] .slogan { font-size: clamp(24px, 2.6vw, 34px); }
-html[lang='en'] .card-title { letter-spacing: -.01em; font-weight: 650; }
-html[lang='en'] .num span { letter-spacing: -.04em; font-weight: 800; }
-html[lang='en'] .num em { font-size: 20px; font-weight: 650; }
-html[lang='en'] .card-text, html[lang='en'] .num-label, html[lang='en'] .s-intro { line-height: 1.55; }
-/* 小标签：西文只需轻微加宽字距 */
-html[lang='en'] .rail-title, html[lang='en'] .hero-tag, html[lang='en'] .c-en, html[lang='en'] .next .label, html[lang='en'] .footer .label, html[lang='en'] .scroll-hint { letter-spacing: .06em; }
-html[lang='en'] .rail-title { text-transform: none; font-weight: 600; }
-html[lang='en'] .card-tag, html[lang='en'] .news-tag, html[lang='en'] .ip-tag, html[lang='en'] .ipf-tags em { letter-spacing: 0; font-weight: 600; }
-html[lang='en'] .fit .jr-era { font-size: 13px; }
-html[lang='en'] .fit .jr-card p { font-size: 12px; }
-html[lang='en'] .jr-card p { font-size: 14px; }
+html[lang='en'] .next .title, html[lang='en'] .slogan, html[lang='en'] .c-text strong, html[lang='en'] .j-title { font-weight: 500 !important; letter-spacing: -.022em !important; }
+html[lang='en'] .hero h1 { font-weight: 500 !important; letter-spacing: -.025em !important; line-height: 1 !important; font-size: clamp(48px, 6.4vw, 92px) !important; }
+html[lang='en'] .hero .l2 { padding-left: 0 !important; }
+html[lang='en'] .hero-sub { font-size: clamp(17px, 1.5vw, 20px) !important; font-weight: 400 !important; max-width: 560px !important; }
+html[lang='en'] .s-title { font-size: clamp(30px, 3.2vw, 44px) !important; line-height: 1.12 !important; }
+html[lang='en'] .s-title .hl { font-weight: 500 !important; }
+html[lang='en'] .s-intro { font-size: 17px !important; line-height: 1.55 !important; }
+html[lang='en'] .page-hero h1 { font-size: clamp(42px, 5.2vw, 72px) !important; line-height: 1.04 !important; margin-top: 8px !important; }
+html[lang='en'] .page-hero p { font-weight: 400 !important; }
+html[lang='en'] .ch-title { font-size: clamp(36px, 4.6vw, 60px) !important; line-height: 1.04 !important; }
+html[lang='en'] .p-title { font-size: clamp(24px, 2.3vw, 32px) !important; line-height: 1.1 !important; }
+html[lang='en'] .p1 .p-title, html[lang='en'] .p3 .p-title { font-size: clamp(30px, 3vw, 42px) !important; }
+html[lang='en'] .next .title { font-size: clamp(34px, 4.2vw, 56px) !important; }
+html[lang='en'] .slogan { font-size: clamp(24px, 2.6vw, 34px) !important; }
+
+/* 卡片：标题中等字重，正文常规 */
+html[lang='en'] .card-title, html[lang='en'] .ipf-body strong, html[lang='en'] .ip-title, html[lang='en'] .news-title, html[lang='en'] .aud strong { font-weight: 500 !important; letter-spacing: -.012em !important; }
+html[lang='en'] .card-title { font-size: 19px !important; line-height: 1.3 !important; }
+html[lang='en'] .card-text, html[lang='en'] .news-text, html[lang='en'] .num-label { font-size: 15px !important; line-height: 1.55 !important; font-weight: 400 !important; }
+html[lang='en'] .card-go, html[lang='en'] .news-go, html[lang='en'] .ip-go { font-weight: 500 !important; font-size: 15px !important; }
+
+/* 分类标签：小号大写、加字距的纯文字 */
+html[lang='en'] .card-tag, html[lang='en'] .news-tag { background: none !important; padding: 0 !important; border-radius: 0 !important; font-size: 11.5px !important; font-weight: 500 !important; letter-spacing: .14em !important; text-transform: uppercase !important; color: var(--muted) !important; }
+html[lang='en'] .ip-tag, html[lang='en'] .ipf-tags em { background: none !important; padding: 0 !important; font-size: 13px !important; font-weight: 400 !important; letter-spacing: 0 !important; color: var(--muted) !important; }
+html[lang='en'] .ip-meta, html[lang='en'] .ipf-tags { flex-direction: column !important; gap: 2px !important; }
+html[lang='en'] .ip-genre, html[lang='en'] .ipf-body small { font-size: 13px !important; font-weight: 400 !important; color: var(--muted) !important; }
+
+/* 数字：大而轻 */
+html[lang='en'] .num span { font-weight: 400 !important; letter-spacing: -.04em !important; }
+html[lang='en'] .num em { font-size: 22px !important; font-weight: 400 !important; }
+
+/* 导航、按钮、小字 */
+html[lang='en'] .nav-link { font-weight: 400 !important; }
+html[lang='en'] .btn { font-weight: 500 !important; }
+html[lang='en'] .rail-title, html[lang='en'] .hero-tag, html[lang='en'] .c-en, html[lang='en'] .next .label, html[lang='en'] .footer .label, html[lang='en'] .scroll-hint, html[lang='en'] .aud-label { letter-spacing: .14em !important; text-transform: uppercase !important; font-weight: 500 !important; font-size: 11.5px !important; }
+html[lang='en'] .rail-link { font-weight: 400 !important; }
+html[lang='en'] .rail-link.active, html[lang='en'] .rail-item.open > .rail-link { font-weight: 500 !important; }
+html[lang='en'] .jr-year { font-weight: 500 !important; letter-spacing: -.02em !important; }
+html[lang='en'] .jr-era { font-weight: 500 !important; text-transform: uppercase !important; letter-spacing: .12em !important; font-size: 14px !important; }
+html[lang='en'] .fit .jr-era { font-size: 11px !important; }
+html[lang='en'] .jr-card p { font-size: 14px !important; }
+html[lang='en'] .fit .jr-card p { font-size: 12px !important; }
+/* IP 卡片（英文）：题材作小号大写眉题放在片名上方，只保留一条核心数据 */
+html[lang='en'] .ipf-body small { order: -1 !important; font-size: 11.5px !important; letter-spacing: .14em !important; text-transform: uppercase !important; font-weight: 500 !important; }
+html[lang='en'] .ipf-body small .f, html[lang='en'] .ipf-tags em:nth-child(n+2) { display: none !important; }
+html[lang='en'] .step strong { font-weight: 500 !important; font-size: 17px !important; letter-spacing: -.01em !important; }

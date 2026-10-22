@@ -687,8 +687,7 @@ const join: Page = {
       ] },
       { type: 'text', paras: ['员工照片与姓名待授权后补充。'] },
     ] },
-    { id: 'benefits', label: '福利与环境', en: 'BENEFITS', title: '福利与办公环境', blocks: [
-      { type: 'tags', title: '员工福利', items: ['五险一金', '补充医疗保险', '年度体检', '法定年假', '弹性工作制', '午餐补助', '电脑补助', '通讯补助', '年节礼品', '健身房', '下午茶', '咖啡机', '周边餐饮住宿折扣'] },
+    { id: 'workplace', label: '办公环境', en: 'WORKPLACE', title: '办公环境', blocks: [
       { type: 'gallery', items: [
         { tag: '办公环境', caption: '北京 · 雍和大厦' },
         { tag: '办公环境', caption: '横琴国际短剧拍摄基地' },
