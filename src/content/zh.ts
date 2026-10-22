@@ -32,6 +32,7 @@ export type Block =
   | { type: 'docs'; cols: { title: string; items: { date: string; title: string; href?: string }[] }[]; href: string }
   | { type: 'contact'; items: { k: string; v: string }[]; cta?: { label: string; href: string } }
   | { type: 'ipwall'; items: IP[]; note?: string }
+  | { type: 'aichat'; title: string; text: string; cta: string }
   | { type: 'videos'; items: { title: string; sub?: string; vertical?: boolean; src?: string }[]; note?: string }
   | { type: 'people'; items: Person[]; cols?: 2 | 3 | 4 }
   | { type: 'contacts'; items: { id: string; tag: string; title: string; text: string; people: Person[] }[] }
@@ -64,15 +65,15 @@ export const contact = {
 };
 
 // 社媒矩阵：微博链接来自现官网页脚；其余账号名与链接待品牌部提供
-export const social: { platform: string; short: string; account: string; href?: string; qr?: string }[] = [
-  { platform: '微信公众号', short: '微信', account: '账号待提供' },
-  { platform: '微博', short: '微博', account: '中文在线（待核实）', href: 'https://weibo.com/u/1759081553' },
-  { platform: '抖音', short: '抖音', account: '账号待提供' },
-  { platform: '小红书', short: '小红书', account: '账号待提供' },
-  { platform: '哔哩哔哩', short: 'B站', account: '账号待提供' },
-  { platform: 'LinkedIn', short: 'in', account: '账号待提供' },
-  { platform: 'YouTube', short: 'YT', account: '账号待提供' },
-  { platform: 'X', short: 'X', account: '账号待提供' },
+export const social: { icon: string; platform: string; short: string; account: string; href?: string; qr?: string }[] = [
+  { icon: 'wechat', platform: '微信公众号', short: '微信', account: '账号待提供' },
+  { icon: 'weibo', platform: '微博', short: '微博', account: '中文在线（待核实）', href: 'https://weibo.com/u/1759081553' },
+  { icon: 'douyin', platform: '抖音', short: '抖音', account: '账号待提供' },
+  { icon: 'xhs', platform: '小红书', short: '小红书', account: '账号待提供' },
+  { icon: 'bilibili', platform: '哔哩哔哩', short: 'B站', account: '账号待提供' },
+  { icon: 'linkedin', platform: 'LinkedIn', short: 'in', account: '账号待提供' },
+  { icon: 'youtube', platform: 'YouTube', short: 'YT', account: '账号待提供' },
+  { icon: 'x', platform: 'X', short: 'X', account: '账号待提供' },
 ];
 
 // 法务链接：文件待法务提供
@@ -466,11 +467,12 @@ const ipPage: Page = {
       id: 'trailers', label: '预告片与样片', en: 'TRAILERS', title: '预告片与样片',
       intro: '面向合作方的样片与面向观众的预告片。',
       blocks: [
-        { type: 'videos', note: '视频文件待提供；样片可通过“合作”页留资索取。', items: [
+        { type: 'videos', note: '其余作品的样片可通过“合作”页留资索取。', items: [
           { title: '罗小黑战记2', sub: '动画电影 · 预告片', src: 'luoxiaohei2-trailer' },
-          { title: 'Raising His Mistress\'s Child', sub: 'FlareFlow · 海外短剧' },
-          { title: '一品布衣', sub: '微短剧', vertical: true },
-          { title: 'The Final Bell', sub: 'UniReel · 日本短剧', vertical: true },
+          { title: '魔皇大管家', sub: 'AI修仙题材横屏长剧', src: 'mohuang' },
+          { title: '大宋', sub: 'AI仿真人古装短剧', src: 'dasong' },
+          { title: 'Raising His Mistress\'s Child', sub: 'FlareFlow · 海外短剧', src: 'raising', vertical: true },
+          { title: '一品布衣', sub: '微短剧 · 预告片', src: 'yipinbuyi', vertical: true },
         ] },
       ],
     },
@@ -650,7 +652,7 @@ const investors: Page = {
         ] },
       ] },
     ] },
-    { id: 'ir-contact', label: '投资者联系', en: 'CONTACT IR', title: '投资者联系', intro: '董事会秘书：王京京 ｜ 证券事务代表：王亚锋', blocks: [
+    { id: 'ir-contact', label: '投资者联系', en: 'CONTACT IR', title: '投资者联系', blocks: [
       { type: 'contact', items: [{ k: 'IR 邮箱', v: 'ir@col.com' }, { k: 'IR 电话', v: '010-84195757' }], cta: { label: '互动易提问', href: cninfo } },
     ] },
   ],
@@ -725,12 +727,8 @@ const partner: Page = {
         { id: 'content', tag: '内容合作', title: '引进内容 / 渠道合作', text: '网文、有声、短剧内容引进与分发，平台与终端渠道合作。', people: [{ name: '负责人待定', role: '内容合作负责人' }] },
         { id: 'license', tag: 'IP授权', title: 'IP授权', text: '影视、动漫、游戏、出版、有声、消费品、品牌联名授权，以及样片索取。', people: [{ name: '负责人待定', role: '版权授权负责人' }] },
         { id: 'data', tag: '数商', title: '数商合作', text: '面向AI与大模型企业的数据与语料服务。详见“数商服务”。', people: [{ name: '负责人待定', role: '数商业务负责人' }] },
-        { id: 'overseas', tag: 'Global BD', title: '海外合作', text: '海外内容引进、发行与IP合作。', people: [
-          { name: 'Bryan Tan', role: '新加坡 · COL WEB', email: 'bryantan@col.com' },
-          { name: 'Rick Yan', role: '美国 · COL MEDIA', email: 'yanxiaodong2@col.com' },
-          { name: '武川基', role: '日本 · COL JAPAN', email: 'takekawa@col.com' },
-        ] },
-        { id: 'investment', tag: '投资', title: '投资合作', text: '战略直投与产业基金合作。', people: [{ name: '投资业务', role: '投资板块', email: 'gaoyzh@col.com' }] },
+        { id: 'overseas', tag: 'Global BD', title: '海外合作', text: '海外内容引进、发行与IP合作。', people: [{ name: '负责人待定', role: '海外业务负责人' }] },
+        { id: 'investment', tag: '投资', title: '投资合作', text: '战略直投与产业基金合作。', people: [{ name: '负责人待定', role: '投资业务负责人' }] },
         { id: 'supplier', tag: '供应商', title: '成为供应商', text: '内容、技术、制作与渠道代理供应商准入（准入说明待补充）。', people: [{ name: '负责人待定', role: '供应商准入' }] },
         { id: 'media', tag: '媒体', title: '媒体采访', text: '采访与报道需求，媒体资料见“新闻中心”。', people: [{ name: '负责人待定', role: '品牌公关' }] },
       ] },
@@ -769,18 +767,22 @@ reorder(investors, ['highlights', 'letter', 'filings', 'ir-contact']);
   const form = partner.sections[1].blocks[0];
   if (form.type === 'form') form.topics = ['海外合作', '数商合作', 'IP授权', '引进内容 / 渠道合作', '投资合作', '成为供应商', '媒体采访', '其他'];
 }
+// 在线留言表单已移除（10/22）：咨询改由 AI 助手转交
+partner.sections = partner.sections.filter((x) => !x.blocks.some((b) => b.type === 'form'));
+// 合作页顶部：AI 助手入口（说明需求后由 AI 转给对应负责人）
+partner.sections[0].blocks.unshift({ type: 'aichat', title: '不知道该找谁？直接问 AI 助手', text: '告诉 AI 你想合作什么，它会整理你的需求并转给对应的负责人，无需自己查找联系方式。', cta: '和 AI 助手聊聊' });
 
 /* ============ 导航 ============ */
 
 export const pages = { about, business: businessIndex, ip: ipPage, data: dataPage, news, investors, join, partner };
 // 导航顺序按受众优先级（T1）：先服务第一顺位的海外合作方与数商（业务与产品含数商、IP），再到投资者（第二顺位），
 // 然后是建立信任的关于我们与新闻，再到求职者（第三顺位）；“合作”作为转化按钮固定在最右
-export const navOrder: Page[] = [businessIndex, ipPage, investors, about, news, join, partner];
+export const navOrder: Page[] = [businessIndex, ipPage, investors, news, about, join, partner];
 
 // 每个页面的“下一章”，用于页面底部的连续导航
 export const nextOf: Record<string, Page> = {
-  business: ipPage, ip: investors, investors: about,
-  about: news, news: join, join: partner, partner: businessIndex,
+  business: ipPage, ip: investors, investors: news,
+  news: about, about: join, join: partner, partner: businessIndex,
 };
 
 /* ============ 首页 ============ */
@@ -866,9 +868,9 @@ export const ui = {
   bizHook: {
     literature: '560万+ 正版内容 · 400万+ 作者',
     drama: '横琴基地 · 出海短剧 · 影视改编',
-    global: '覆盖 200+ 国家和地区',
+    global: '覆盖 200+ 国家和地区 · 用好故事连接世界',
     data: '600TB 多模态数据 · 数十家大模型合作',
-    ai: '“中文逍遥”大模型 · 创作工具',
+    ai: '逍遥AI · 次元神笔',
     ipr: '近万起维权诉讼',
   } as Record<string, string>,
   // 内容块

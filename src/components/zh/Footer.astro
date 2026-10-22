@@ -2,6 +2,7 @@
 // 页脚：网站地图（一级栏目 + 各业务）+ 社媒矩阵 + 资质公示 + 法务链接
 import { u as asset } from '../../lib/url';
 import { useLang } from '../../lib/i18n';
+import { socialIcons } from '../../lib/social-icons';
 const { c, ui, l: u } = useLang(Astro.url);
 const { site, navOrder, businessPages, contact, social, legal } = c;
 const year = new Date().getFullYear();
@@ -20,7 +21,7 @@ const words = ui.footerWords;
       <div class="brand">
         <img src={asset("/logo-white.png")} alt={site.name} class="logo" width="177" height="24" />
         <p class="muted">{site.fullName} · {site.stockCode}</p>
-        <p class="muted">{ui.hotline} {contact.phone} · {ui.fax} {contact.fax}</p>
+        <p class="muted">{ui.hotline} {contact.phone}</p>
         {contact.address && <p class="muted">{contact.address}</p>}
       </div>
       <div class="col">
@@ -40,7 +41,7 @@ const words = ui.footerWords;
             const Tag = s.href ? 'a' : 'span';
             return (
               <Tag href={s.href} class:list={['soc', { pending: !s.href }]} target={s.href ? '_blank' : undefined} rel={s.href ? 'noopener' : undefined} tabindex={s.href ? undefined : 0} aria-label={`${s.platform}：${s.account}`}>
-                <span class="soc-name">{s.short}</span>
+                <svg class:list={['soc-icon', `i-${s.icon}`]} viewBox="0 0 24 24" aria-hidden="true"><path d={socialIcons[s.icon]} /></svg>
                 <span class="soc-pop" role="tooltip">
                   <span class="qr" aria-hidden="true">{s.qr ? '' : ui.qr}</span>
                   <strong>{s.platform}</strong>
@@ -87,6 +88,8 @@ const words = ui.footerWords;
 
   /* 社媒矩阵：悬停弹出二维码 */
   .social { display: grid; grid-template-columns: repeat(4, 44px); gap: 10px; }
+  .soc-icon { width: 20px; height: 20px; fill: currentColor; }
+  .soc-icon.i-xhs { width: 34px; height: 34px; }
   .soc { position: relative; width: 44px; height: 44px; border-radius: 14px; display: grid; place-items: center; background: rgba(255,255,255,.08); color: #fff; font-size: 12px; font-weight: 700; transition: background .25s, transform .4s var(--spring); }
   .soc:hover, .soc:focus-visible { background: linear-gradient(135deg, var(--brand), var(--brand-2)); transform: translateY(-3px); }
   .soc-pop {

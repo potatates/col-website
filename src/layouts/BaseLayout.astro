@@ -188,6 +188,13 @@ const docTitle = lang === 'en' ? title.replace('_', ' | ') : title;
           if (log) log.scrollTop = log.scrollHeight;
         }, reduce ? 0 : 650);
       }
+      // 页头“合作”按钮：打开 AI 助手（捕获阶段拦截，不跳转页面）
+      document.addEventListener('click', (e) => {
+        if (!(e.target as HTMLElement).closest('[data-ai-chat]')) return;
+        e.preventDefault();
+        e.stopPropagation();
+        aiToggle(true);
+      }, true);
       document.addEventListener('click', (e) => {
         const t = e.target as HTMLElement;
         if (t.closest('[data-ai-open]')) { aiToggle(); return; }

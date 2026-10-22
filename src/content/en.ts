@@ -27,15 +27,15 @@ export const contact = {
 };
 
 // Social accounts: Weibo link from the current site footer; other handles to be provided by Brand
-export const social: { platform: string; short: string; account: string; href?: string; qr?: string }[] = [
-  { platform: 'WeChat Official Account', short: 'WeChat', account: 'To be provided' },
-  { platform: 'Weibo', short: 'Weibo', account: '中文在线 (to be verified)', href: 'https://weibo.com/u/1759081553' },
-  { platform: 'Douyin', short: 'Douyin', account: 'To be provided' },
-  { platform: 'Xiaohongshu (RED)', short: 'RED', account: 'To be provided' },
-  { platform: 'Bilibili', short: 'Bili', account: 'To be provided' },
-  { platform: 'LinkedIn', short: 'in', account: 'To be provided' },
-  { platform: 'YouTube', short: 'YT', account: 'To be provided' },
-  { platform: 'X', short: 'X', account: 'To be provided' },
+export const social: { icon: string; platform: string; short: string; account: string; href?: string; qr?: string }[] = [
+  { icon: 'wechat', platform: 'WeChat Official Account', short: 'WeChat', account: 'To be provided' },
+  { icon: 'weibo', platform: 'Weibo', short: 'Weibo', account: '中文在线 (to be verified)', href: 'https://weibo.com/u/1759081553' },
+  { icon: 'douyin', platform: 'Douyin', short: 'Douyin', account: 'To be provided' },
+  { icon: 'xhs', platform: 'Xiaohongshu (RED)', short: 'RED', account: 'To be provided' },
+  { icon: 'bilibili', platform: 'Bilibili', short: 'Bili', account: 'To be provided' },
+  { icon: 'linkedin', platform: 'LinkedIn', short: 'in', account: 'To be provided' },
+  { icon: 'youtube', platform: 'YouTube', short: 'YT', account: 'To be provided' },
+  { icon: 'x', platform: 'X', short: 'X', account: 'To be provided' },
 ];
 
 // Legal documents to be provided by Legal
@@ -106,7 +106,7 @@ const about: Page = {
           { year: '2008', text: 'Became a core operating partner of China Mobile’s mobile reading base' },
           { era: 'Chapter Three', year: '2015', text: 'Listed on ChiNext in January as China’s first digital publishing stock; became a group company in September' },
           { year: '2016', text: 'Raised RMB 2 billion in a private placement and set up a US company, starting international expansion' },
-          { year: '2021', text: 'Entered micro microdrama as a pioneer of vertical microdrama in China' },
+          { year: '2021', text: 'Entered microdrama as a pioneer of vertical microdrama in China' },
           { year: '2023', text: 'Launched the “Zhongwen Xiaoyao” large model' },
           { year: '2025', text: 'Launched FlareFlow, its overseas microdrama platform' },
           { year: '2026', text: 'Launched Ciyuan Shenbi, a full-stack AI creation platform' },
@@ -125,8 +125,8 @@ const about: Page = {
       id: 'honors', label: 'Honors', en: 'HONORS', title: 'Honors',
       blocks: [
         { type: 'honors', items: [
-          { year: '2025', items: ['The Legend of Hei 2 named “Most Commercially Valuable Animation IP of 2025” and a Top 10 work at the China Animation & Comic Golden Dragon Award', 'Yi Pin Bu Yi (The Commoner) named a “Micro Microdrama of 2025” by Zongyi Bao and won “Most Commercially Valuable Micro Microdrama” at the Beijing International Film Festival', 'A FlareFlow original won “Best Female Leadership Narrative” at the 2025 International Short Drama Festival'] },
-          { year: '2024', items: ['Sereal+ named one of China’s “Top 10 Overseas Micro Microdrama Platforms” at the China International New Media Short Film Festival', '“Best Suspense Microdrama” and “Best Visual Effects” at the Hainan Island International Film Festival'] },
+          { year: '2025', items: ['The Legend of Hei 2 named “Most Commercially Valuable Animation IP of 2025” and a Top 10 work at the China Animation & Comic Golden Dragon Award', 'Yi Pin Bu Yi (The Commoner) named a “Microdrama of 2025” by Zongyi Bao and won “Most Commercially Valuable Microdrama” at the Beijing International Film Festival', 'A FlareFlow original won “Best Female Leadership Narrative” at the 2025 International Short Drama Festival'] },
+          { year: '2024', items: ['Sereal+ named one of China’s “Top 10 Overseas Microdrama Platforms” at the China International New Media Short Film Festival', '“Best Suspense Microdrama” and “Best Visual Effects” at the Hainan Island International Film Festival'] },
           { year: '2023', items: ['Overseas Online Literature Platform Award (Online Literature Center, China Writers Association)', 'One of China’s 50 most valuable companies in “AIGC × content”', 'Selected for Beijing’s General Artificial Intelligence Industry Innovation Partner Program'] },
           { year: '2021', items: ['Private publishing enterprise for national reading promotion during the 13th Five-Year Plan', '“Digital Rural Library” named one of China’s top 10 reading-for-poverty-alleviation projects', 'Outstanding Digital Publishing Brand 2020–2021'] },
           { year: '2018', items: ['“Outstanding Publishing Unit” at the 4th China Government Award for Publishing', 'One of the “Top 30 Capital Cultural Enterprises” (3rd edition)'] },
@@ -268,7 +268,7 @@ const global: Page = {
           { tag: 'Connected TV', title: 'FlareFlow × Whale TV', text: 'Launched on the Whale TV independent TV operating system in September 2026, starting with South America. Whale TV works with 400+ TV brands and has over 47.5 million monthly active devices.' },
           { tag: 'Southeast Asia', title: 'Partnering with Thailand’s CP Group', text: 'Accelerating local microdrama production.' },
           { tag: 'Japan', title: 'COL JAPAN × UniReel', text: 'Formed a microdrama committee with LINE Yahoo, Hakuhodo DY Media Partners and HUUM; the first title was co-produced with Nippon TV. Earlier titles were sold to DMM.com.' },
-          { tag: 'Singapore', title: 'Supermodel Me', text: 'A reality micro microdrama produced with Refinery Media.' },
+          { tag: 'Singapore', title: 'Supermodel Me', text: 'A reality microdrama produced with Refinery Media.' },
         ] },
       ],
     },
@@ -414,11 +414,12 @@ const ipPage: Page = {
       id: 'trailers', label: 'Trailers & Screeners', en: 'TRAILERS', title: 'Trailers & screeners',
       intro: 'Screeners for partners and trailers for audiences.',
       blocks: [
-        { type: 'videos', note: 'Video files to be provided; partners can request screeners via the Partner page.', items: [
+        { type: 'videos', note: 'Screeners for other titles are available on request via the Partner page.', items: [
           { title: 'The Legend of Hei 2', sub: 'Animated feature · Trailer', src: 'luoxiaohei2-trailer' },
-          { title: 'Raising His Mistress\'s Child', sub: 'FlareFlow · Global microdrama' },
-          { title: 'Yi Pin Bu Yi (The Commoner)', sub: 'Micro microdrama', vertical: true },
-          { title: 'The Final Bell', sub: 'UniReel · Japan microdrama', vertical: true },
+          { title: 'Magic Emperor’s Grand Steward', sub: 'AI animation · Xianxia long-form series', src: 'mohuang' },
+          { title: 'The Great Song', sub: 'AI live-action historical microdrama', src: 'dasong' },
+          { title: 'Raising His Mistress\'s Child', sub: 'FlareFlow · Microdrama', src: 'raising', vertical: true },
+          { title: 'Yi Pin Bu Yi (The Commoner)', sub: 'Microdrama · Trailer', src: 'yipinbuyi', vertical: true },
         ] },
       ],
     },
@@ -599,7 +600,7 @@ const investors: Page = {
         ] },
       ] },
     ] },
-    { id: 'ir-contact', label: 'Contact IR', en: 'CONTACT IR', title: 'Investor contacts', intro: 'Board Secretary: Wang Jingjing | Securities Affairs Representative: Wang Yafeng', blocks: [
+    { id: 'ir-contact', label: 'Contact IR', en: 'CONTACT IR', title: 'Investor contacts', blocks: [
       { type: 'contact', items: [{ k: 'IR email', v: 'ir@col.com' }, { k: 'IR phone', v: '010-84195757' }], cta: { label: 'Ask on CNINFO Hudongyi', href: cninfo } },
     ] },
   ],
@@ -677,12 +678,8 @@ const partner: Page = {
         { id: 'content', tag: 'Content', title: 'Content Acquisition / Distribution', text: 'Acquiring and distributing web fiction, audio and microdrama content; platform and device channel partnerships.', people: [{ name: 'To be confirmed', role: 'Head of Content Partnerships' }] },
         { id: 'license', tag: 'IP Licensing', title: 'IP Licensing', text: 'Film & TV, animation, games, publishing, audio, consumer products and brand collaborations, plus screener requests.', people: [{ name: 'To be confirmed', role: 'Head of IP Licensing' }] },
         { id: 'data', tag: 'Data', title: 'Data Solutions', text: 'Data and corpus services for AI and large-model companies. See “Data Solutions”.', people: [{ name: 'To be confirmed', role: 'Head of Data Solutions' }] },
-        { id: 'overseas', tag: 'Global BD', title: 'International Partnerships', text: 'Overseas content acquisition, distribution and IP partnerships.', people: [
-          { name: 'Bryan Tan', role: 'Singapore · COL WEB', email: 'bryantan@col.com' },
-          { name: 'Rick Yan', role: 'United States · COL MEDIA', email: 'yanxiaodong2@col.com' },
-          { name: 'Takekawa', role: 'Japan · COL JAPAN', email: 'takekawa@col.com' },
-        ] },
-        { id: 'investment', tag: 'Investment', title: 'Investment', text: 'Strategic direct investment and industry fund partnerships.', people: [{ name: 'Investment team', role: 'Investment', email: 'gaoyzh@col.com' }] },
+        { id: 'overseas', tag: 'Global BD', title: 'International Partnerships', text: 'Overseas content acquisition, distribution and IP partnerships.', people: [{ name: 'To be confirmed', role: 'Head of International Partnerships' }] },
+        { id: 'investment', tag: 'Investment', title: 'Investment', text: 'Strategic direct investment and industry fund partnerships.', people: [{ name: 'To be confirmed', role: 'Head of Investment' }] },
         { id: 'supplier', tag: 'Suppliers', title: 'Become a Supplier', text: 'Onboarding for content, technology, production and channel suppliers (onboarding guide to be provided).', people: [{ name: 'To be confirmed', role: 'Supplier onboarding' }] },
         { id: 'media', tag: 'Media', title: 'Media Inquiries', text: 'Interview and coverage requests. Media resources are in the Newsroom.', people: [{ name: 'To be confirmed', role: 'Brand & PR' }] },
       ] },
@@ -716,15 +713,19 @@ reorder(investors, ['highlights', 'letter', 'filings', 'ir-contact']);
   const form = partner.sections[1].blocks[0];
   if (form.type === 'form') form.topics = ['International Partnerships', 'Data Solutions', 'IP Licensing', 'Content Acquisition / Distribution', 'Investment', 'Become a Supplier', 'Media Inquiries', 'Other'];
 }
+// 在线留言表单已移除（10/22）：咨询改由 AI 助手转交
+partner.sections = partner.sections.filter((x) => !x.blocks.some((b) => b.type === 'form'));
+// Partner page: AI assistant entry (it forwards your request to the right contact)
+partner.sections[0].blocks.unshift({ type: 'aichat', title: 'Not sure who to contact? Just ask our AI assistant', text: 'Tell the AI what you’d like to work on. It will summarize your request and pass it to the right person, so you don’t need to look up contacts yourself.', cta: 'Chat with the AI assistant' });
 
 /* ============ Navigation ============ */
 
 export const pages = { about, business: businessIndex, ip: ipPage, data: dataPage, news, investors, join, partner };
-export const navOrder: Page[] = [businessIndex, ipPage, investors, about, news, join, partner];
+export const navOrder: Page[] = [businessIndex, ipPage, investors, news, about, join, partner];
 
 export const nextOf: Record<string, Page> = {
-  business: ipPage, ip: investors, investors: about,
-  about: news, news: join, join: partner, partner: businessIndex,
+  business: ipPage, ip: investors, investors: news,
+  news: about, about: join, join: partner, partner: businessIndex,
 };
 
 /* ============ Home ============ */
@@ -808,9 +809,9 @@ export const ui = {
   bizHook: {
     literature: '5.6M+ licensed titles · 4M+ creators',
     drama: 'Hengqin studio · Global microdrama · Screen adaptations',
-    global: 'In 200+ countries and regions',
+    global: 'In 200+ countries and regions · Connecting the world through great stories',
     data: '600 TB multimodal data · Dozens of AI model partners',
-    ai: '“Zhongwen Xiaoyao” model · Creative tools',
+    ai: 'Xiaoyao AI · Ciyuan Shenbi',
     ipr: 'Nearly 10,000 infringement lawsuits',
   } as Record<string, string>,
   // Content blocks
