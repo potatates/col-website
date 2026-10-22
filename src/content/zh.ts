@@ -848,7 +848,7 @@ export const ui = {
   ctaWorks: '看看我们的作品',
   scrollDown: '向下滚动',
   audienceAria: '按身份快速进入',
-  audienceLabel: '快速入口',
+  audienceLabel: '你是',
   bizTitle: ['业务', '版图'],
   bizAll: '全部业务',
   newsTitle: '新鲜事',
