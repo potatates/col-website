@@ -673,7 +673,7 @@ const partner: Page = {
   en: 'PARTNER WITH US',
   intro: 'Content acquisition, IP licensing, data, global partnerships, suppliers and media: find the right person, or just ask our AI assistant.',
   sections: [
-    { id: 'types', label: 'Partnership Types', en: 'I WANT TO…', title: 'I want to…', blocks: [
+    { id: 'types', label: 'Contacts', en: 'CONTACTS', title: 'Contact the right team', blocks: [
       { type: 'contacts', items: [
         { id: 'content', tag: 'Content', title: 'Content Acquisition / Distribution', text: 'Acquiring and distributing web fiction, audio and microdrama content; platform and device channel partnerships.', people: [{ name: 'To be confirmed', role: 'Head of Content Partnerships' }] },
         { id: 'license', tag: 'IP Licensing', title: 'IP Licensing', text: 'Film & TV, animation, games, publishing, audio, consumer products and brand collaborations, plus screener requests.', people: [{ name: 'To be confirmed', role: 'Head of IP Licensing' }] },
@@ -807,7 +807,7 @@ export const ui = {
   // Home
   heroL1: 'Better Content',
   heroL2: 'Better Life',
-  heroSub: 'An AI-driven global leader in digital entertainment, connecting the world through great stories.',
+  heroSub: 'An AI-driven global leader in digital entertainment.',
   ctaPartner: 'Partner with us',
   ctaWorks: 'Explore our works',
   scrollDown: 'Scroll down',

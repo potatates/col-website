@@ -723,7 +723,7 @@ const partner: Page = {
   en: 'PARTNER WITH US',
   intro: '内容引进、IP授权、数商、海外、供应商、媒体……找到对应的人，或直接问 AI 助手。',
   sections: [
-    { id: 'types', label: '合作类型', en: 'I WANT TO…', title: '我想……', blocks: [
+    { id: 'types', label: '联系负责人', en: 'CONTACTS', title: '联系对应负责人', blocks: [
       { type: 'contacts', items: [
         { id: 'content', tag: '内容合作', title: '引进内容 / 渠道合作', text: '网文、有声、短剧内容引进与分发，平台与终端渠道合作。', people: [{ name: '负责人待定', role: '内容合作负责人' }] },
         { id: 'license', tag: 'IP授权', title: 'IP授权', text: '影视、动漫、游戏、出版、有声、消费品、品牌联名授权，以及样片索取。', people: [{ name: '负责人待定', role: '版权授权负责人' }] },
@@ -867,7 +867,7 @@ export const ui = {
   // 首页
   heroL1: '更好内容',
   heroL2: '更好生活',
-  heroSub: 'AI驱动的全球领先数字文娱平台，用好故事连接世界',
+  heroSub: 'AI驱动的全球领先数字文娱平台',
   ctaPartner: '合作咨询',
   ctaWorks: '看看我们的作品',
   scrollDown: '向下滚动',
