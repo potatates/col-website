@@ -73,7 +73,10 @@ const isNum = (v: string) => /^[\d,]+$/.test(v);
         <div class="b-covers">
           {b.items.map((c, i) => (
             <div class="b-cover reveal" style={`--d:${(i % 6) * 50}ms`}>
-              <div class="cover" style={`--h:${hue(c.title)}`}><span>{c.title}</span></div>
+              <div class:list={['cover', { 'has-poster': c.poster }]} style={`--h:${hue(c.title)}`}>
+                {c.poster ? <PosterImg name={c.poster} alt={c.title} /> : <span>{c.title}</span>}
+              </div>
+              {c.poster && <strong class="cv-title">{c.title}</strong>}
               {c.sub && <small>{c.sub}</small>}
             </div>
           ))}
@@ -517,7 +520,8 @@ const isNum = (v: string) => /^[\d,]+$/.test(v);
   /* 封面 */
   .b-covers { display: grid; grid-template-columns: repeat(6, 1fr); gap: 22px; }
   .b-cover:nth-child(even) { margin-top: 28px; }
-  .b-cover small { display: block; margin-top: 10px; font-size: 13px; color: var(--muted); }
+  .cv-title { display: block; margin-top: 10px; font-size: 14px; font-weight: 600; color: var(--ink); line-height: 1.35; }
+  .b-cover small { display: block; margin-top: 4px; font-size: 13px; color: var(--muted); }
 
   /* 标签 */
   .b-tags h4 { font-size: 16px; font-weight: 800; margin-bottom: 14px; color: var(--ink); }

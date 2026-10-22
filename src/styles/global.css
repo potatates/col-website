@@ -181,7 +181,7 @@ a.cover:hover::after { opacity: 1; }
 .ticker { overflow: hidden; padding: 28px 0; user-select: none; }
 .ticker-track { display: flex; width: max-content; animation: ticker 40s linear infinite; }
 .ticker span { font-size: clamp(40px, 7vw, 96px); font-weight: 900; white-space: nowrap; padding-right: .5em; letter-spacing: -.01em; color: transparent; -webkit-text-stroke: 1.5px rgba(11,20,48,.18); }
-.ticker span:nth-child(even) { -webkit-text-stroke: 0; background: var(--grad); -webkit-background-clip: text; background-clip: text; }
+.ticker span { -webkit-text-stroke: 0; background: var(--grad); -webkit-background-clip: text; background-clip: text; } /* 中英文都用渐变色（10/22） */
 @keyframes ticker { to { transform: translateX(-50%); } }
 
 /* ---------- 滚动渐显 ---------- */

@@ -176,7 +176,9 @@ const docTitle = lang === 'en' ? title.replace('_', ' | ') : title;
         setTimeout(() => {
           if (!typing) return;
           if (hit) {
-            const link = hit.link ? `<br><a href="${base}${hit.link.href}" data-ai-link>${esc(hit.link.label)} →</a>` : '';
+            // 页面路径补结尾“/”，避免 GitHub Pages 跳转时丢掉 #锚点（同 lib/url.ts）
+            const href = hit.link ? hit.link.href.replace(/^([^?#]*?)(\/?)([?#].*)?$/, (_m: string, p: string, _s: string, r = '') => `${p}/${r}`) : '';
+            const link = hit.link ? `<br><a href="${base}${href}" data-ai-link>${esc(hit.link.label)} →</a>` : '';
             typing.innerHTML = esc(hit.a) + link;
           } else {
             const chips = suggestions.map((s) => `<button class="ai-chip" data-ai-q="${esc(s)}">${esc(s)}</button>`).join('');

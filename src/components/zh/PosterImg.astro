@@ -4,7 +4,7 @@
 import { u } from '../../lib/url';
 interface Props { name: string; wide?: boolean; alt?: string }
 const { name, alt = '' } = Astro.props;
-const POS: Record<string, string> = { yiyou: '50% 100%', xiuluowushen: '50% 100%' };
+const POS: Record<string, string> = { yiyou: '50% 100%', luoxiaohei: '50% 100%' };
 const src = u(`/posters/${name}.jpg`);
 ---
 <img src={src} alt={alt} class="poster-img" style={POS[name] ? `object-position:${POS[name]}` : undefined} loading="lazy" />

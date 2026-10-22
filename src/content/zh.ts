@@ -11,7 +11,7 @@
 
 export type Stat = { value: string; unit?: string; label: string };
 export type Card = { id?: string; logo?: string; title: string; text?: string; meta?: string; tag?: string; href?: string; external?: boolean; color?: [string, string] };
-export type Cover = { title: string; sub?: string };
+export type Cover = { title: string; sub?: string; poster?: string };
 export type Person = { name: string; role: string; text?: string; email?: string; phone?: string };
 // poster：/public/posters 下的海报（取自《中文在线集团介绍2026-09-17》）；wide=横版海报，卡片内完整显示
 export type IP = { title: string; genre: string; forms: string[]; tags: string[]; poster?: string; wide?: boolean };
@@ -477,14 +477,21 @@ const ipPage: Page = {
     {
       id: 'library', label: '作品库', en: 'LIBRARY', title: '作品库',
       blocks: [
-        { type: 'covers', title: '有声', items: [
-          { title: '机器之门' }, { title: '都市全能高手' }, { title: '长津湖' }, { title: '建军大业' }, { title: '大明王朝' }, { title: '橙红年代' },
+        // 作品墙：封面取自《中文在线集团介绍2026-09-17》
+        { type: 'covers', title: '网络文学', items: [
+          { title: '修罗武神', poster: 'works/xiuluo-novel' }, { title: '九星霸体诀', poster: 'works/jiuxing' }, { title: '重回1990', poster: 'works/chonghui1990' }, { title: '风起龙城', poster: 'works/fengqi' }, { title: '超级兵王', poster: 'works/bingwang' }, { title: '平步青云', poster: 'works/pingbu' },
+          { title: '第九特区', poster: 'works/dijiu' }, { title: '天衣', poster: 'works/tianyi' }, { title: '逆行者', poster: 'works/nixing' }, { title: '归一', poster: 'works/guiyi' }, { title: '探索者', poster: 'works/tansuo' }, { title: '天下藏局', poster: 'works/tianxia' },
         ] },
-        { type: 'covers', title: '动漫', items: [
-          { title: '傲世丹神' }, { title: '妖怪公寓' }, { title: '修罗武神' }, { title: '混沌剑神' }, { title: '九星霸体诀' }, { title: '我的徒弟居然是女帝' },
+        { type: 'covers', title: '名家作品', items: [
+          { title: '康熙大帝', sub: '二月河', poster: 'works/kangxi' }, { title: '人民的名义', sub: '周梅森', poster: 'works/renmin' }, { title: '尘埃落定', sub: '阿来', poster: 'works/chenai' }, { title: '文化苦旅', sub: '余秋雨', poster: 'works/wenhua' },
+          { title: '乡村教师', sub: '刘慈欣', poster: 'works/xiangcun' }, { title: '推拿', sub: '毕飞宇', poster: 'works/tuina' },
         ] },
-        { type: 'covers', title: '影视', items: [
-          { title: '招惹' }, { title: '造作时光' }, { title: '夏虫可语冰' }, { title: '花琉璃轶闻' }, { title: '他跨越山海而来' }, { title: '就想和你谈恋爱' },
+        { type: 'covers', title: '短剧', items: [
+          { title: '奶宝财神回家后，全府跪求我显灵', poster: 'works/naibao' }, { title: '太子别哭', poster: 'works/taizi' }, { title: '退婚后，我的诗仙身份曝光了', poster: 'works/tuihun' }, { title: '他比前男友更炙热', poster: 'works/qianyou' }, { title: '夜色撩人', poster: 'works/yese' }, { title: 'Oops, I Married My Bestie\'s Brother!', sub: 'FlareFlow', poster: 'works/oops' },
+        ] },
+        { type: 'covers', title: '漫剧', items: [
+          { title: '系统提前三年，可末世真没降临', poster: 'works/mori' }, { title: '我在诡秘世界玩嗨了', poster: 'works/guimi' }, { title: '从娘胎开始逆袭', poster: 'works/niangtai' }, { title: '仙尊归来，只手镇人间', poster: 'works/xianzun' }, { title: '神帝归来', poster: 'works/shendi' }, { title: '超凡进化', poster: 'works/chaofan' },
+          { title: '沦陷契约', poster: 'works/xianjie' }, { title: '祭品公主的生存法则', poster: 'works/jipin' }, { title: '法神归来', poster: 'works/fashen' }, { title: '无敌修仙', poster: 'works/wudi' }, { title: '我的消费能无限暴击返现', poster: 'works/xiaofei' }, { title: '全民领主：我能召唤历史名将', poster: 'works/lingzhu' },
         ] },
       ],
     },
@@ -588,7 +595,6 @@ const news: Page = {
         { title: '官方 Logo', meta: 'PNG / SVG · 待提供' },
         { title: '官方图片库', meta: 'ZIP · 待提供' },
         { title: '公司简介', meta: 'PDF · 待提供' },
-        { title: '高管简介与照片', meta: 'PDF · 待提供' },
       ] },
       { type: 'cards', cols: 2, items: [
         { tag: '媒体', title: '采访与报道需求', text: '联系品牌公关团队。', href: toPartner('media', '媒体采访') },
@@ -752,8 +758,8 @@ reorder(about, ['intro', 'culture', 'history', 'strategy', 'honors', 'licenses']
 reorder(ipPage, ['wall', 'trailers', 'cases', 'license', 'library']);
 // 数商服务（10/22 会议）：只保留服务类型与资源规模
 reorder(dataPage, ['services', 'scale']);
-// 投资者关系（10/22 会议：只留基础信息）：亮点 → 报告与公告 → 致股东信 → 联系；股价在页头
-reorder(investors, ['highlights', 'filings', 'letter', 'ir-contact']);
+// 投资者关系（10/22 会议：只留基础信息）：亮点 → 致股东信 → 报告与公告 → 联系；股价在页头
+reorder(investors, ['highlights', 'letter', 'filings', 'ir-contact']);
 
 // 合作：卡片按受众优先级排列（海外 → 数商 → IP授权 → 内容渠道 → 投资 → 供应商 → 媒体），表单选项同序
 {

@@ -425,14 +425,21 @@ const ipPage: Page = {
     {
       id: 'library', label: 'Library', en: 'LIBRARY', title: 'Content library',
       blocks: [
-        { type: 'covers', title: 'Audio', items: [
-          { title: 'Gate of Machines' }, { title: 'Urban All-Round Master' }, { title: 'The Battle at Lake Changjin' }, { title: 'The Founding of an Army' }, { title: 'The Great Ming Dynasty' }, { title: 'Age of Legends' },
+        // Works wall: covers from the COL Group corporate presentation (Sept 2026)
+        { type: 'covers', title: 'Web novels', items: [
+          { title: 'Martial God Asura', poster: 'works/xiuluo-novel' }, { title: 'Nine Star Hegemon Body Art', poster: 'works/jiuxing' }, { title: 'Back to 1990', poster: 'works/chonghui1990' }, { title: 'Rise of the Dragon City', poster: 'works/fengqi' }, { title: 'Super Soldier King', poster: 'works/bingwang' }, { title: 'Rising Through the Ranks', poster: 'works/pingbu' },
+          { title: 'District Nine', poster: 'works/dijiu' }, { title: 'Celestial Garment', poster: 'works/tianyi' }, { title: 'The Retrograde', poster: 'works/nixing' }, { title: 'Return to One', poster: 'works/guiyi' }, { title: 'The Explorer', poster: 'works/tansuo' }, { title: 'The Hidden Game', poster: 'works/tianxia' },
         ] },
-        { type: 'covers', title: 'Animation', items: [
-          { title: 'Peerless Alchemy God' }, { title: 'Monster Apartment' }, { title: 'Martial God Asura' }, { title: 'Chaotic Sword God' }, { title: 'Nine Star Hegemon Body Art' }, { title: 'My Disciple Is Actually the Empress' },
+        { type: 'covers', title: 'Acclaimed authors', items: [
+          { title: 'Emperor Kangxi', sub: 'Eryue He', poster: 'works/kangxi' }, { title: 'In the Name of the People', sub: 'Zhou Meisen', poster: 'works/renmin' }, { title: 'Red Poppies', sub: 'Alai', poster: 'works/chenai' }, { title: 'A Bitter Journey Through Culture', sub: 'Yu Qiuyu', poster: 'works/wenhua' },
+          { title: 'The Village Teacher', sub: 'Liu Cixin', poster: 'works/xiangcun' }, { title: 'Massage', sub: 'Bi Feiyu', poster: 'works/tuina' },
         ] },
-        { type: 'covers', title: 'Film & TV', items: [
-          { title: 'Provoke' }, { title: 'Pretentious Times' }, { title: 'Summer Insects Can Talk of Ice' }, { title: 'Royal Rumours' }, { title: 'He Came Across Mountains and Seas' }, { title: 'Just Want to Date You' },
+        { type: 'covers', title: 'Short dramas', items: [
+          { title: 'The Little God of Fortune Comes Home', poster: 'works/naibao' }, { title: 'Don’t Cry, Crown Prince', poster: 'works/taizi' }, { title: 'After the Broken Engagement, My Poet Identity Is Revealed', poster: 'works/tuihun' }, { title: 'Hotter Than My Ex', poster: 'works/qianyou' }, { title: 'Seduction After Dark', poster: 'works/yese' }, { title: 'Oops, I Married My Bestie\'s Brother!', sub: 'FlareFlow', poster: 'works/oops' },
+        ] },
+        { type: 'covers', title: 'Comic dramas', items: [
+          { title: 'The Apocalypse That Never Came', poster: 'works/mori' }, { title: 'Having a Blast in the Mystery World', poster: 'works/guimi' }, { title: 'Comeback From Birth', poster: 'works/niangtai' }, { title: 'Return of the Immortal Lord', poster: 'works/xianzun' }, { title: 'Return of the Divine Emperor', poster: 'works/shendi' }, { title: 'Beyond Evolution', poster: 'works/chaofan' },
+          { title: 'Fallen Contract', poster: 'works/xianjie' }, { title: 'Survival Rules of a Sacrificial Princess', poster: 'works/jipin' }, { title: 'Return of the Mage God', poster: 'works/fashen' }, { title: 'Invincible Cultivation', poster: 'works/wudi' }, { title: 'Unlimited Cashback on Every Purchase', poster: 'works/xiaofei' }, { title: 'Lord of All: Summoning Legendary Generals', poster: 'works/lingzhu' },
         ] },
       ],
     },
@@ -536,7 +543,6 @@ const news: Page = {
         { title: 'Official logo', meta: 'PNG / SVG · To be provided' },
         { title: 'Image library', meta: 'ZIP · To be provided' },
         { title: 'Company overview', meta: 'PDF · To be provided' },
-        { title: 'Executive bios & photos', meta: 'PDF · To be provided' },
       ] },
       { type: 'cards', cols: 2, items: [
         { tag: 'Media', title: 'Interview & coverage requests', text: 'Contact our brand and PR team.', href: toPartner('media', 'Media Inquiries') },
@@ -700,7 +706,7 @@ function reorder(p: Page, ids: string[]) {
 reorder(about, ['intro', 'culture', 'history', 'strategy', 'honors', 'licenses']);
 reorder(ipPage, ['wall', 'trailers', 'cases', 'license', 'library']);
 reorder(dataPage, ['services', 'scale']);
-reorder(investors, ['highlights', 'filings', 'letter', 'ir-contact']);
+reorder(investors, ['highlights', 'letter', 'filings', 'ir-contact']);
 
 // Partner: cards by audience priority; form topics in the same order
 {
