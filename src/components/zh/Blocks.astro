@@ -4,6 +4,8 @@ import { u as asset } from '../../lib/url';
 import { useLang } from '../../lib/i18n';
 import type { Block } from '../../content/zh';
 const { ui, l: u } = useLang(Astro.url);
+// 深色模式下黑色字的 logo 换成白字版本（public/products/*-dark.png）
+const DARK_LOGOS = ['flareflow', 'cyshenbi', '4yt'];
 import PosterImg from './PosterImg.astro';
 
 interface Props { blocks: Block[] }
@@ -54,7 +56,12 @@ const isNum = (v: string) => /^[\d,]+$/.test(v);
                 style={`--d:${(i % 4) * 70}ms;${c.color ? `--c1:${c.color[0]};--c2:${c.color[1]}` : ''}`}
               >
                 {c.color && <span class="card-stripe" aria-hidden="true"></span>}
-                {c.logo && <span class="card-logo"><img src={asset(`/products/${c.logo}.png`)} alt={c.title} loading="lazy" /></span>}
+                {c.logo && (
+                  <span class="card-logo">
+                    <img class="logo-light" src={asset(`/products/${c.logo}.png`)} alt={c.title} loading="lazy" />
+                    {DARK_LOGOS.includes(c.logo) && <img class="logo-dark" src={asset(`/products/${c.logo}-dark.png`)} alt="" aria-hidden="true" loading="lazy" />}
+                  </span>
+                )}
                 {c.tag && <span class="card-tag">{c.tag}</span>}
                 <span class="card-title">{c.title}</span>
                 {c.text && <span class="card-text">{c.text}</span>}
@@ -529,6 +536,9 @@ const isNum = (v: string) => /^[\d,]+$/.test(v);
   .b-cards.featured > :nth-child(-n+2) { grid-column: span 3; }
   .card-logo { display: flex; align-items: center; height: 56px; margin-bottom: 18px; }
   .card-logo img { max-height: 100%; max-width: 70%; object-fit: contain; }
+  .card-logo .logo-dark { display: none; }
+  :global([data-theme="dark"]) .card-logo:has(.logo-dark) .logo-light { display: none; }
+  :global([data-theme="dark"]) .card-logo .logo-dark { display: block; }
   .b-cards.featured > :nth-child(n+3) .card-logo { height: 44px; }
   .b-cards { display: grid; gap: 20px; }
   .b-cards.c2 { grid-template-columns: repeat(2, 1fr); }
