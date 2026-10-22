@@ -1,7 +1,10 @@
 ---
 // 内容块渲染器：所有栏目页的内容都通过这里渲染，保证全站视觉与交互一致
-import { u } from '../../lib/url';
+import { u as asset } from '../../lib/url';
+import { useLang } from '../../lib/i18n';
 import type { Block } from '../../content/zh';
+const { ui, l: u } = useLang(Astro.url);
+import PosterImg from './PosterImg.astro';
 
 interface Props { blocks: Block[] }
 const { blocks } = Astro.props;
@@ -37,7 +40,7 @@ const isNum = (v: string) => /^[\d,]+$/.test(v);
 
     case 'cards':
       return (
-        <div class:list={['b-cards', `c${b.cols ?? 3}`]}>
+        <div class:list={['b-cards', b.featured ? 'featured' : `c${b.cols ?? 3}`]}>
           {b.items.map((c, i) => {
             const live = !!c.href && c.href !== '#';
             const Tag = live ? 'a' : 'div';
@@ -51,11 +54,12 @@ const isNum = (v: string) => /^[\d,]+$/.test(v);
                 style={`--d:${(i % 4) * 70}ms;${c.color ? `--c1:${c.color[0]};--c2:${c.color[1]}` : ''}`}
               >
                 {c.color && <span class="card-stripe" aria-hidden="true"></span>}
+                {c.logo && <span class="card-logo"><img src={asset(`/products/${c.logo}.png`)} alt={c.title} loading="lazy" /></span>}
                 {c.tag && <span class="card-tag">{c.tag}</span>}
                 <span class="card-title">{c.title}</span>
                 {c.text && <span class="card-text">{c.text}</span>}
-                {live && <span class="card-go">{c.external ? '访问官网' : '了解更多'} <span class="arrow">{c.external ? '↗' : '→'}</span></span>}
-                {c.href === '#' && <span class="card-soon">链接待提供</span>}
+                {live && <span class="card-go">{c.external ? ui.visitSite : ui.learnMore} <span class="arrow">{c.external ? '↗' : '→'}</span></span>}
+                {c.href === '#' && <span class="card-soon">{ui.linkSoon}</span>}
               </Tag>
             );
           })}
@@ -97,6 +101,51 @@ const isNum = (v: string) => /^[\d,]+$/.test(v);
           ))}
         </ol>
       );
+
+    case 'journey': {
+      // 发展历程：一条上扬的发光曲线（参照集团介绍的“跨越式发展”页）。桌面端吸附在屏幕上：
+      // 先随滚动横向推进、逐个点亮（大字号）；滚到底时整条时间线缩小成一屏全景并停留。手机端改为竖向列表
+      const n = b.items.length, W = 1000, H = 600;
+      // 向上的卡片放在波峰、向下的卡片放在波谷，整体缓缓上扬，相邻卡片不互相遮挡
+      const pts = b.items.map((_, i) => ({ x: 45 + i * ((W - 90) / (n - 1)), y: 440 - i * 17 + (i % 2 === 0 ? -30 : 30) }));
+      const d = pts.map((p, i) => {
+        if (i === 0) return `M0 ${p.y + 30} C 30 ${p.y + 30} 40 ${p.y} ${p.x} ${p.y}`;
+        const q = pts[i - 1], h = (p.x - q.x) / 2;
+        return `C ${q.x + h} ${q.y} ${p.x - h} ${p.y} ${p.x} ${p.y}`;
+      }).join(' ') + ` C ${W - 30} ${pts[n - 1].y} ${W - 20} ${pts[n - 1].y - 40} ${W} ${pts[n - 1].y - 60}`;
+      return (
+        <div class="b-journey" data-journey style={`--n:${n}`}>
+          <div class="jr-sticky">
+            <div class="jr-track" style={`--bigw:${n * 330 + 260}px`}>
+              <svg class="jr-svg" viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="none" aria-hidden="true">
+                <defs>
+                  <linearGradient id="jr-grad" x1="0" x2="1" y1="0" y2="0">
+                    <stop offset="0" class="s1" /><stop offset=".5" class="s2" /><stop offset="1" class="s3" />
+                  </linearGradient>
+                  {/* 彩色线按滚动进度从左往右露出：用裁切矩形而不是虚线偏移，保证线条连续 */}
+                  <clipPath id="jr-clip"><rect class="jr-clip" x="0" y="-100" width="0" height={H + 200} /></clipPath>
+                </defs>
+                <path d={d} class="jr-base" vector-effect="non-scaling-stroke" />
+                <g clip-path="url(#jr-clip)">
+                  <path d={d} class="jr-line jr-blur" vector-effect="non-scaling-stroke" />
+                  <path d={d} class="jr-line" vector-effect="non-scaling-stroke" />
+                </g>
+              </svg>
+              {b.items.map((t, i) => (
+                <div class:list={['jr-node', { up: i % 2 === 0, era: t.era, first: i === 0, last: i === n - 1 }]} style={`left:${(pts[i].x / W) * 100}%;top:${(pts[i].y / H) * 100}%`} data-x={pts[i].x / W}>
+                  <span class="jr-dot"></span>
+                  <div class="jr-card">
+                    {t.era && <span class="jr-era">#{t.era}</span>}
+                    <span class="jr-year">{t.year}</span>
+                    <p>{t.text}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      );
+    }
 
     case 'timeline':
       return (
@@ -146,8 +195,8 @@ const isNum = (v: string) => /^[\d,]+$/.test(v);
             ))}
           </ol>
           <details class="full">
-            <summary><span>阅读全文</span></summary>
-            <p>（全文待从官网迁入，正式版在此处展开完整信件内容。）</p>
+            <summary><span>{ui.readFull}</span></summary>
+            <p>{ui.letterSoon}</p>
           </details>
           <footer><strong>{b.author}</strong> · {b.role} · {b.date}</footer>
         </article>
@@ -160,19 +209,28 @@ const isNum = (v: string) => /^[\d,]+$/.test(v);
         <div class="b-newswrap" data-filterable>
           {tags.length > 1 && (
             <div class="filters reveal">
-              <button class="chip on" data-filter-key="all" data-filter-value="all">全部</button>
+              <button class="chip on" data-filter-key="all" data-filter-value="all">{ui.all}</button>
               {tags.map((t) => <button class="chip" data-filter-key="tag" data-filter-value={t}>{t}</button>)}
             </div>
           )}
           <ul class="b-news">
             {b.items.map((n, i) => (
-              <li class="reveal" data-tag={n.tag} style={`--d:${i * 60}ms`}>
-                <div class="news-row">
-                  <time>{n.date}</time>
-                  {n.tag && <span class="news-tag">{n.tag}</span>}
-                  <span class="news-title">{n.title}</span>
-                  <span class="news-soon">详情页待上线</span>
-                </div>
+              <li class="reveal" id={`news-${n.date}`} data-tag={n.tag} style={`--d:${i * 60}ms`}>
+                {(() => {
+                  // 有原文链接（官网文章，与公众号同文）时整行可点，新窗口打开
+                  const Row = n.href ? 'a' : 'div';
+                  return (
+                    <Row class:list={['news-row', { 'has-img': n.img, live: n.href }]} href={n.href} target={n.href ? '_blank' : undefined} rel={n.href ? 'noopener' : undefined}>
+                      {n.img && <img class="news-img" src={asset(`/news/${n.img}.jpg`)} alt="" loading="lazy" />}
+                      <span class="news-body">
+                        <span class="news-meta"><time>{n.date}</time>{n.tag && <span class="news-tag">{n.tag}</span>}</span>
+                        <span class="news-title">{n.title}</span>
+                        {n.text && <span class="news-text">{n.text}</span>}
+                      </span>
+                      {n.href ? <span class="news-go">{ui.readSource} <span class="arrow">↗</span></span> : <span class="news-soon">{ui.detailSoon}</span>}
+                    </Row>
+                  );
+                })()}
               </li>
             ))}
           </ul>
@@ -193,34 +251,31 @@ const isNum = (v: string) => /^[\d,]+$/.test(v);
               </ul>
             </div>
           ))}
-          <a href={u(b.href)} target="_blank" rel="noopener" class="btn btn-outline docs-more">巨潮资讯查看全部 <span class="arrow">↗</span></a>
+          <a href={u(b.href)} target="_blank" rel="noopener" class="btn btn-outline docs-more">{ui.cninfoAll} <span class="arrow">↗</span></a>
         </div>
       );
 
     case 'ipwall': {
-      // IP 墙：卡片 = 封面 + 数据标签 + 题材 + 开发状态；顶部按题材/状态筛选（不跳页）
+      // IP 墙：卡片 = 海报 + 数据标签 + 题材；顶部按题材筛选（不跳页）
       const genres = [...new Set(b.items.map((x) => x.genre))];
-      const statuses = [...new Set(b.items.map((x) => x.status))];
       return (
         <div class="b-ipwall" data-filterable>
           <div class="filters reveal">
-            <button class="chip on" data-filter-key="all" data-filter-value="all">全部</button>
+            <button class="chip on" data-filter-key="all" data-filter-value="all">{ui.all}</button>
             {genres.map((g) => <button class="chip" data-filter-key="genre" data-filter-value={g}>{g}</button>)}
-            <span class="sep" aria-hidden="true"></span>
-            {statuses.map((t) => <button class="chip" data-filter-key="status" data-filter-value={t}>{t}</button>)}
           </div>
           <div class="ip-grid">
             {b.items.map((x, i) => (
-              <a class="ip-card reveal" href={u(`/partner?type=${encodeURIComponent(x.title)}#license`)} data-genre={x.genre} data-status={x.status} style={`--d:${(i % 4) * 60}ms`}>
-                <div class="cover" style={`--h:${hue(x.title)}`}>
-                  <span class:list={['status', `s-${['可授权', '改编中', '已授权'].indexOf(x.status)}`]}>{x.status}</span>
-                  <span>{x.title}</span>
+              <a class="ip-card reveal" href={u(`/partner?type=${encodeURIComponent(x.title)}#license`)} data-genre={x.genre} style={`--d:${(i % 4) * 60}ms`}>
+                <div class:list={['cover', { 'has-poster': x.poster }]} style={`--h:${hue(x.title)}`}>
+                  {x.poster ? <PosterImg name={x.poster} wide={x.wide} alt={x.title} /> : <span>{x.title}</span>}
                 </div>
+                <strong class="ip-title">{x.title}</strong>
                 <div class="ip-meta">
                   <span class="ip-genre">{x.genre}{x.forms.length > 0 && ` · ${x.forms.join(' / ')}`}</span>
                   {x.tags.map((t) => <span class="ip-tag">#{t}</span>)}
                 </div>
-                <span class="ip-go">洽谈授权 <span class="arrow">→</span></span>
+                <span class="ip-go">{ui.talkLicense} <span class="arrow">→</span></span>
               </a>
             ))}
           </div>
@@ -235,7 +290,7 @@ const isNum = (v: string) => /^[\d,]+$/.test(v);
         <div class="b-videos">
           {b.items.map((v, i) => (
             <figure class:list={['video reveal', { vertical: v.vertical }]} style={`--d:${(i % 4) * 70}ms;--h:${hue(v.title)}`}>
-              <button class="play" aria-label={`播放 ${v.title}（待接入）`} title="视频待接入">▶</button>
+              <button class="play" aria-label={`${ui.play} ${v.title}`} title={ui.videoSoon}>▶</button>
               <figcaption><strong>{v.title}</strong>{v.sub && <small>{v.sub}</small>}</figcaption>
             </figure>
           ))}
@@ -285,7 +340,7 @@ const isNum = (v: string) => /^[\d,]+$/.test(v);
                   </div>
                 ))}
               </div>
-              <button class="card-go cc-go" data-topic={c.title}>发送咨询 <span class="arrow">→</span></button>
+              <button class="card-go cc-go" data-topic={c.title}>{ui.sendInquiry} <span class="arrow">→</span></button>
             </div>
           ))}
         </div>
@@ -296,20 +351,20 @@ const isNum = (v: string) => /^[\d,]+$/.test(v);
       return (
         <form class="b-form reveal" id={b.id ?? 'inquiry'} data-proto-form data-astro-reload>
           <div class="f-row">
-            <label>合作类型<select name="topic" required>{b.topics.map((t) => <option>{t}</option>)}</select></label>
-            <label>姓名<input name="name" required placeholder="您的姓名" /></label>
+            <label>{ui.form.topic}<select name="topic" required>{b.topics.map((t) => <option>{t}</option>)}</select></label>
+            <label>{ui.form.name}<input name="name" required placeholder={ui.form.namePh} /></label>
           </div>
           <div class="f-row">
-            <label>公司 / 机构<input name="company" placeholder="公司名称" /></label>
-            <label>职务<input name="title" placeholder="您的职务" /></label>
+            <label>{ui.form.company}<input name="company" placeholder={ui.form.companyPh} /></label>
+            <label>{ui.form.title}<input name="title" placeholder={ui.form.titlePh} /></label>
           </div>
           <div class="f-row">
-            <label>邮箱<input name="email" type="email" required placeholder="name@company.com" /></label>
-            <label>电话 / 微信<input name="phone" placeholder="便于我们联系您" /></label>
+            <label>{ui.form.email}<input name="email" type="email" required placeholder="name@company.com" /></label>
+            <label>{ui.form.phone}<input name="phone" placeholder={ui.form.phonePh} /></label>
           </div>
-          <label>需求描述<textarea name="message" rows="4" placeholder="简单介绍您的需求，我们会尽快安排对应负责人联系您"></textarea></label>
+          <label>{ui.form.message}<textarea name="message" rows="4" placeholder={ui.form.messagePh}></textarea></label>
           <div class="f-foot">
-            <button class="btn btn-primary" type="submit">提交咨询 <span class="arrow">→</span></button>
+            <button class="btn btn-primary" type="submit">{ui.form.submit} <span class="arrow">→</span></button>
             <p class="f-msg" role="status" aria-live="polite"></p>
           </div>
           {b.note && <p class="b-note">{b.note}</p>}
@@ -321,13 +376,13 @@ const isNum = (v: string) => /^[\d,]+$/.test(v);
       return (
         <div class="b-gallery" data-filterable>
           <div class="filters reveal">
-            <button class="chip on" data-filter-key="all" data-filter-value="all">全部</button>
+            <button class="chip on" data-filter-key="all" data-filter-value="all">{ui.all}</button>
             {tags.map((t) => <button class="chip" data-filter-key="tag" data-filter-value={t}>{t}</button>)}
           </div>
           <div class="g-grid">
             {b.items.map((x, i) => (
               <figure class:list={['g-item reveal', `g${i % 5}`]} data-tag={x.tag} style={`--d:${(i % 4) * 60}ms;--h:${hue(x.caption)}`}>
-                <span class="g-ph" aria-hidden="true">照片待提供</span>
+                <span class="g-ph" aria-hidden="true">{ui.photoSoon}</span>
                 <figcaption><em>{x.tag}</em>{x.caption}</figcaption>
               </figure>
             ))}
@@ -398,6 +453,62 @@ const isNum = (v: string) => /^[\d,]+$/.test(v);
   .b-note { font-size: 12px; color: var(--muted); margin-top: 14px; }
 
   /* 卡片 */
+  /* ---------- 发展历程：横向推进 → 滚到底缩成全景 ---------- */
+  .b-journey { position: relative; height: calc(var(--n) * 20vh + 160vh); }
+  .jr-sticky { position: sticky; top: 96px; height: calc(100vh - 128px); min-height: 560px; overflow: hidden; border-radius: 32px; padding: 0 12px;
+    /* 浅色：中性浅灰底 + 深色文字，只有曲线是橙粉渐变；深色：青紫粉（星空感） */
+    --jr-ink: #141821; --jr-text: #5b6170; --jr-year: #141821; --jr-base: rgba(20,24,33,.1); --jr-dot-glow: rgba(255,122,40,.45); --jr-ring: rgba(255,122,40,.16);
+    --jr-s1: #ffb020; --jr-s2: #ff6a3d; --jr-s3: #ff3d8b; --jr-era1: #141821; --jr-era2: #141821;
+    background: linear-gradient(160deg, #fbfbfc, #f2f3f6);
+    box-shadow: inset 0 0 0 1px rgba(20,24,33,.06); color: var(--jr-ink); }
+  :global([data-theme="dark"]) .jr-sticky { --jr-ink: #fff; --jr-text: rgba(255,255,255,.82); --jr-year: #9fd8ff; --jr-base: rgba(255,255,255,.12); --jr-dot-glow: #9ab8ff; --jr-ring: rgba(255,255,255,.12);
+    --jr-s1: #00c1de; --jr-s2: #7b6cff; --jr-s3: #ff7ad9; --jr-era1: #7ce8ff; --jr-era2: #c9a8ff;
+    background: radial-gradient(60% 80% at 80% 20%, rgba(123,108,255,.35), transparent 60%), radial-gradient(50% 60% at 10% 90%, rgba(0,193,222,.25), transparent 60%), linear-gradient(160deg, #070b2a, #140a3d 60%, #2a0b45); box-shadow: none; }
+  .jr-track { position: relative; width: var(--bigw); height: 100%; transition: width .9s var(--ease); will-change: transform; }
+  .b-journey.zooming .jr-track { transition: width .9s var(--ease), transform .9s var(--ease); }
+  .b-journey.fit .jr-track { width: 100%; transform: none !important; }
+  .jr-svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+  .jr-base { fill: none; stroke: var(--jr-base); stroke-width: 3; }
+  .jr-line { fill: none; stroke: url(#jr-grad); stroke-width: 4; stroke-linecap: round; }
+  .jr-svg .s1 { stop-color: var(--jr-s1); } .jr-svg .s2 { stop-color: var(--jr-s2); } .jr-svg .s3 { stop-color: var(--jr-s3); }
+  .jr-blur { stroke-width: 12; opacity: .45; filter: blur(5px); }
+  .jr-node { position: absolute; width: 0; height: 0; }
+  .jr-dot { position: absolute; width: 16px; height: 16px; left: -8px; top: -8px; border-radius: 50%; background: #fff; box-shadow: 0 0 0 5px var(--jr-ring), 0 0 20px var(--jr-dot-glow); transform: scale(.45); opacity: .5; transition: transform .6s var(--spring), opacity .4s; }
+  .jr-node.era .jr-dot { width: 24px; height: 24px; left: -12px; top: -12px; background: radial-gradient(circle, #fff 30%, var(--jr-s2) 31%, #fff 62%); }
+  .jr-card { position: absolute; left: 50%; width: 250px; translate: -50% 0; opacity: 0; transform: translateY(12px); transition: opacity .6s var(--ease), transform .6s var(--spring), width .9s var(--ease); }
+  .fit .jr-card { width: 136px; }
+  .jr-node.up .jr-card { bottom: 20px; }
+  .jr-node.first .jr-card { translate: -14px 0; }
+  .jr-node.last .jr-card { translate: calc(-100% + 14px) 0; text-align: right; }
+  .jr-node:not(.up) .jr-card { top: 20px; transform: translateY(-12px); }
+  .jr-node.on .jr-dot { transform: scale(1); opacity: 1; }
+  .jr-node.on .jr-card { opacity: 1; transform: none; }
+  .jr-era { display: block; font-size: 24px; transition: font-size .9s var(--ease); font-weight: 900; line-height: 1.3; margin-bottom: 2px; background: linear-gradient(90deg, var(--jr-era1), var(--jr-era2)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .jr-year { display: block; font-size: 44px; transition: font-size .9s var(--ease); font-weight: 900; color: var(--jr-year); line-height: 1.1; font-variant-numeric: tabular-nums; }
+  .jr-card p { margin-top: 4px; font-size: 15px; line-height: 1.55; transition: font-size .9s var(--ease); color: var(--jr-text); }
+  .fit .jr-era { font-size: 15px; }
+  .fit .jr-year { font-size: 24px; }
+  .fit .jr-card p { font-size: 12.5px; line-height: 1.5; }
+  @media (max-width: 1100px) {
+    .b-journey { height: auto; }
+    .jr-sticky { position: relative; top: 0; height: auto; min-height: 0; border-radius: 26px; padding: 28px 22px; }
+    .jr-track { width: auto; transform: none !important; height: auto; display: flex; flex-direction: column; gap: 22px; padding-left: 22px; border-left: 2px solid var(--jr-base); }
+    .jr-svg { display: none; }
+    .jr-node { position: relative; left: auto !important; top: auto !important; width: auto; height: auto; }
+    .jr-dot { left: -31px; top: 8px; transform: none; opacity: 1; }
+    .jr-node.era .jr-dot { left: -35px; }
+    .jr-card, .jr-node.up .jr-card, .jr-node:not(.up) .jr-card { position: static; width: auto; translate: none; opacity: 1; transform: none; }
+    .jr-year { font-size: 32px; }
+    .jr-card p { font-size: 14px; }
+  }
+
+  /* 重点产品：便当盒排布，前两张大、后三张小 */
+  .b-cards.featured { display: grid; grid-template-columns: repeat(6, 1fr); gap: 20px; margin-bottom: 20px; }
+  .b-cards.featured > * { grid-column: span 2; }
+  .b-cards.featured > :nth-child(-n+2) { grid-column: span 3; }
+  .card-logo { display: flex; align-items: center; height: 56px; margin-bottom: 18px; }
+  .card-logo img { max-height: 100%; max-width: 70%; object-fit: contain; }
+  .b-cards.featured > :nth-child(n+3) .card-logo { height: 44px; }
   .b-cards { display: grid; gap: 20px; }
   .b-cards.c2 { grid-template-columns: repeat(2, 1fr); }
   .b-cards.c3 { grid-template-columns: repeat(3, 1fr); }
@@ -455,8 +566,8 @@ const isNum = (v: string) => /^[\d,]+$/.test(v);
   .b-quote figcaption { position: relative; z-index: 1; display: flex; align-items: center; gap: 14px; margin-top: 32px; flex-wrap: wrap; }
   .b-quote figcaption > span:nth-child(2) { display: flex; flex-direction: column; margin-right: auto; }
   .b-quote small { opacity: .8; font-size: 13px; }
-  .b-quote .btn-outline { background: #fff; box-shadow: none; }
-  .b-quote .btn-outline:hover { background: var(--ink); }
+  .b-quote .btn-outline { background: var(--surface); box-shadow: none; }
+  .b-quote .btn-outline:hover { background: var(--night); }
   .avatar { width: 56px; height: 56px; border-radius: 50%; background: #fff; color: var(--c1, var(--brand)); display: grid; place-items: center; font-weight: 900; }
 
   /* 致股东信 */
@@ -477,17 +588,9 @@ const isNum = (v: string) => /^[\d,]+$/.test(v);
 
   /* 新闻 */
   .b-news { list-style: none; display: flex; flex-direction: column; gap: 10px; }
-  .b-news a {
-    display: grid; grid-template-columns: 110px 72px 1fr 40px; align-items: center; gap: 20px;
-    padding: 22px 24px; border-radius: 22px; background: var(--surface);
-    box-shadow: 0 8px 20px -16px rgba(10,22,48,.3); transition: transform .5s var(--spring), box-shadow .3s;
-  }
-  .b-news a:hover { transform: translateX(8px); box-shadow: 0 18px 36px -20px rgba(10,22,48,.35); }
   .b-news time { font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; }
   .news-tag { font-size: 12px; font-weight: 700; color: var(--c1, var(--brand)); background: color-mix(in srgb, var(--c1, var(--brand)) 10%, transparent); border-radius: 999px; padding: 3px 10px; justify-self: start; }
   .news-title { font-size: 16px; font-weight: 600; }
-  .b-news .arrow { width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; background: var(--bg); color: var(--c1, var(--brand)); transition: transform .4s var(--spring), background .3s, color .3s; }
-  .b-news a:hover .arrow { background: linear-gradient(135deg, var(--c1, var(--brand)), var(--c2, var(--brand-2))); color: #fff; transform: rotate(-30deg); }
 
   /* 公告 */
   .b-docs { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
@@ -518,6 +621,17 @@ const isNum = (v: string) => /^[\d,]+$/.test(v);
   .ip-card:hover .cover { box-shadow: 0 30px 50px -20px rgba(10,22,48,.55); }
   .b-news li.hide { display: none; }
   .news-row { display: grid; grid-template-columns: 110px 72px 1fr auto; align-items: center; gap: 20px; padding: 22px 24px; border-radius: 22px; background: var(--surface); box-shadow: 0 8px 20px -16px rgba(10,22,48,.3); }
+  .news-row { grid-template-columns: 1fr auto; }
+  .news-row.has-img { grid-template-columns: 220px 1fr auto; padding: 14px 24px 14px 14px; }
+  .news-img { width: 220px; aspect-ratio: 16 / 9; object-fit: cover; border-radius: 14px; }
+  .news-body { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+  .news-meta { display: flex; align-items: center; gap: 12px; }
+  .news-text { font-size: 14px; line-height: 1.7; color: var(--muted); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .news-go { font-size: 13px; font-weight: 700; color: var(--c1, var(--brand)); white-space: nowrap; }
+  .news-go .arrow { display: inline-block; transition: transform .4s var(--spring); }
+  a.news-row { transition: transform .4s var(--spring), box-shadow .3s; }
+  a.news-row:hover { transform: translateX(6px); box-shadow: 0 18px 36px -20px rgba(10,22,48,.35); }
+  a.news-row:hover .news-go .arrow { transform: translate(3px, -3px); }
   .news-soon { font-size: 12px; color: var(--muted); white-space: nowrap; }
 
 
@@ -536,10 +650,7 @@ const isNum = (v: string) => /^[\d,]+$/.test(v);
   .chip.on { background: linear-gradient(120deg, var(--c1, var(--brand)), var(--c2, var(--brand-2))); color: #fff; }
   .ip-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 22px; }
   .ip-card.hide, .g-item.hide { display: none; }
-  .ip-card .cover { aspect-ratio: 4 / 5; }
-  .status { position: absolute; top: 12px; left: 12px; z-index: 2; font-size: 12px; font-weight: 700; padding: 3px 10px; border-radius: 999px; background: rgba(255,255,255,.92); color: var(--ink); }
-  .status.s-0 { background: #3ddc97; color: #06351f; }
-  .status.s-1 { background: var(--sun); color: #4a3200; }
+  .ip-title { display: block; margin-top: 14px; font-size: 16px; line-height: 1.4; }
   .ip-meta { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
   .ip-genre { width: 100%; font-size: 13px; color: var(--muted); }
   .ip-tag { font-size: 12px; font-weight: 600; color: var(--c1, var(--brand)); background: color-mix(in srgb, var(--c1, var(--brand)) 9%, transparent); padding: 2px 8px; border-radius: 6px; }
@@ -636,6 +747,7 @@ const isNum = (v: string) => /^[\d,]+$/.test(v);
     .g-grid { grid-template-columns: repeat(3, 1fr); }
     .b-logos { grid-template-columns: repeat(4, 1fr); }
     .b-cards.c4, .b-cards.c3 { grid-template-columns: repeat(2, 1fr); }
+    .b-cards.featured > *, .b-cards.featured > :nth-child(-n+2) { grid-column: span 3; }
     .b-covers { grid-template-columns: repeat(4, 1fr); }
     .b-timeline { grid-template-columns: repeat(3, 1fr); }
     .b-honors { columns: 2; }
@@ -653,6 +765,7 @@ const isNum = (v: string) => /^[\d,]+$/.test(v);
     .g3 { grid-column: span 1; }
     .b-logos { grid-template-columns: repeat(3, 1fr); }
     .b-cards.c2, .b-cards.c3, .b-cards.c4 { grid-template-columns: 1fr; }
+    .b-cards.featured > *, .b-cards.featured > :nth-child(-n+2) { grid-column: 1 / -1; }
     .b-stats { gap: 24px 32px; }
     .b-stat { min-width: 130px; }
     .b-covers { grid-template-columns: repeat(3, 1fr); gap: 12px; }
@@ -665,10 +778,10 @@ const isNum = (v: string) => /^[\d,]+$/.test(v);
     .b-timeline li:nth-child(even) { margin-top: 0; }
     .b-honors { columns: 1; }
     .b-quote, .b-letter { padding: 28px 24px; border-radius: 26px; }
-    .b-news a, .news-row { grid-template-columns: 1fr auto; gap: 8px 12px; padding: 18px; }
-    .news-soon { display: none; }
-    .news-title { grid-column: 1 / -1; }
-    .b-news .arrow { display: none; }
+    .news-row, .news-row.has-img { grid-template-columns: 1fr auto; gap: 8px 12px; padding: 18px; }
+    .news-img { grid-column: 1 / -1; width: 100%; }
+    .news-soon, .news-go { display: none; }
+    .news-body { grid-column: 1 / -1; }
     .b-docs { grid-template-columns: 1fr; }
     .b-docs li a { grid-template-columns: 1fr auto; gap: 4px 12px; }
     .b-docs li a span { grid-column: 1 / -1; grid-row: 2; }

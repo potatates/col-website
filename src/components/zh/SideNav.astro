@@ -9,8 +9,10 @@ interface Props {
   items: NavItem[];
 }
 const { title, items } = Astro.props;
+import { useLang } from '../../lib/i18n';
+const { ui } = useLang(Astro.url);
 ---
-<nav class="rail" aria-label={`${title}·本页导航`}>
+<nav class="rail" aria-label={`${title} · ${ui.pageNav}`}>
   <span class="rail-title">{title}</span>
   <ol class="rail-list">
     {items.map((it) => (

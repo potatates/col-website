@@ -9,7 +9,8 @@ import SideNav, { type NavItem } from '../../components/zh/SideNav.astro';
 import Blocks from '../../components/zh/Blocks.astro';
 import NextPage from '../../components/zh/NextPage.astro';
 import CtaBand from '../../components/zh/CtaBand.astro';
-import { site, pages, businessPages, nextOf } from '../../content/zh';
+import { useLang } from '../../lib/i18n';
+const { site, pages, businessPages, nextOf } = useLang(Astro.url).c;
 
 const page = pages.business;
 const navItems: NavItem[] = [
@@ -98,7 +99,7 @@ const navItems: NavItem[] = [
   /* 本业务内容速览：仅作提示，往下滚动即可依次看到 */
   .ch-toc { list-style: none; display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
   .ch-toc a { display: inline-block; padding: 6px 14px; border-radius: 999px; background: rgba(255,255,255,.18); font-size: 14px; font-weight: 600; backdrop-filter: blur(6px); transition: background .25s, color .25s, transform .4s var(--spring); }
-  .ch-toc a:hover { background: #fff; color: var(--c1); transform: translateY(-2px); }
+  .ch-toc a:hover { background: var(--surface); color: var(--c1); transform: translateY(-2px); }
   .s-head .s-ghost { -webkit-text-stroke-color: color-mix(in srgb, var(--c1) 22%, transparent); }
   .s-title { font-size: clamp(26px, 3.2vw, 40px); }
   @media (max-width: 768px) {

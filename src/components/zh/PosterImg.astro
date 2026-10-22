@@ -1,0 +1,10 @@
+---
+// 海报图：放在 .cover 内，铺满卡片（object-fit: cover）。
+// 竖长海报（约 9:16）的片名在下方，裁切时对齐底部，保证片名文字不被裁掉
+import { u } from '../../lib/url';
+interface Props { name: string; wide?: boolean; alt?: string }
+const { name, alt = '' } = Astro.props;
+const POS: Record<string, string> = { yiyou: '50% 100%', xiuluowushen: '50% 100%' };
+const src = u(`/posters/${name}.jpg`);
+---
+<img src={src} alt={alt} class="poster-img" style={POS[name] ? `object-position:${POS[name]}` : undefined} loading="lazy" />

@@ -1,5 +1,6 @@
 ---
 import SectionPage from '../layouts/SectionPage.astro';
-import { pages } from '../content/zh';
+import { useLang } from '../lib/i18n';
+const { pages } = useLang(Astro.url).c;
 ---
 <SectionPage page={pages.ip} />

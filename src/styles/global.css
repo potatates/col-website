@@ -17,6 +17,8 @@
   --line: #e4e9f2;
   --bg: #f6f8fc;
   --surface: #ffffff;
+  --glass: rgba(255,255,255,.88);  /* 页头、浮层的毛玻璃底 */
+  --night: #0b1430;                /* 恒为深色的底（页脚、深色按钮），不随主题反转 */
   --radius: 28px;
   --maxw: 1240px;
   --ease: cubic-bezier(.22, .61, .36, 1);
@@ -24,6 +26,20 @@
   --grad: linear-gradient(120deg, var(--brand) 0%, var(--brand-2) 45%, var(--violet) 100%);
   --font: 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Noto Sans SC', system-ui, sans-serif;
 }
+
+/* 深色模式：只换颜色变量，版式不变；默认浅色，页头按钮切换并记住选择 */
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --ink: #eef2ff;
+  --text: #d6dcec;
+  --muted: #98a2bf;
+  --line: #262e4a;
+  --bg: #0a0f22;
+  --surface: #131a33;
+  --glass: rgba(14,20,42,.86);
+  --night: #050914;
+}
+:root[data-theme="dark"] .s-ghost { -webkit-text-stroke-color: rgba(120,170,255,.18); }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
 html { scroll-behavior: smooth; }
@@ -124,9 +140,9 @@ a.card:hover .card-go .arrow { transform: translateX(8px); }
 .btn-primary { background: var(--grad); background-size: 160% 100%; color: #fff; box-shadow: 0 12px 28px -12px rgba(0,113,206,.7); transition: background-position .5s, transform .4s var(--spring), box-shadow .3s; }
 .btn-primary:hover { background-position: 100% 0; box-shadow: 0 18px 34px -12px rgba(108,77,255,.6); }
 .btn-ghost { background: rgba(255,255,255,.14); color: #fff; backdrop-filter: blur(8px); border: 1px solid rgba(255,255,255,.3); }
-.btn-ghost:hover { background: #fff; color: var(--ink); }
+.btn-ghost:hover { background: #fff; color: #0b1430; }
 .btn-outline { background: var(--surface); color: var(--ink); box-shadow: 0 0 0 1.5px var(--ink) inset; }
-.btn-outline:hover { background: var(--ink); color: #fff; }
+.btn-outline:hover { background: var(--night); color: #fff; }
 
 .link-u { background: linear-gradient(currentColor, currentColor) 0 100% / 0 1.5px no-repeat; transition: background-size .35s var(--ease), color .2s; }
 .link-u:hover { background-size: 100% 1.5px; }
@@ -155,6 +171,11 @@ a.card:hover .card-go .arrow { transform: translateX(8px); }
 a.cover:hover { box-shadow: 0 30px 50px -20px rgba(10,22,48,.55); }
 a.cover:hover::after { opacity: 1; }
 .cover span { position: relative; z-index: 1; text-shadow: 0 2px 12px rgba(0,0,0,.25); }
+.cover.has-poster { background: #111; }
+.cover.has-poster::before { display: none; }
+/* 海报卡片统一 2:3（接近大多数海报比例），裁切最少 */
+.cover.has-poster { aspect-ratio: 2 / 3; }
+.cover .poster-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
 
 /* ---------- 跑马灯大字 ---------- */
 .ticker { overflow: hidden; padding: 28px 0; user-select: none; }
@@ -200,3 +221,33 @@ a.cover:hover::after { opacity: 1; }
   .page-grid { display: block; }
   .page-body > .block-section:first-child, .page-body > .chapter:first-child { padding-top: 40px; }
 }
+
+/* ---------- 英文版排版 ----------
+   中文版式里的“描边英文大字 + 加宽字距的大写小标签 + 900 粗体”放到英文里会变成重复和别扭：
+   英文版去掉与标题重复的英文装饰字，用 Inter、收紧字距、降低字重，按西文习惯排版 */
+html[lang='en'] body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, 'PingFang SC', sans-serif; line-height: 1.6; font-feature-settings: 'cv11', 'ss01'; }
+/* 与标题重复的英文装饰：背后描边大字、题图/章节/海报上的大写小标签 */
+html[lang='en'] .s-ghost, html[lang='en'] .page-hero .en, html[lang='en'] .ch-en, html[lang='en'] .p-en { display: none; }
+html[lang='en'] .s-head { margin-bottom: 36px; }
+/* 标题：更紧的字距、较低的字重 */
+html[lang='en'] h1, html[lang='en'] h2, html[lang='en'] h3, html[lang='en'] .s-title, html[lang='en'] .ch-title, html[lang='en'] .p-title,
+html[lang='en'] .next .title, html[lang='en'] .slogan, html[lang='en'] .c-text strong, html[lang='en'] .j-title { letter-spacing: -.025em; font-weight: 700; }
+html[lang='en'] .hero h1 { font-weight: 800; letter-spacing: -.035em; line-height: 1; }
+html[lang='en'] .s-title { font-size: clamp(28px, 3vw, 42px); line-height: 1.15; }
+html[lang='en'] .page-hero h1 { font-size: clamp(40px, 5.2vw, 72px); line-height: 1.05; margin-top: 8px; }
+html[lang='en'] .ch-title { font-size: clamp(34px, 4.6vw, 60px); line-height: 1.05; }
+html[lang='en'] .p-title { font-size: clamp(24px, 2.3vw, 32px); line-height: 1.1; }
+html[lang='en'] .p1 .p-title, html[lang='en'] .p3 .p-title { font-size: clamp(30px, 3vw, 42px); }
+html[lang='en'] .next .title { font-size: clamp(32px, 4.2vw, 54px); }
+html[lang='en'] .slogan { font-size: clamp(24px, 2.6vw, 34px); }
+html[lang='en'] .card-title { letter-spacing: -.01em; font-weight: 650; }
+html[lang='en'] .num span { letter-spacing: -.04em; font-weight: 800; }
+html[lang='en'] .num em { font-size: 20px; font-weight: 650; }
+html[lang='en'] .card-text, html[lang='en'] .num-label, html[lang='en'] .s-intro { line-height: 1.55; }
+/* 小标签：西文只需轻微加宽字距 */
+html[lang='en'] .rail-title, html[lang='en'] .hero-tag, html[lang='en'] .c-en, html[lang='en'] .next .label, html[lang='en'] .footer .label, html[lang='en'] .scroll-hint { letter-spacing: .06em; }
+html[lang='en'] .rail-title { text-transform: none; font-weight: 600; }
+html[lang='en'] .card-tag, html[lang='en'] .news-tag, html[lang='en'] .ip-tag, html[lang='en'] .ipf-tags em { letter-spacing: 0; font-weight: 600; }
+html[lang='en'] .fit .jr-era { font-size: 13px; }
+html[lang='en'] .fit .jr-card p { font-size: 12px; }
+html[lang='en'] .jr-card p { font-size: 14px; }

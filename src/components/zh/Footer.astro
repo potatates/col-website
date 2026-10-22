@@ -1,9 +1,11 @@
 ---
 // 页脚：网站地图（一级栏目 + 各业务）+ 社媒矩阵 + 资质公示 + 法务链接
-import { u } from '../../lib/url';
-import { site, navOrder, businessPages, contact, social, legal } from '../../content/zh';
+import { u as asset } from '../../lib/url';
+import { useLang } from '../../lib/i18n';
+const { c, ui, l: u } = useLang(Astro.url);
+const { site, navOrder, businessPages, contact, social, legal } = c;
 const year = new Date().getFullYear();
-const words = ['更好内容', 'BETTER CONTENT', '更好生活', 'BETTER LIFE'];
+const words = ui.footerWords;
 ---
 <div class="ticker" aria-hidden="true">
   <div class="ticker-track">
@@ -16,23 +18,23 @@ const words = ['更好内容', 'BETTER CONTENT', '更好生活', 'BETTER LIFE'];
   <div class="container">
     <div class="top">
       <div class="brand">
-        <img src={u("/logo-white.png")} alt={site.name} class="logo" width="144" height="33" />
+        <img src={asset("/logo-white.png")} alt={site.name} class="logo" width="177" height="24" />
         <p class="slogan">{site.slogan}</p>
         <p class="muted">{site.fullName} · {site.stockCode}</p>
-        <p class="muted">服务热线 {contact.phone} · 传真 {contact.fax}</p>
+        <p class="muted">{ui.hotline} {contact.phone} · {ui.fax} {contact.fax}</p>
         {contact.address && <p class="muted">{contact.address}</p>}
       </div>
       <div class="col">
-        {navOrder.map((p) => <a href={u(p.href)} class="big link-u">{p.title}</a>)}
+        {navOrder.map((p) => <a href={u(p.href)} class="big link-u">{p.nav ?? p.title}</a>)}
       </div>
       <div class="col">
-        <span class="label">业务与产品</span>
+        <span class="label">{ui.footerBiz}</span>
         {businessPages.map((b) => (
           <a href={u(b.href)} class="biz" style={`--c1:${b.theme?.[0]};--c2:${b.theme?.[1]}`}><i></i>{b.title}</a>
         ))}
       </div>
       <div class="col">
-        <span class="label">关注我们</span>
+        <span class="label">{ui.follow}</span>
         <div class="social">
           {social.map((s) => {
             // 有链接的账号可点击；账号未提供时只显示图标与说明（悬停/聚焦弹出），不做成空链接
@@ -41,7 +43,7 @@ const words = ['更好内容', 'BETTER CONTENT', '更好生活', 'BETTER LIFE'];
               <Tag href={s.href} class:list={['soc', { pending: !s.href }]} target={s.href ? '_blank' : undefined} rel={s.href ? 'noopener' : undefined} tabindex={s.href ? undefined : 0} aria-label={`${s.platform}：${s.account}`}>
                 <span class="soc-name">{s.short}</span>
                 <span class="soc-pop" role="tooltip">
-                  <span class="qr" aria-hidden="true">{s.qr ? '' : '二维码'}</span>
+                  <span class="qr" aria-hidden="true">{s.qr ? '' : ui.qr}</span>
                   <strong>{s.platform}</strong>
                   <small>{s.account}</small>
                 </span>
@@ -55,26 +57,26 @@ const words = ['更好内容', 'BETTER CONTENT', '更好生活', 'BETTER LIFE'];
     <div class="legal">
       <div class="licenses">
         {contact.icp.map((t) => <span>{t}</span>)}
-        <a href={u('/about#licenses')} class="link-u">资质证照</a>
+        <a href={u('/about#licenses')} class="link-u">{ui.licenses}</a>
       </div>
       <div class="links">
-        {legal.map((l) => (l.href === '#' ? <span class="soon" title="文件待提供">{l.label}</span> : <a href={u(l.href)} class="link-u">{l.label}</a>))}
+        {legal.map((l) => (l.href === '#' ? <span class="soon" title={ui.fileSoon}>{l.label}</span> : <a href={u(l.href)} class="link-u">{l.label}</a>))}
       </div>
     </div>
     <div class="bottom">
-      <span>© {year} {site.fullName} 版权所有</span>
+      <span>© {year} {site.fullName} {ui.rights}</span>
     </div>
   </div>
 </footer>
 
 <style>
-  .footer { position: relative; isolation: isolate; background: var(--ink); color: rgba(255,255,255,.7); padding: 88px 0 32px; font-size: 14px; border-radius: 40px 40px 0 0; }
+  .footer { position: relative; isolation: isolate; background: var(--night); color: rgba(255,255,255,.7); padding: 88px 0 32px; font-size: 14px; border-radius: 40px 40px 0 0; }
   .blob { position: absolute; border-radius: 50%; filter: blur(90px); z-index: -1; pointer-events: none; }
   .b1 { width: 480px; height: 480px; background: var(--brand); opacity: .45; right: 0; top: -100px; }
   .b2 { width: 360px; height: 360px; background: var(--violet); opacity: .3; left: 10%; bottom: 0; }
   .footer { overflow: hidden; }
   .top { display: grid; grid-template-columns: 1.6fr 1fr 1fr 1.3fr; gap: 40px; padding-bottom: 48px; }
-  .logo { height: 33px; width: auto; margin-bottom: 20px; }
+  .logo { height: 24px; width: auto; margin-bottom: 20px; }
   .slogan { font-size: clamp(28px, 3.4vw, 44px); font-weight: 900; color: #fff; line-height: 1.2; letter-spacing: .06em; }
   .muted { color: rgba(255,255,255,.45); font-size: 13px; margin-top: 10px; }
   .col { display: flex; flex-direction: column; gap: 10px; align-items: flex-start; }
@@ -91,7 +93,7 @@ const words = ['更好内容', 'BETTER CONTENT', '更好生活', 'BETTER LIFE'];
   .soc:hover, .soc:focus-visible { background: linear-gradient(135deg, var(--brand), var(--brand-2)); transform: translateY(-3px); }
   .soc-pop {
     position: absolute; bottom: calc(100% + 10px); left: 50%; z-index: 5; width: 150px; padding: 12px; border-radius: 16px;
-    background: #fff; color: var(--ink); display: flex; flex-direction: column; align-items: center; gap: 4px; text-align: center;
+    background: #fff; color: #0b1430; display: flex; flex-direction: column; align-items: center; gap: 4px; text-align: center;
     opacity: 0; visibility: hidden; transform: translate(-50%, 8px) scale(.95); transition: opacity .2s, transform .35s var(--spring), visibility .2s;
     box-shadow: 0 20px 40px -16px rgba(0,0,0,.5);
   }

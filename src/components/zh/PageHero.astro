@@ -1,6 +1,7 @@
 ---
 // 栏目页题图：用该栏目的主题色做渐变，配漂浮的几何形状，底部渐隐进全站浅底
-import { u } from '../../lib/url';
+import { useLang } from '../../lib/i18n';
+const { ui, l: u } = useLang(Astro.url);
 interface Props {
   title: string;
   en: string;
@@ -22,8 +23,8 @@ const { title, en, intro, theme = ['#0071ce', '#00c1de'], crumbs = [] } = Astro.
   </div>
   <div class="container inner">
     <div class="text">
-      <nav class="crumbs" aria-label="面包屑">
-        <a href={u("/")} class="link-u">首页</a>
+      <nav class="crumbs" aria-label={ui.crumbs}>
+        <a href={u("/")} class="link-u">{ui.home}</a>
         {crumbs.map((c) => <><span>/</span><a href={u(c.href)} class="link-u">{c.label}</a></>)}
         <span>/</span><span class="here">{title}</span>
       </nav>

@@ -1,7 +1,9 @@
 ---
 // 投资者关系：与其他栏目共用版式，题图右侧放股票行情卡片
 import SectionPage from '../layouts/SectionPage.astro';
-import { pages, site } from '../content/zh';
+import { useLang } from '../lib/i18n';
+const { c, ui } = useLang(Astro.url);
+const { pages, site } = c;
 ---
 <SectionPage page={pages.investors}>
   <!-- 行情卡片：原型中为静态占位，正式版接入行情接口 -->
@@ -9,12 +11,12 @@ import { pages, site } from '../content/zh';
     <div class="q-top">
       <div>
         <div class="q-name">{site.name}</div>
-        <div class="q-code">A股 · {site.stockCode} · 深交所创业板</div>
+        <div class="q-code">{ui.quoteCode}</div>
       </div>
-      <span class="q-tag"><i></i>行情待接入</span>
+      <span class="q-tag"><i></i>{ui.quotePending}</span>
     </div>
     <div class="price">--.--</div>
-    <div class="q-meta"><span>涨跌幅 --</span><span>总市值 --</span><span>成交额 --</span></div>
+    <div class="q-meta">{ui.quoteMeta.map((m) => <span>{m}</span>)}</div>
   </div>
 </SectionPage>
 

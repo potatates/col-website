@@ -1,7 +1,8 @@
 ---
 // 页面底部的“下一章”：一张大号主题色卡片，悬停时箭头飞出、形状转动
-import { u } from '../../lib/url';
+import { useLang } from '../../lib/i18n';
 import type { Page } from '../../content/zh';
+const { ui, l: u } = useLang(Astro.url);
 interface Props { next: Page }
 const { next } = Astro.props;
 const [c1, c2] = next.theme ?? ['#0071ce', '#00c1de'];
@@ -9,7 +10,7 @@ const [c1, c2] = next.theme ?? ['#0071ce', '#00c1de'];
 <div class="container wrap">
   <a href={u(next.href)} class="next spot" style={`--n1:${c1};--n2:${c2}`}>
     <span class="shape" aria-hidden="true"></span>
-    <span class="label">下一章 · NEXT</span>
+    <span class="label">{ui.next}</span>
     <span class="title">{next.title}</span>
     <span class="intro">{next.intro}</span>
     <span class="go" aria-hidden="true">→</span>

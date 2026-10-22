@@ -1,16 +1,17 @@
 ---
 // 每页底部重复出现的“合作咨询”横幅（B 端官网的转化入口），合作页本身不显示
-import { u } from '../../lib/url';
+import { useLang } from '../../lib/i18n';
+const { ui, l: u } = useLang(Astro.url);
 ---
 <section class="container cta-wrap">
   <a href={u('/partner')} class="cta spot reveal">
     <span class="c-shape" aria-hidden="true"></span>
     <span class="c-text">
       <span class="c-en">LET'S WORK TOGETHER</span>
-      <strong>有合作想法？和我们聊聊</strong>
-      <small>内容引进 · IP授权 · 数商合作 · 海外合作 · 供应商准入</small>
+      <strong>{ui.ctaBandTitle}</strong>
+      <small>{ui.ctaBandSub}</small>
     </span>
-    <span class="c-btn">合作咨询 <span class="arrow">→</span></span>
+    <span class="c-btn">{ui.ctaPartner} <span class="arrow">→</span></span>
   </a>
 </section>
 
@@ -18,7 +19,7 @@ import { u } from '../../lib/url';
   .cta-wrap { padding-top: 24px; padding-bottom: 72px; }
   .cta {
     position: relative; overflow: hidden; isolation: isolate; display: flex; align-items: center; justify-content: space-between; gap: 24px; flex-wrap: wrap;
-    padding: 40px 48px; border-radius: 36px; color: #fff; background: linear-gradient(120deg, var(--ink), #16307a 60%, var(--brand));
+    padding: 40px 48px; border-radius: 36px; color: #fff; background: linear-gradient(120deg, var(--night), #16307a 60%, var(--brand));
     transition: transform .6s var(--spring), opacity .8s var(--ease);
   }
   .cta::after { content: ''; position: absolute; inset: 0; z-index: -1; opacity: 0; transition: opacity .3s; background: radial-gradient(380px circle at var(--mx, 50%) var(--my, 50%), rgba(0,193,222,.35), transparent 65%); }
@@ -30,7 +31,7 @@ import { u } from '../../lib/url';
   .c-en { font-size: 12px; font-weight: 700; letter-spacing: .25em; color: var(--brand-2); }
   .c-text strong { font-size: clamp(24px, 3vw, 34px); font-weight: 900; }
   .c-text small { font-size: 14px; opacity: .75; }
-  .c-btn { display: inline-flex; gap: 10px; padding: 14px 28px; border-radius: 999px; background: #fff; color: var(--ink); font-weight: 700; }
+  .c-btn { display: inline-flex; gap: 10px; padding: 14px 28px; border-radius: 999px; background: #fff; color: #0b1430; font-weight: 700; }
   .c-btn .arrow { transition: transform .4s var(--spring); }
   .cta:hover .c-btn .arrow { transform: translateX(6px); }
   @media (max-width: 768px) { .cta { padding: 32px 24px; border-radius: 28px; } }

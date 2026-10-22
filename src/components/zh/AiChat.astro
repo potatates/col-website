@@ -1,8 +1,11 @@
 ---
 // 右下角 AI 助手：浮动按钮 + 对话面板（替代原“回到顶部”按钮）。
 // 原型阶段按关键词匹配预设问答（见 content/zh.ts 的 aiAssistant），交互逻辑在 BaseLayout 的全站脚本里。
-import { aiAssistant } from '../../content/zh';
-const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+import { useLang } from '../../lib/i18n';
+const { c, ui, lang } = useLang(Astro.url);
+const { aiAssistant } = c;
+// 预设答案里的站内链接，英文版加 /en 前缀
+const base = import.meta.env.BASE_URL.replace(/\/$/, '') + (lang === 'en' ? '/en' : '');
 ---
 <div class="ai" id="ai-chat" data-base={base}>
   <script type="application/json" id="ai-data" set:html={JSON.stringify(aiAssistant)} />
@@ -12,9 +15,9 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
       <span class="ai-avatar" aria-hidden="true">✦</span>
       <span class="ai-titles">
         <strong>{aiAssistant.title}</strong>
-        <small>原型 · 预设问答，未接入大模型</small>
+        <small>{ui.aiNote}</small>
       </span>
-      <button class="ai-close" data-ai-close aria-label="关闭">×</button>
+      <button class="ai-close" data-ai-close aria-label={ui.close}>×</button>
     </header>
     <div class="ai-log" id="ai-log" aria-live="polite">
       <div class="msg bot">{aiAssistant.greeting}</div>
@@ -23,13 +26,13 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
       </div>
     </div>
     <form class="ai-form" data-ai-form data-astro-reload>
-      <input name="q" autocomplete="off" placeholder="输入你的问题，例如：怎么洽谈授权？" aria-label="输入问题" />
-      <button type="submit" aria-label="发送">↑</button>
+      <input name="q" autocomplete="off" placeholder={ui.aiPlaceholder} aria-label={ui.aiInput} />
+      <button type="submit" aria-label={ui.send}>↑</button>
     </form>
   </section>
 
   <button class="ai-fab" data-ai-open aria-controls="ai-panel" aria-expanded="false">
-    <span class="spark" aria-hidden="true">✦</span><span class="ai-fab-text">AI 助手</span>
+    <span class="spark" aria-hidden="true">✦</span><span class="ai-fab-text">{ui.aiFab}</span>
   </button>
 </div>
 

@@ -1,17 +1,10 @@
 ---
 // 业务海报墙：首页“业务与产品”板块使用。每项业务一张彩色海报卡，错落排列。
-import { u } from '../../lib/url';
-import { businessPages } from '../../content/zh';
+import { useLang } from '../../lib/i18n';
+const { c, ui, l: u } = useLang(Astro.url);
+const { businessPages } = c;
 
-// 每张海报上的一句话亮点
-const hook: Record<string, string> = {
-  literature: '560万+ 正版内容 · 400万+ 作者',
-  drama: '横琴基地 · 出海短剧 · 影视改编',
-  global: '覆盖 200+ 国家和地区',
-  data: '600TB 多模态数据 · 数十家大模型合作',
-  ai: '“中文逍遥”大模型 · 创作工具',
-  ipr: '近万起维权诉讼',
-};
+const hook = ui.bizHook;
 ---
 <div class="posters">
   {businessPages.map((b, i) => (
@@ -28,8 +21,7 @@ const hook: Record<string, string> = {
 
 <style>
   /* 便当盒（bento）布局：大小不一、错落排列，避免整齐的方格感
-     海外 = 大块主视觉；数商 = 横幅；影视·短剧 = 竖长；版权 / AI / 网文 填充。
-     排位让相邻卡片的颜色顺接：数商(紫→靛) 下接 版权(靛→蓝)，AI(蓝→青) 旁接 网文(青→绿) */
+     网文 = 大块主视觉；影视·短剧 = 横幅；海外 = 竖长；AI / 版权 / 数商 填充（顺序见 10/22 会议） */
   .posters {
     display: grid; gap: 18px;
     grid-template-columns: repeat(12, 1fr);
