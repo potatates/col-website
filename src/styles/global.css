@@ -68,6 +68,7 @@ img { max-width: 100%; display: block; }
 /* ---------- 板块 ---------- */
 .block-section { padding: 110px 0; position: relative; }
 .block-section + .block-section { padding-top: 40px; }
+.block-section.bare { padding-bottom: 0; } /* 无标题的板块（如合作页 AI 入口）紧贴下一板块 */
 
 /* 板块标题：背后是描边英文大字，前面是粗体中文 */
 .s-head { position: relative; margin-bottom: 48px; }

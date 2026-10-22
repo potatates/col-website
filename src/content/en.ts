@@ -671,7 +671,7 @@ const partner: Page = {
   href: '/partner',
   title: 'Partner With Us',
   en: 'PARTNER WITH US',
-  intro: 'Content acquisition, IP licensing, data solutions, international business, suppliers, media: find the right contact, or send us a message.',
+  intro: 'Content acquisition, IP licensing, data, global partnerships, suppliers and media: find the right person, or just ask our AI assistant.',
   sections: [
     { id: 'types', label: 'Partnership Types', en: 'I WANT TO…', title: 'I want to…', blocks: [
       { type: 'contacts', items: [
@@ -716,7 +716,22 @@ reorder(investors, ['highlights', 'letter', 'filings', 'ir-contact']);
 // 在线留言表单已移除（10/22）：咨询改由 AI 助手转交
 partner.sections = partner.sections.filter((x) => !x.blocks.some((b) => b.type === 'form'));
 // Partner page: AI assistant entry (it forwards your request to the right contact)
-partner.sections[0].blocks.unshift({ type: 'aichat', title: 'Not sure who to contact? Just ask our AI assistant', text: 'Tell the AI what you’d like to work on. It will summarize your request and pass it to the right person, so you don’t need to look up contacts yourself.', cta: 'Chat with the AI assistant' });
+// Partner page top: overview of partnership areas, each jumps to its contact card
+partner.sections.unshift({
+  id: 'overview', label: 'Overview', en: 'OVERVIEW', title: 'Ways to work with us',
+  intro: 'From content and IP to data and global distribution, across the whole content value chain. Pick an area to reach the right team.',
+  blocks: [{ type: 'cards', cols: 4, items: [
+    { tag: 'Global', title: 'International Partnerships', text: 'Global distribution, acquisition and co-production of microdramas and webnovels, plus FlareFlow partnerships.', href: '#overseas', color: bizColor.global },
+    { tag: 'Data', title: 'Data Solutions', text: 'Licensed, custom and annotated data for AI and large-model companies.', href: '#data', color: bizColor.data },
+    { tag: 'IP', title: 'IP Licensing', text: 'Film & TV, animation, games, publishing, audio, consumer products and brand collaborations.', href: '#license', color: bizColor.drama },
+    { tag: 'Content', title: 'Content & Distribution', text: 'Acquisition and distribution of webnovels, audio and microdramas, and platform partnerships.', href: '#content', color: bizColor.literature },
+    { tag: 'Investment', title: 'Investment', text: 'Strategic direct investment and industry funds across content, AI and global expansion.', href: '#investment', color: bizColor.ai },
+    { tag: 'Suppliers', title: 'Become a Supplier', text: 'Onboarding for content, technology, production and channel suppliers.', href: '#supplier', color: bizColor.ipr },
+    { tag: 'Media', title: 'Media Inquiries', text: 'Interview and coverage requests, and media materials.', href: '#media', color: bizColor.global },
+    { tag: 'AI', title: 'Not sure who to ask?', text: 'Chat with our AI assistant and it will pass your request to the right person.', href: '#types', color: bizColor.ai },
+  ] }],
+});
+partner.sections.unshift({ id: 'ask-ai', label: 'Ask AI', en: 'ASK AI', bare: true, blocks: [{ type: 'aichat', title: 'Not sure who to contact? Just ask our AI assistant', text: 'Tell the AI what you’d like to work on. It will summarize your request and pass it to the right person, so you don’t need to look up contacts yourself.', cta: 'Chat with the AI assistant' }] });
 
 /* ============ Navigation ============ */
 

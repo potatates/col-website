@@ -31,12 +31,14 @@ const theme = page.theme ?? ['#0071ce', '#00c1de'];
       <SideNav title={page.title} items={page.sections.map((s) => ({ id: s.id, label: s.label }))} />
       <div class="page-body">
         {page.sections.map((s) => (
-          <section id={s.id} class="block-section">
-            <div class="s-head reveal">
-              <span class="s-ghost" aria-hidden="true">{s.en}</span>
-              <h2 class="s-title">{s.title ?? s.label}</h2>
-              {s.intro && <p class="s-intro">{s.intro}</p>}
-            </div>
+          <section id={s.id} class:list={['block-section', { bare: s.bare }]}>
+            {!s.bare && (
+              <div class="s-head reveal">
+                <span class="s-ghost" aria-hidden="true">{s.en}</span>
+                <h2 class="s-title">{s.title ?? s.label}</h2>
+                {s.intro && <p class="s-intro">{s.intro}</p>}
+              </div>
+            )}
             <div class="s-body">
               <Blocks blocks={s.blocks} />
             </div>

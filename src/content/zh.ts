@@ -42,7 +42,8 @@ export type Block =
   | { type: 'logos'; items: string[]; note?: string }
   | { type: 'downloads'; items: { title: string; meta: string }[] };
 
-export type Section = { id: string; label: string; en: string; title?: string; intro?: string; blocks: Block[] };
+// bare：不显示板块标题，直接显示内容（如合作页顶部的 AI 入口）
+export type Section = { id: string; label: string; en: string; title?: string; intro?: string; blocks: Block[]; bare?: boolean };
 export type Page = { key: string; href: string; title: string; nav?: string; en: string; intro: string; sections: Section[]; theme?: [string, string] };
 
 /* ============ 站点信息 ============ */
@@ -720,7 +721,7 @@ const partner: Page = {
   href: '/partner',
   title: '合作',
   en: 'PARTNER WITH US',
-  intro: '内容引进、IP授权、数商、海外、供应商、媒体……找到对应的人，或直接留言给我们。',
+  intro: '内容引进、IP授权、数商、海外、供应商、媒体……找到对应的人，或直接问 AI 助手。',
   sections: [
     { id: 'types', label: '合作类型', en: 'I WANT TO…', title: '我想……', blocks: [
       { type: 'contacts', items: [
@@ -770,7 +771,22 @@ reorder(investors, ['highlights', 'letter', 'filings', 'ir-contact']);
 // 在线留言表单已移除（10/22）：咨询改由 AI 助手转交
 partner.sections = partner.sections.filter((x) => !x.blocks.some((b) => b.type === 'form'));
 // 合作页顶部：AI 助手入口（说明需求后由 AI 转给对应负责人）
-partner.sections[0].blocks.unshift({ type: 'aichat', title: '不知道该找谁？直接问 AI 助手', text: '告诉 AI 你想合作什么，它会整理你的需求并转给对应的负责人，无需自己查找联系方式。', cta: '和 AI 助手聊聊' });
+// 合作页最上方：合作方向总览，点击跳到对应的合作卡片
+partner.sections.unshift({
+  id: 'overview', label: '合作总览', en: 'OVERVIEW', title: '可以和我们合作什么',
+  intro: '从内容、IP 到数据与出海，覆盖内容产业的上下游。选择方向，直达对应负责人。',
+  blocks: [{ type: 'cards', cols: 4, items: [
+    { tag: '海外', title: '海外合作', text: '短剧与网文的海外发行、引进与联合制作，FlareFlow 平台合作。', href: '#overseas', color: bizColor.global },
+    { tag: '数商', title: '数据与语料', text: '面向 AI 与大模型企业的正版数据、定制数据与标注服务。', href: '#data', color: bizColor.data },
+    { tag: 'IP授权', title: 'IP 授权与衍生', text: '影视、动漫、游戏、出版、有声、消费品与品牌联名授权。', href: '#license', color: bizColor.drama },
+    { tag: '内容', title: '内容引进与渠道', text: '网文、有声、短剧的内容引进与分发，平台和终端渠道合作。', href: '#content', color: bizColor.literature },
+    { tag: '投资', title: '投资合作', text: '战略直投与产业基金，围绕内容、AI 与出海的产业布局。', href: '#investment', color: bizColor.ai },
+    { tag: '供应商', title: '成为供应商', text: '内容、技术、制作与渠道代理等供应商准入。', href: '#supplier', color: bizColor.ipr },
+    { tag: '媒体', title: '媒体采访', text: '采访与报道需求，以及媒体资料获取。', href: '#media', color: bizColor.global },
+    { tag: 'AI', title: '不确定找谁？', text: '直接和 AI 助手聊，它会把你的需求转给对应负责人。', href: '#types', color: bizColor.ai },
+  ] }],
+});
+partner.sections.unshift({ id: 'ask-ai', label: '问 AI 助手', en: 'ASK AI', bare: true, blocks: [{ type: 'aichat', title: '不知道该找谁？直接问 AI 助手', text: '告诉 AI 你想合作什么，它会整理你的需求并转给对应的负责人，无需自己查找联系方式。', cta: '和 AI 助手聊聊' }] });
 
 /* ============ 导航 ============ */
 
