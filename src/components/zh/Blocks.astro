@@ -5,7 +5,7 @@ import { useLang } from '../../lib/i18n';
 import type { Block } from '../../content/zh';
 const { ui, l: u } = useLang(Astro.url);
 // 深色模式下黑色字的 logo 换成白字版本（public/products/*-dark.png）
-const DARK_LOGOS = ['flareflow', 'cyshenbi', '4yt'];
+const DARK_LOGOS = ['flareflow', 'cyshenbi', '4yt', '17k']; // 17k-dark 为官方反白版
 import PosterImg from './PosterImg.astro';
 
 interface Props { blocks: Block[] }
