@@ -6,17 +6,22 @@ const { c, ui } = useLang(Astro.url);
 const { pages, site } = c;
 ---
 <SectionPage page={pages.investors}>
-  <!-- 行情卡片：原型中为静态占位，正式版接入行情接口 -->
+  <!-- 行情卡片：数值由 BaseLayout 全站脚本读取腾讯财经公开行情后填入（data-stock），读取失败时标签显示“行情暂不可用” -->
   <div class="quote" slot="aside">
     <div class="q-top">
       <div>
         <div class="q-name">{site.name}</div>
         <div class="q-code">{ui.quoteCode}</div>
       </div>
-      <span class="q-tag"><i></i>{ui.quotePending}</span>
+      <span class="q-tag"><i></i><span data-stock="status" data-stock-live={ui.quoteLive} data-stock-fail={ui.quoteFail}>{ui.quoteLoading}</span></span>
     </div>
-    <div class="price">--.--</div>
-    <div class="q-meta">{ui.quoteMeta.map((m) => <span>{m}</span>)}</div>
+    <div class="q-price"><span class="price" data-stock="price">--.--</span><span class="q-chg" data-stock="chg"></span></div>
+    <div class="q-meta">
+      <span>{ui.quoteMeta[0]} <b data-stock="pct">--</b></span>
+      <span>{ui.quoteMeta[1]} <b data-stock="cap">--</b></span>
+      <span>{ui.quoteMeta[2]} <b data-stock="amount">--</b></span>
+      <a href="https://quote.eastmoney.com/sz300364.html" target="_blank" rel="noopener">{ui.quoteMore} ↗</a>
+    </div>
   </div>
 </SectionPage>
 
@@ -37,6 +42,15 @@ const { pages, site } = c;
   .q-tag { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; padding: 3px 10px; border-radius: 999px; background: rgba(255,255,255,.12); white-space: nowrap; }
   .q-tag i { width: 6px; height: 6px; border-radius: 50%; background: var(--brand-2); animation: pulse 1.6s infinite; }
   @keyframes pulse { 50% { opacity: .3; } }
-  .price { font-size: 52px; font-weight: 700; margin: 20px 0 10px; font-variant-numeric: tabular-nums; }
-  .q-meta { display: flex; gap: 20px; font-size: 13px; opacity: .65; flex-wrap: wrap; }
+  .q-price { display: flex; align-items: baseline; gap: 14px; margin: 20px 0 10px; font-variant-numeric: tabular-nums; }
+  .price { font-size: 52px; font-weight: 700; line-height: 1.1; }
+  .q-chg { font-size: 18px; font-weight: 700; }
+  .q-meta { display: flex; gap: 8px 20px; font-size: 13px; flex-wrap: wrap; align-items: baseline; }
+  .q-meta span { opacity: .7; }
+  .q-meta b { font-weight: 700; font-variant-numeric: tabular-nums; opacity: 1; }
+  .q-meta a { margin-left: auto; font-weight: 600; opacity: .85; }
+  .q-meta a:hover { opacity: 1; text-decoration: underline; }
+  /* 题图底色较深：涨跌用更亮的红绿 */
+  .quote :global(.stock-up) { color: #ff7a7f !important; }
+  .quote :global(.stock-down) { color: #4ade80 !important; }
 </style>

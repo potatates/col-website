@@ -294,22 +294,6 @@ const isNum = (v: string) => /^[\d,]+$/.test(v);
       );
     }
 
-    case 'stock':
-      // 实时股价：数值由 BaseLayout 全站脚本填入（data-stock），读取失败时保持 --
-      return (
-        <div class="b-stock reveal">
-          <div class="sk-id"><strong>{b.name}</strong><span>{b.code}</span></div>
-          <div class="sk-price"><strong data-stock="price">--.--</strong><span data-stock="chg"></span><span data-stock="pct"></span></div>
-          <dl class="sk-meta">
-            <div><dt>{ui.stockOpen}</dt><dd data-stock="open">--</dd></div>
-            <div><dt>{ui.stockHigh}</dt><dd data-stock="high">--</dd></div>
-            <div><dt>{ui.stockLow}</dt><dd data-stock="low">--</dd></div>
-            <div><dt>{ui.stockCap}</dt><dd data-stock="cap">--</dd></div>
-          </dl>
-          <p class="sk-note"><span data-stock="time"></span> {b.note} · <a href={b.link.href} target="_blank" rel="noopener">{b.link.label} ↗</a></p>
-        </div>
-      );
-
     case 'aichat':
       // 打开右下角 AI 助手（BaseLayout 中 [data-ai-chat] 的点击处理）
       return (
@@ -384,7 +368,7 @@ const isNum = (v: string) => /^[\d,]+$/.test(v);
                   </div>
                 ))}
               </div>
-              <button class="card-go cc-go" data-topic={c.title} data-ai-chat>{ui.sendInquiry} <span class="arrow">→</span></button>
+              <button class="card-go cc-go" data-topic={c.id} data-ai-chat>{ui.sendInquiry} <span class="arrow">→</span></button>
             </div>
           ))}
         </div>
@@ -574,20 +558,6 @@ const isNum = (v: string) => /^[\d,]+$/.test(v);
     padding: 10px 18px; border-radius: 999px; background: var(--surface); font-size: 15px; font-weight: 500; cursor: default;
     box-shadow: 0 6px 16px -10px rgba(10,22,48,.25); transition: transform .4s var(--spring), background .25s, color .25s;
   }
-
-  /* 实时股价 */
-  .b-stock { display: grid; grid-template-columns: auto 1fr; align-items: center; gap: 16px 40px; padding: 28px 32px; margin-bottom: 40px; border-radius: 28px; background: var(--surface); box-shadow: 0 18px 40px -26px rgba(10,22,48,.35); }
-  .sk-id { display: flex; flex-direction: column; }
-  .sk-id strong { font-size: 18px; color: var(--ink); }
-  .sk-id span { font-size: 13px; color: var(--muted); font-weight: 700; letter-spacing: .05em; }
-  .sk-price { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; font-variant-numeric: tabular-nums; }
-  .sk-price strong { font-size: clamp(40px, 5vw, 56px); font-weight: 900; line-height: 1; color: var(--ink); }
-  .sk-price span { font-size: 18px; font-weight: 700; }
-  .sk-meta { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; padding-top: 16px; border-top: 1px solid var(--line); }
-  .sk-meta dt { font-size: 12px; color: var(--muted); }
-  .sk-meta dd { font-size: 16px; font-weight: 700; color: var(--ink); font-variant-numeric: tabular-nums; }
-  .sk-note { grid-column: 1 / -1; font-size: 12px; color: var(--muted); }
-  .sk-note a { color: var(--brand); font-weight: 700; }
 
   /* 步骤：彩色圆形编号 + 连线 */
   .b-steps { list-style: none; display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 16px; position: relative; }
@@ -847,8 +817,6 @@ const isNum = (v: string) => /^[\d,]+$/.test(v);
     .b-covers { grid-template-columns: repeat(3, 1fr); gap: 12px; }
     .b-cover:nth-child(even) { margin-top: 0; }
     .b-covers .cover { font-size: 12px; padding: 10px; border-radius: 14px; }
-    .b-stock { grid-template-columns: 1fr; padding: 24px; gap: 12px; }
-    .sk-meta { grid-template-columns: repeat(2, 1fr); }
     .b-steps { grid-auto-flow: row; }
     .b-steps::before { display: none; }
     /* 带颜色的步骤（业务总览）：手机上排成两行，每行三个 */

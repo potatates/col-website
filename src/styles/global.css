@@ -79,6 +79,8 @@ img { max-width: 100%; display: block; }
   display: block; font-size: clamp(56px, 10vw, 140px); font-weight: 900; line-height: .9; letter-spacing: -.02em;
   color: transparent; -webkit-text-stroke: 1.5px rgba(0,113,206,.16); white-space: nowrap; user-select: none;
   margin-bottom: -.42em; pointer-events: none;
+  /* 长单词（如 HEADQUARTERS）在手机上比屏幕还宽：裁掉超出部分，否则手机 Safari 会把整页缩小，右侧留白 */
+  overflow: hidden;
 }
 .s-title { position: relative; font-size: clamp(30px, 4vw, 52px); font-weight: 800; line-height: 1.2; color: var(--ink); letter-spacing: .01em; }
 .s-title .hl { background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent; }

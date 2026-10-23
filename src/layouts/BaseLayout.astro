@@ -142,7 +142,8 @@ const docTitle = lang === 'en' ? title.replace('_', ' | ') : title;
 
       // ---------------- AI 助手（原型：关键词匹配预设问答） ----------------
       type Faq = { q: string; keywords: string[]; a: string; link?: { label: string; href: string } };
-      type Contact = { keywords: string[]; a: string; template: string; slot: string; fill: string; unfilled: string; received: string; topics: { name: string; keywords: string[] }[]; other: string };
+      type Field = { label: string; placeholder: string };
+      type Contact = { keywords: string[]; a: string; org: Field; who: Field; topic: string; need: Field; reach: Field; submit: string; missing: string; received: string; topics: { id: string; name: string }[] };
       const aiData = () => JSON.parse(document.getElementById('ai-data')?.textContent || '{}') as { faq: Faq[]; suggestions: string[]; fallback: string; contact: Contact };
       const aiBox = () => document.getElementById('ai-chat');
       function aiToggle(open?: boolean) {
@@ -151,7 +152,12 @@ const docTitle = lang === 'en' ? title.replace('_', ' | ') : title;
         const on = open ?? !box.classList.contains('open');
         box.classList.toggle('open', on);
         box.querySelector('#ai-panel')?.setAttribute('aria-hidden', String(!on));
-        box.querySelector('[data-ai-open]')?.setAttribute('aria-expanded', String(on));
+        box.querySelector('.ai-fab')?.setAttribute('aria-expanded', String(on));
+        if (on) {
+          // 打开过一次后：本次会话不再弹出问候气泡
+          box.classList.remove('nudge');
+          try { sessionStorage.setItem('ai-seen', '1'); } catch {}
+        }
         if (on) setTimeout(() => box.querySelector<HTMLTextAreaElement>('.ai-form [name=q]')?.focus(), 250);
       }
       function aiAdd(cls: string, html: string) {
@@ -174,18 +180,13 @@ const docTitle = lang === 'en' ? title.replace('_', ' | ') : title;
         const low = text.toLowerCase();
         const has = (ks: string[]) => ks.some((k) => low.includes(k.toLowerCase()));
         const exact = faq.find((f) => f.q === text);
-        // 填好的合作留言（带联系方式，或照模板写的）：模拟转交给对应负责人
-        const filled = !exact && (/@|1\d{10}|\d{3,4}-?\d{7,8}/.test(text) || /联系方式|contact:/i.test(text));
-        const wantsContact = !exact && !filled && has(contact.keywords);
-        const hit = exact ?? (filled || wantsContact ? undefined : faq.find((f) => has(f.keywords)));
+        const wantsContact = !exact && has(contact.keywords);
+        const hit = exact ?? (wantsContact ? undefined : faq.find((f) => has(f.keywords)));
         const base = aiBox()?.dataset.base ?? '';
         setTimeout(() => {
           if (!typing) return;
-          if (filled) {
-            const topic = contact.topics.find((t) => has(t.keywords))?.name ?? contact.other;
-            typing.innerHTML = esc(/[【\[]/.test(text) ? contact.unfilled : contact.received.replace('{topic}', topic));
-          } else if (wantsContact) {
-            typing.innerHTML = aiTemplate(contact);
+          if (wantsContact) {
+            aiLead(typing, contact);
           } else if (hit) {
             // 页面路径补结尾“/”，避免 GitHub Pages 跳转时丢掉 #锚点（同 lib/url.ts）
             const href = hit.link ? hit.link.href.replace(/^([^?#]*?)(\/?)([?#].*)?$/, (_m: string, p: string, _s: string, r = '') => `${p}/${r}`) : '';
@@ -199,10 +200,25 @@ const docTitle = lang === 'en' ? title.replace('_', ' | ') : title;
           if (log) log.scrollTop = log.scrollHeight;
         }, reduce ? 0 : 650);
       }
-      // 合作留言模板：显示模板 + “填写模板”按钮（点击后填进输入框）；topic 为合作卡片名时预先填好合作方向
-      function aiTemplate(contact: Contact, topic?: string) {
-        const t = topic ? contact.template.replace(contact.slot, topic) : contact.template;
-        return `${esc(contact.a)}<div class="ai-tpl">${esc(t)}</div><div class="ai-chips" style="margin-top:10px"><button class="ai-chip ai-fill" data-ai-fill="${esc(t)}">${esc(contact.fill)}</button></div>`;
+      // 合作留言卡：在对话里放一张小表单（填空 + 点选合作方向）；topic 为合作卡片 id 时预先选好方向
+      let leadCount = 0;
+      function aiLead(el: HTMLElement, contact: Contact, topic?: string) {
+        const n = ++leadCount;
+        const field = (name: string, f: Field, area = false) =>
+          `<label class="lead-f"><span>${esc(f.label)}</span>${area
+            ? `<textarea name="${name}" rows="2" placeholder="${esc(f.placeholder)}"></textarea>`
+            : `<input name="${name}" placeholder="${esc(f.placeholder)}" autocomplete="off">`}</label>`;
+        const opts = contact.topics.map((t) =>
+          `<label class="lead-opt"><input type="radio" name="topic" value="${esc(t.name)}"${t.id === topic ? ' checked' : ''}><span>${esc(t.name)}</span></label>`).join('');
+        el.classList.add('has-lead');
+        el.innerHTML = `${esc(contact.a)}<form class="lead" data-ai-lead data-astro-reload novalidate>
+          ${field('org', contact.org)}${field('who', contact.who)}
+          <fieldset class="lead-f"><legend>${esc(contact.topic)}</legend><div class="lead-opts">${opts}</div></fieldset>
+          ${field('need', contact.need, true)}${field('reach', contact.reach)}
+          <p class="lead-err" aria-live="polite"></p>
+          <button type="submit">${esc(contact.submit)} <span aria-hidden="true">→</span></button>
+        </form>`;
+        el.querySelector('form')!.id = `lead-${n}`;
       }
       // 合作页的 AI 入口与各合作卡片按钮：打开 AI 助手（捕获阶段拦截，不跳转页面）；卡片按钮直接给出对应方向的模板
       document.addEventListener('click', (e) => {
@@ -212,28 +228,46 @@ const docTitle = lang === 'en' ? title.replace('_', ' | ') : title;
         e.stopPropagation();
         aiToggle(true);
         const topic = btn.dataset.topic;
-        if (topic) aiAdd('bot', aiTemplate(aiData().contact, topic));
+        if (topic) {
+          const el = aiAdd('bot', '');
+          if (el) { aiLead(el, aiData().contact, topic); el.scrollIntoView({ block: 'nearest' }); }
+        }
       }, true);
       document.addEventListener('click', (e) => {
         const t = e.target as HTMLElement;
+        if (t.closest('[data-ai-nudge-close]')) {
+          aiBox()?.classList.remove('nudge');
+          try { sessionStorage.setItem('ai-seen', '1'); } catch {}
+          return;
+        }
+        if (t.closest('.ai-nudge [data-ai-open]')) { aiToggle(true); return; }
         if (t.closest('[data-ai-open]')) { aiToggle(); return; }
         if (t.closest('[data-ai-close]')) { aiToggle(false); return; }
         const chip = t.closest<HTMLElement>('[data-ai-q]');
         if (chip) { aiAsk(chip.dataset.aiQ!); return; }
-        const fill = t.closest<HTMLElement>('[data-ai-fill]');
-        if (fill) {
-          const input = document.querySelector<HTMLTextAreaElement>('#ai-chat .ai-form [name=q]');
-          if (!input) return;
-          input.value = fill.dataset.aiFill!;
-          input.dispatchEvent(new Event('input', { bubbles: true }));
-          input.focus();
-          // 选中第一个待填的【】，直接输入即可替换
-          const m = /【[^】]*】|\[[^\]]*\]/.exec(input.value);
-          if (m) input.setSelectionRange(m.index, m.index + m[0].length);
-          return;
-        }
         if (t.closest('[data-ai-link]')) aiToggle(false);
       });
+      // 发送合作留言卡：需选方向并留联系方式；发送后卡片锁定，显示一条整理好的留言与“已转交”回复
+      document.addEventListener('submit', (e) => {
+        const form = (e.target as HTMLElement).closest<HTMLFormElement>('[data-ai-lead]');
+        if (!form) return;
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        const { contact } = aiData();
+        const data = new FormData(form);
+        const v = (k: string) => (data.get(k) as string | null)?.trim() ?? '';
+        if (!v('topic') || !v('reach')) {
+          form.querySelector('.lead-err')!.textContent = contact.missing;
+          return;
+        }
+        form.querySelector('.lead-err')!.textContent = '';
+        form.querySelectorAll('input, textarea, button').forEach((x) => ((x as HTMLInputElement).disabled = true));
+        form.classList.add('sent');
+        const lines = [v('topic'), [v('org'), v('who')].filter(Boolean).join(' · '), v('need'), v('reach')].filter(Boolean);
+        aiAdd('user', lines.map(esc).join('<br>'));
+        const typing = aiAdd('bot', '<span class="typing"><i></i><i></i><i></i></span>');
+        setTimeout(() => { if (typing) typing.textContent = contact.received.replace('{topic}', v('topic')); }, reduce ? 0 : 650);
+      }, true);
       document.addEventListener('submit', (e) => {
         const form = (e.target as HTMLElement).closest<HTMLFormElement>('[data-ai-form]');
         if (!form) return;
@@ -435,10 +469,16 @@ const docTitle = lang === 'en' ? title.replace('_', ' | ') : title;
                 high: Number(f[33]).toFixed(2),
                 low: Number(f[34]).toFixed(2),
                 cap: en ? `CNY ${(Number(f[45]) / 10).toFixed(2)} bn` : `${Number(f[45]).toFixed(2)} 亿元`,
+                // 成交额：接口单位为万元
+                amount: en ? `CNY ${(Number(f[37]) / 100).toFixed(0)} M` : `${(Number(f[37]) / 10000).toFixed(2)} 亿元`,
                 time: t.length >= 12 ? `${en ? 'As of' : '更新于'} ${t.slice(4, 6)}-${t.slice(6, 8)} ${t.slice(8, 10)}:${t.slice(10, 12)} ·` : '',
               };
               document.querySelectorAll<HTMLElement>('[data-stock]').forEach((el) => {
                 const k = el.dataset.stock!;
+                if (k === 'status') {
+                  el.textContent = `${el.dataset.stockLive} · ${t.slice(8, 10)}:${t.slice(10, 12)}`;
+                  return;
+                }
                 if (!(k in vals)) return;
                 el.textContent = vals[k];
                 if (k === 'price' || k === 'chg' || k === 'pct') {
@@ -451,7 +491,32 @@ const docTitle = lang === 'en' ? title.replace('_', ' | ') : title;
           };
           loadStock();
           const timer = setInterval(loadStock, 60_000);
-          cleanups.push(() => clearInterval(timer));
+          // 8 秒后仍没有数据（接口被网络拦截等）：行情卡片标签改为“行情暂不可用”，保留“完整行情”链接
+          const failTimer = setTimeout(() => {
+            if (Number((window as any).v_sz300364?.split('~')[3])) return;
+            document.querySelectorAll<HTMLElement>('[data-stock-fail]').forEach((el) => { el.textContent = el.dataset.stockFail!; });
+          }, 8000);
+          cleanups.push(() => { clearInterval(timer); clearTimeout(failTimer); });
+        }
+
+        // AI 助手更醒目：本次会话还没打开过时，进站 3 秒后弹出一次问候气泡，10 秒后自动收起（光环见 AiChat 样式）
+        {
+          const box = aiBox();
+          let seen = false;
+          try { seen = sessionStorage.getItem('ai-seen') === '1'; } catch {}
+          if (box && !seen) {
+            let shown = false;
+            try { shown = sessionStorage.getItem('ai-nudged') === '1'; } catch {}
+            if (!shown) {
+              const t1 = setTimeout(() => {
+                if (box.classList.contains('open')) return;
+                box.classList.add('nudge');
+                try { sessionStorage.setItem('ai-nudged', '1'); } catch {}
+              }, 3000);
+              const t2 = setTimeout(() => box.classList.remove('nudge'), 13000);
+              cleanups.push(() => { clearTimeout(t1); clearTimeout(t2); });
+            }
+          }
         }
 
         if (fromDropdown) {

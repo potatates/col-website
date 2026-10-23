@@ -33,8 +33,6 @@ export type Block =
   | { type: 'contact'; items: { k: string; v: string }[]; cta?: { label: string; href: string } }
   | { type: 'ipwall'; items: IP[]; note?: string }
   | { type: 'aichat'; title: string; text: string; cta: string }
-  // 实时股价（腾讯财经公开行情，页面打开时读取）
-  | { type: 'stock'; name: string; code: string; note: string; link: { label: string; href: string } }
   | { type: 'videos'; items: { title: string; sub?: string; vertical?: boolean; src?: string }[]; note?: string }
   | { type: 'people'; items: Person[]; cols?: 2 | 3 | 4 }
   | { type: 'contacts'; items: { id: string; tag: string; title: string; text: string; people: Person[] }[] }
@@ -628,7 +626,6 @@ const investors: Page = {
   intro: '以AI为技术底座、以内容为核心资产、以全球化为发展方向。A股代码 300364.SZ。',
   sections: [
     { id: 'highlights', label: '投资亮点', en: 'HIGHLIGHTS', title: '投资亮点', blocks: [
-      { type: 'stock', name: '中文在线', code: '300364.SZ', note: '行情来源：腾讯财经，约有数秒至数分钟延迟', link: { label: '查看完整行情', href: 'https://quote.eastmoney.com/sz300364.html' } },
       { type: 'stats', items: irHighlights, note: '数据来源：2026年董事长致股东信、2026年半年度报告' },
     ] },
     { id: 'letter', label: '致股东信', en: 'LETTER', title: '董事长致股东信', blocks: [
@@ -760,7 +757,7 @@ reorder(about, ['intro', 'culture', 'history', 'strategy', 'honors', 'licenses']
 reorder(ipPage, ['wall', 'trailers', 'cases', 'license', 'library']);
 // 数商服务（10/22 会议）：只保留服务类型与资源规模
 reorder(dataPage, ['services', 'scale']);
-// 投资者关系（10/22 会议：只留基础信息）：亮点 → 致股东信 → 报告与公告 → 联系；股价在页头
+// 投资者关系（10/22 会议：只留基础信息）：亮点 → 致股东信 → 报告与公告 → 联系；实时股价在题图右侧的行情卡片
 reorder(investors, ['highlights', 'letter', 'filings', 'ir-contact']);
 
 // 合作：卡片按受众优先级排列（海外 → 数商 → IP授权 → 内容渠道 → 投资 → 供应商 → 媒体），表单选项同序
@@ -830,32 +827,35 @@ export const aiAssistant = {
   greeting: '你好！我可以帮你快速找到中文在线的业务、IP作品和投资者信息，也可以把你的合作需求转给对应负责人。试试下面的问题：',
   fallback: '这个问题我暂时回答不了（原型阶段尚未接入大模型）。你可以试试下面的问题；想找人合作，直接说“我想合作”。',
   suggestions: ['我想找你们合作', '中文在线是做什么的？', '怎么洽谈IP授权？', '有哪些产品？', '在哪里看财报和股价？'],
-  // 合作 / 联系：给出留言模板，填好发回后模拟“已转交负责人”
+  // 合作 / 联系：在对话里弹出一张留言卡（填空 + 点选合作方向），发送后模拟“已转交负责人”
   contact: {
     keywords: ['合作', '联系', '对接', '洽谈', '商务', '负责人', '找人'],
-    a: '好的！点下面的“填写模板”，把【】里的内容换成你的信息发给我，我会整理后转给对应负责人：',
-    template: '我是【公司 / 机构】的【姓名 · 职位】，想洽谈【合作方向：海外 / 数商 / IP授权 / 内容渠道 / 投资 / 供应商 / 媒体】。需求简述：【一两句话】。联系方式：【电话或邮箱】',
-    slot: '【合作方向：海外 / 数商 / IP授权 / 内容渠道 / 投资 / 供应商 / 媒体】',
-    fill: '填写模板',
-    unfilled: '模板里还有【】没有填完哦，换成你的信息再发给我。',
+    a: '好的！填一下这张卡片，我会整理后转给对应负责人：',
+    org: { label: '公司 / 机构', placeholder: '例如：星河影业' },
+    who: { label: '姓名 · 职位', placeholder: '例如：张三 · 制片人' },
+    topic: '想合作什么',
+    need: { label: '需求简述', placeholder: '一两句话说说你的想法' },
+    reach: { label: '联系方式', placeholder: '电话或邮箱' },
+    submit: '发送给负责人',
+    missing: '请选一个合作方向，并留下联系方式',
     received: '收到！已整理为一条「{topic}」需求，会转给对应负责人，一般 1–2 个工作日内联系你。（原型阶段不会真的发送）',
     topics: [
-      { name: '海外合作', keywords: ['海外', '出海', 'flareflow', '翻译', '发行'] },
-      { name: '数商合作', keywords: ['数商', '数据', '语料', '训练', '大模型'] },
-      { name: 'IP授权', keywords: ['授权', 'ip', '改编', '版权'] },
-      { name: '引进内容 / 渠道合作', keywords: ['渠道', '引进', '分发', '内容'] },
-      { name: '投资合作', keywords: ['投资', '融资', '基金'] },
-      { name: '成为供应商', keywords: ['供应商', '采购', '供应'] },
-      { name: '媒体采访', keywords: ['媒体', '采访', '报道', '记者'] },
+      { id: 'overseas', name: '海外合作' },
+      { id: 'data', name: '数商合作' },
+      { id: 'license', name: 'IP授权' },
+      { id: 'content', name: '内容 / 渠道' },
+      { id: 'investment', name: '投资合作' },
+      { id: 'supplier', name: '成为供应商' },
+      { id: 'media', name: '媒体采访' },
+      { id: 'other', name: '其他' },
     ],
-    other: '商务合作',
   },
   faq: [
     { q: '中文在线是做什么的？', keywords: ['做什么', '介绍', '公司', '是谁', '业务', '简介'],
       a: '中文在线是AI驱动的全球领先数字文娱平台，2000年源于清华大学，2015年在深交所创业板上市（300364）。业务覆盖网络文学、影视·短剧、海外、AI与创作工具、版权保护和数商。',
       link: { label: '看业务版图', href: '/business' } },
     { q: '怎么洽谈IP授权？', keywords: ['ip', '改编', '罗小黑', '一品布衣', '修罗武神', '乙游'],
-      a: '「IP作品」页有IP墙、预告片和改编案例，可以先看看感兴趣的作品。想洽谈授权，跟我说“我想合作”，按模板留下需求，我会转给IP授权负责人。',
+      a: '「IP作品」页有IP墙、预告片和改编案例，可以先看看感兴趣的作品。想洽谈授权，跟我说“我想合作”，填一张留言卡，我会转给IP授权负责人。',
       link: { label: '看IP作品', href: '/ip#wall' } },
     { q: '有哪些产品？', keywords: ['产品', '17k', '四月天', '逍遥', '次元神笔', 'app', '下载', '小说', '看剧'],
       a: '主要产品有 FlareFlow（海外短剧）、次元神笔（AI漫剧）、逍遥AI（AI创作）、17K小说网和四月天（网络文学）。',
@@ -892,10 +892,6 @@ export const ui = {
   mobileNav: '移动端导航',
   openMenu: '打开菜单',
   toggleTheme: '切换深色 / 浅色',
-  stockOpen: '今开',
-  stockHigh: '最高',
-  stockLow: '最低',
-  stockCap: '总市值',
   stockPending: '中文在线实时股价（腾讯财经）',
   crumbs: '面包屑',
   pageNav: '本页导航',
@@ -960,9 +956,14 @@ export const ui = {
   aiPlaceholder: '输入问题，或说“我想合作”',
   aiInput: '输入问题',
   send: '发送',
-  aiFab: 'AI 助手',
+  aiFab: '问问 AI 助手',
+  aiNudge: '有问题？问我就行：找业务、看IP、联系合作负责人都可以。',
+  aiNudgeGo: '开始提问',
   // 投资者行情卡
   quoteCode: 'A股 · 300364.SZ · 深交所创业板',
-  quotePending: '行情待接入',
-  quoteMeta: ['涨跌幅 --', '总市值 --', '成交额 --'],
+  quoteLoading: '行情加载中',
+  quoteLive: '实时行情',
+  quoteFail: '行情暂不可用',
+  quoteMeta: ['涨跌幅', '总市值', '成交额'],
+  quoteMore: '完整行情',
 };
