@@ -819,7 +819,13 @@ const isNum = (v: string) => /^[\d,]+$/.test(v);
     .b-covers .cover { font-size: 12px; padding: 10px; border-radius: 14px; }
     .b-steps { grid-auto-flow: row; }
     .b-steps::before { display: none; }
-    .step.colored::after { display: none; }
+    /* 带颜色的步骤（业务总览）：手机上排成两行，每行三个 */
+    .b-steps:has(.step.colored) { grid-template-columns: repeat(3, 1fr); gap: 24px 10px; }
+    .step.colored .step-no { width: 44px; height: 44px; font-size: 14px; margin-bottom: 6px; }
+    .step.colored strong { font-size: 15px; }
+    .step.colored span:last-child:not(.step-no) { font-size: 12px; line-height: 1.5; }
+    .step.colored::after { left: 50px; right: -6px; top: 21px; }
+    .step.colored:nth-child(3n)::after { display: none; }
     .b-timeline { grid-template-columns: 1fr 1fr; }
     .b-timeline li:nth-child(even) { margin-top: 0; }
     .b-honors { columns: 1; }

@@ -339,10 +339,15 @@ const docTitle = lang === 'en' ? title.replace('_', ' | ') : title;
               a.classList.toggle('active', on);
               if (!on) return;
               // 让当前条目在导航里可见：手机横向条左右滚动，桌面侧栏上下滚动
+              // 手机端不显示小板块，按它所属的一级条目定位（否则隐藏条目的位置为 0，导航条会往回跳）
+              const shown = a.getClientRects().length ? a : a.closest('.rail-item')?.querySelector<HTMLElement>('.rail-link');
               const list = a.closest<HTMLElement>('.rail-list');
-              if (list && list.scrollWidth > list.clientWidth) {
-                const dx = a.getBoundingClientRect().left - list.getBoundingClientRect().left;
-                list.scrollTo({ left: list.scrollLeft + dx - 16, behavior: 'smooth' });
+              if (shown && list && list.scrollWidth > list.clientWidth) {
+                const dx = shown.getBoundingClientRect().left - list.getBoundingClientRect().left;
+                // 目标不能超出可滚动范围：超出时手机 Safari 会先冲过头再弹回来
+                const max = list.scrollWidth - list.clientWidth;
+                const left = Math.max(0, Math.min(max, Math.round(list.scrollLeft + dx - 16)));
+                if (left !== Math.round(list.scrollLeft)) list.scrollTo({ left, behavior: 'smooth' });
               }
               const rail = a.closest<HTMLElement>('.rail');
               if (rail && rail.scrollHeight > rail.clientHeight) {
