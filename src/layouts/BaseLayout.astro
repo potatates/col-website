@@ -142,7 +142,8 @@ const docTitle = lang === 'en' ? title.replace('_', ' | ') : title;
 
       // ---------------- AI 助手（原型：关键词匹配预设问答） ----------------
       type Faq = { q: string; keywords: string[]; a: string; link?: { label: string; href: string } };
-      const aiData = () => JSON.parse(document.getElementById('ai-data')?.textContent || '{}') as { faq: Faq[]; suggestions: string[]; fallback: string };
+      type Contact = { keywords: string[]; a: string; template: string; slot: string; fill: string; unfilled: string; received: string; topics: { name: string; keywords: string[] }[]; other: string };
+      const aiData = () => JSON.parse(document.getElementById('ai-data')?.textContent || '{}') as { faq: Faq[]; suggestions: string[]; fallback: string; contact: Contact };
       const aiBox = () => document.getElementById('ai-chat');
       function aiToggle(open?: boolean) {
         const box = aiBox();
@@ -151,7 +152,7 @@ const docTitle = lang === 'en' ? title.replace('_', ' | ') : title;
         box.classList.toggle('open', on);
         box.querySelector('#ai-panel')?.setAttribute('aria-hidden', String(!on));
         box.querySelector('[data-ai-open]')?.setAttribute('aria-expanded', String(on));
-        if (on) setTimeout(() => box.querySelector<HTMLInputElement>('.ai-form input')?.focus(), 250);
+        if (on) setTimeout(() => box.querySelector<HTMLTextAreaElement>('.ai-form [name=q]')?.focus(), 250);
       }
       function aiAdd(cls: string, html: string) {
         const log = document.getElementById('ai-log');
@@ -167,15 +168,25 @@ const docTitle = lang === 'en' ? title.replace('_', ' | ') : title;
       function aiAsk(q: string) {
         const text = q.trim();
         if (!text) return;
-        const { faq, suggestions, fallback } = aiData();
+        const { faq, suggestions, fallback, contact } = aiData();
         aiAdd('user', esc(text));
         const typing = aiAdd('bot', '<span class="typing"><i></i><i></i><i></i></span>');
         const low = text.toLowerCase();
-        const hit = faq.find((f) => f.q === text) ?? faq.find((f) => f.keywords.some((k) => low.includes(k.toLowerCase())));
+        const has = (ks: string[]) => ks.some((k) => low.includes(k.toLowerCase()));
+        const exact = faq.find((f) => f.q === text);
+        // 填好的合作留言（带联系方式，或照模板写的）：模拟转交给对应负责人
+        const filled = !exact && (/@|1\d{10}|\d{3,4}-?\d{7,8}/.test(text) || /联系方式|contact:/i.test(text));
+        const wantsContact = !exact && !filled && has(contact.keywords);
+        const hit = exact ?? (filled || wantsContact ? undefined : faq.find((f) => has(f.keywords)));
         const base = aiBox()?.dataset.base ?? '';
         setTimeout(() => {
           if (!typing) return;
-          if (hit) {
+          if (filled) {
+            const topic = contact.topics.find((t) => has(t.keywords))?.name ?? contact.other;
+            typing.innerHTML = esc(/[【\[]/.test(text) ? contact.unfilled : contact.received.replace('{topic}', topic));
+          } else if (wantsContact) {
+            typing.innerHTML = aiTemplate(contact);
+          } else if (hit) {
             // 页面路径补结尾“/”，避免 GitHub Pages 跳转时丢掉 #锚点（同 lib/url.ts）
             const href = hit.link ? hit.link.href.replace(/^([^?#]*?)(\/?)([?#].*)?$/, (_m: string, p: string, _s: string, r = '') => `${p}/${r}`) : '';
             const link = hit.link ? `<br><a href="${base}${href}" data-ai-link>${esc(hit.link.label)} →</a>` : '';
@@ -188,12 +199,20 @@ const docTitle = lang === 'en' ? title.replace('_', ' | ') : title;
           if (log) log.scrollTop = log.scrollHeight;
         }, reduce ? 0 : 650);
       }
-      // 页头“合作”按钮：打开 AI 助手（捕获阶段拦截，不跳转页面）
+      // 合作留言模板：显示模板 + “填写模板”按钮（点击后填进输入框）；topic 为合作卡片名时预先填好合作方向
+      function aiTemplate(contact: Contact, topic?: string) {
+        const t = topic ? contact.template.replace(contact.slot, topic) : contact.template;
+        return `${esc(contact.a)}<div class="ai-tpl">${esc(t)}</div><div class="ai-chips" style="margin-top:10px"><button class="ai-chip ai-fill" data-ai-fill="${esc(t)}">${esc(contact.fill)}</button></div>`;
+      }
+      // 合作页的 AI 入口与各合作卡片按钮：打开 AI 助手（捕获阶段拦截，不跳转页面）；卡片按钮直接给出对应方向的模板
       document.addEventListener('click', (e) => {
-        if (!(e.target as HTMLElement).closest('[data-ai-chat]')) return;
+        const btn = (e.target as HTMLElement).closest<HTMLElement>('[data-ai-chat]');
+        if (!btn) return;
         e.preventDefault();
         e.stopPropagation();
         aiToggle(true);
+        const topic = btn.dataset.topic;
+        if (topic) aiAdd('bot', aiTemplate(aiData().contact, topic));
       }, true);
       document.addEventListener('click', (e) => {
         const t = e.target as HTMLElement;
@@ -201,6 +220,18 @@ const docTitle = lang === 'en' ? title.replace('_', ' | ') : title;
         if (t.closest('[data-ai-close]')) { aiToggle(false); return; }
         const chip = t.closest<HTMLElement>('[data-ai-q]');
         if (chip) { aiAsk(chip.dataset.aiQ!); return; }
+        const fill = t.closest<HTMLElement>('[data-ai-fill]');
+        if (fill) {
+          const input = document.querySelector<HTMLTextAreaElement>('#ai-chat .ai-form [name=q]');
+          if (!input) return;
+          input.value = fill.dataset.aiFill!;
+          input.dispatchEvent(new Event('input', { bubbles: true }));
+          input.focus();
+          // 选中第一个待填的【】，直接输入即可替换
+          const m = /【[^】]*】|\[[^\]]*\]/.exec(input.value);
+          if (m) input.setSelectionRange(m.index, m.index + m[0].length);
+          return;
+        }
         if (t.closest('[data-ai-link]')) aiToggle(false);
       });
       document.addEventListener('submit', (e) => {
@@ -208,9 +239,24 @@ const docTitle = lang === 'en' ? title.replace('_', ' | ') : title;
         if (!form) return;
         e.preventDefault();
         e.stopImmediatePropagation();
-        const input = form.querySelector<HTMLInputElement>('input[name=q]');
-        if (input) { aiAsk(input.value); input.value = ''; }
+        const input = form.querySelector<HTMLTextAreaElement>('[name=q]');
+        if (input) { aiAsk(input.value); input.value = ''; input.dispatchEvent(new Event('input', { bubbles: true })); }
       }, true);
+      // 输入框随内容长高（放得下整段留言模板）；回车发送，Shift+回车换行
+      document.addEventListener('input', (e) => {
+        const t = e.target as HTMLElement;
+        if (!(t instanceof HTMLTextAreaElement) || !t.closest('[data-ai-form]')) return;
+        t.style.height = 'auto';
+        t.style.height = `${Math.min(t.scrollHeight, 140)}px`;
+      });
+      document.addEventListener('keydown', (e) => {
+        const t = e.target as HTMLElement;
+        if (e.key !== 'Enter' || e.shiftKey || e.isComposing || !(t instanceof HTMLTextAreaElement)) return;
+        const form = t.closest<HTMLFormElement>('[data-ai-form]');
+        if (!form) return;
+        e.preventDefault();
+        form.requestSubmit();
+      });
       document.addEventListener('keydown', (e) => { if (e.key === 'Escape') aiToggle(false); });
 
       // 数字滚动计数
@@ -364,6 +410,48 @@ const docTitle = lang === 'en' ? title.replace('_', ' | ') : title;
           update();
           addEventListener('scroll', update, { passive: true });
           cleanups.push(() => removeEventListener('scroll', update));
+        }
+
+        // 实时股价：用 <script> 读取腾讯财经公开行情（qt.gtimg.cn 不支持跨域 fetch，但可作为脚本加载，
+        // 返回 v_sz300364="51~中文在线~300364~现价~昨收~今开~…"），填入页头小标签和投资者关系页。每分钟刷新一次。
+        if (document.querySelector('[data-stock]')) {
+          const en = isEn();
+          const loadStock = () => {
+            const tag = document.createElement('script');
+            tag.src = `https://qt.gtimg.cn/q=sz300364&_=${Date.now()}`;
+            tag.charset = 'gbk';
+            tag.onload = tag.onerror = () => {
+              tag.remove();
+              const f = String((window as any).v_sz300364 ?? '').split('~');
+              if (!Number(f[3])) return;
+              const chg = Number(f[31]);
+              const sign = chg > 0 ? '+' : '';
+              const t = f[30] ?? '';
+              const vals: Record<string, string> = {
+                price: Number(f[3]).toFixed(2),
+                chg: `${sign}${chg.toFixed(2)}`,
+                pct: `${sign}${Number(f[32]).toFixed(2)}%`,
+                open: Number(f[5]).toFixed(2),
+                high: Number(f[33]).toFixed(2),
+                low: Number(f[34]).toFixed(2),
+                cap: en ? `CNY ${(Number(f[45]) / 10).toFixed(2)} bn` : `${Number(f[45]).toFixed(2)} 亿元`,
+                time: t.length >= 12 ? `${en ? 'As of' : '更新于'} ${t.slice(4, 6)}-${t.slice(6, 8)} ${t.slice(8, 10)}:${t.slice(10, 12)} ·` : '',
+              };
+              document.querySelectorAll<HTMLElement>('[data-stock]').forEach((el) => {
+                const k = el.dataset.stock!;
+                if (!(k in vals)) return;
+                el.textContent = vals[k];
+                if (k === 'price' || k === 'chg' || k === 'pct') {
+                  el.classList.toggle('stock-up', chg > 0);
+                  el.classList.toggle('stock-down', chg < 0);
+                }
+              });
+            };
+            document.head.appendChild(tag);
+          };
+          loadStock();
+          const timer = setInterval(loadStock, 60_000);
+          cleanups.push(() => clearInterval(timer));
         }
 
         if (fromDropdown) {

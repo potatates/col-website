@@ -33,6 +33,8 @@ export type Block =
   | { type: 'contact'; items: { k: string; v: string }[]; cta?: { label: string; href: string } }
   | { type: 'ipwall'; items: IP[]; note?: string }
   | { type: 'aichat'; title: string; text: string; cta: string }
+  // 实时股价（腾讯财经公开行情，页面打开时读取）
+  | { type: 'stock'; name: string; code: string; note: string; link: { label: string; href: string } }
   | { type: 'videos'; items: { title: string; sub?: string; vertical?: boolean; src?: string }[]; note?: string }
   | { type: 'people'; items: Person[]; cols?: 2 | 3 | 4 }
   | { type: 'contacts'; items: { id: string; tag: string; title: string; text: string; people: Person[] }[] }
@@ -626,6 +628,7 @@ const investors: Page = {
   intro: '以AI为技术底座、以内容为核心资产、以全球化为发展方向。A股代码 300364.SZ。',
   sections: [
     { id: 'highlights', label: '投资亮点', en: 'HIGHLIGHTS', title: '投资亮点', blocks: [
+      { type: 'stock', name: '中文在线', code: '300364.SZ', note: '行情来源：腾讯财经，约有数秒至数分钟延迟', link: { label: '查看完整行情', href: 'https://quote.eastmoney.com/sz300364.html' } },
       { type: 'stats', items: irHighlights, note: '数据来源：2026年董事长致股东信、2026年半年度报告' },
     ] },
     { id: 'letter', label: '致股东信', en: 'LETTER', title: '董事长致股东信', blocks: [
@@ -738,7 +741,7 @@ const partner: Page = {
       { type: 'form', topics: ['引进内容 / 渠道合作', 'IP授权', '数商合作', '海外合作', '投资合作', '成为供应商', '媒体采访', '其他'] },
     ] },
     { id: 'hq', label: '公司总部', en: 'HEADQUARTERS', title: '公司总部', blocks: [
-      { type: 'contact', items: [{ k: '地址', v: '北京市东城区安定门东大街28号雍和大厦E座6层' }, { k: '服务热线', v: contact.phone }, { k: '传真', v: contact.fax }] },
+      { type: 'contact', items: [{ k: '地址', v: '北京市东城区安定门东大街28号雍和大厦E座6层' }, { k: '服务热线', v: contact.phone }] },
     ] },
   ],
 };
@@ -824,31 +827,60 @@ export const home = {
 // 原型阶段未接入大模型：按关键词匹配预设问答，答案附带站内链接。正式版接入模型后替换。
 export const aiAssistant = {
   title: '中文在线 AI 助手',
-  greeting: '你好！我可以帮你快速找到中文在线的业务、IP、财报和合作入口。试试下面的问题：',
-  fallback: '这个问题我暂时回答不了（原型阶段尚未接入大模型）。你可以试试下面的问题，或直接联系我们。',
-  suggestions: ['中文在线是做什么的？', '怎么洽谈IP授权？', '你们提供哪些AI训练数据？', '在哪里看财报和公告？'],
+  greeting: '你好！我可以帮你快速找到中文在线的业务、IP作品和投资者信息，也可以把你的合作需求转给对应负责人。试试下面的问题：',
+  fallback: '这个问题我暂时回答不了（原型阶段尚未接入大模型）。你可以试试下面的问题；想找人合作，直接说“我想合作”。',
+  suggestions: ['我想找你们合作', '中文在线是做什么的？', '怎么洽谈IP授权？', '有哪些产品？', '在哪里看财报和股价？'],
+  // 合作 / 联系：给出留言模板，填好发回后模拟“已转交负责人”
+  contact: {
+    keywords: ['合作', '联系', '对接', '洽谈', '商务', '负责人', '找人'],
+    a: '好的！点下面的“填写模板”，把【】里的内容换成你的信息发给我，我会整理后转给对应负责人：',
+    template: '我是【公司 / 机构】的【姓名 · 职位】，想洽谈【合作方向：海外 / 数商 / IP授权 / 内容渠道 / 投资 / 供应商 / 媒体】。需求简述：【一两句话】。联系方式：【电话或邮箱】',
+    slot: '【合作方向：海外 / 数商 / IP授权 / 内容渠道 / 投资 / 供应商 / 媒体】',
+    fill: '填写模板',
+    unfilled: '模板里还有【】没有填完哦，换成你的信息再发给我。',
+    received: '收到！已整理为一条「{topic}」需求，会转给对应负责人，一般 1–2 个工作日内联系你。（原型阶段不会真的发送）',
+    topics: [
+      { name: '海外合作', keywords: ['海外', '出海', 'flareflow', '翻译', '发行'] },
+      { name: '数商合作', keywords: ['数商', '数据', '语料', '训练', '大模型'] },
+      { name: 'IP授权', keywords: ['授权', 'ip', '改编', '版权'] },
+      { name: '引进内容 / 渠道合作', keywords: ['渠道', '引进', '分发', '内容'] },
+      { name: '投资合作', keywords: ['投资', '融资', '基金'] },
+      { name: '成为供应商', keywords: ['供应商', '采购', '供应'] },
+      { name: '媒体采访', keywords: ['媒体', '采访', '报道', '记者'] },
+    ],
+    other: '商务合作',
+  },
   faq: [
     { q: '中文在线是做什么的？', keywords: ['做什么', '介绍', '公司', '是谁', '业务', '简介'],
-      a: '中文在线是国内领先的数字文化内容产业集团，2000年成立于清华大学，2015年在深交所创业板上市（300364）。业务覆盖海外短剧（FlareFlow）、数商（AI数据服务）、影视·短剧、网络文学、AI创作工具与版权保护。',
-      link: { label: '看业务与产品', href: '/business' } },
-    { q: '怎么洽谈IP授权？', keywords: ['授权', 'ip', '改编', '版权合作', '罗小黑', '一品布衣'],
-      a: '在「IP与作品」浏览IP墙，点任意IP就能直达授权负责人；也可以在「合作」页选择“IP授权”直接留言。',
-      link: { label: '去洽谈IP授权', href: toPartner('license', 'IP授权') } },
-    { q: '你们提供哪些AI训练数据？', keywords: ['数据', '数商', '语料', '训练', '大模型', '标注'],
-      a: '我们为AI与大模型企业提供主产数据、高端定制数据与训练数据标注服务，数据总量600TB，覆盖文字、音频、图片、视频，已与数十家大模型建立合作。',
-      link: { label: '看数商服务', href: '/business#data' } },
-    { q: '在哪里看财报和公告？', keywords: ['财报', '公告', '年报', '季报', '投资', '股价', '股票', '300364'],
-      a: '定期报告与公告在「投资者关系」页，PDF原文直链巨潮资讯。公司A股代码300364。',
-      link: { label: '看报告与公告', href: '/investors#filings' } },
+      a: '中文在线是AI驱动的全球领先数字文娱平台，2000年源于清华大学，2015年在深交所创业板上市（300364）。业务覆盖网络文学、影视·短剧、海外、AI与创作工具、版权保护和数商。',
+      link: { label: '看业务版图', href: '/business' } },
+    { q: '怎么洽谈IP授权？', keywords: ['ip', '改编', '罗小黑', '一品布衣', '修罗武神', '乙游'],
+      a: '「IP作品」页有IP墙、预告片和改编案例，可以先看看感兴趣的作品。想洽谈授权，跟我说“我想合作”，按模板留下需求，我会转给IP授权负责人。',
+      link: { label: '看IP作品', href: '/ip#wall' } },
+    { q: '有哪些产品？', keywords: ['产品', '17k', '四月天', '逍遥', '次元神笔', 'app', '下载', '小说', '看剧'],
+      a: '主要产品有 FlareFlow（海外短剧）、次元神笔（AI漫剧）、逍遥AI（AI创作）、17K小说网和四月天（网络文学）。',
+      link: { label: '看产品一览', href: '/business#products' } },
     { q: 'FlareFlow 是什么？', keywords: ['flareflow', '短剧', '海外', '出海'],
       a: 'FlareFlow是中文在线的海外短剧平台，覆盖200多个国家和地区，截至2026年6月注册用户超5,200万。',
       link: { label: '看海外业务', href: '/business#global' } },
+    { q: '你们提供哪些AI训练数据？', keywords: ['数据', '数商', '语料', '训练', '大模型', '标注'],
+      a: '我们为AI与大模型企业提供主产数据、高端定制数据与训练数据标注服务，数据总量600TB，覆盖文字、音频、图片、视频，已与数十家大模型建立合作。',
+      link: { label: '看数商服务', href: '/business#data' } },
+    { q: '在哪里看财报和股价？', keywords: ['财报', '公告', '年报', '季报', '投资', '股价', '股票', '300364', '股东'],
+      a: '「投资者关系」页有实时股价、投资亮点、董事长致股东信和定期报告（PDF直链巨潮资讯）。A股代码300364。',
+      link: { label: '去投资者关系', href: '/investors' } },
+    { q: '公司有哪些历史和荣誉？', keywords: ['历史', '历程', '成立', '清华', '创业', '文化', '荣誉', '资质', '战略', '关于'],
+      a: '在「关于我们」可以看到公司简介、企业文化、“三次创业”发展历程、发展战略和荣誉资质。',
+      link: { label: '看发展历程', href: '/about#history' } },
+    { q: '最近有什么新闻？', keywords: ['新闻', '动态', '最新', '活动', '发布', '消息'],
+      a: '最新动态都在「新闻中心」，每条都附图片和摘要，点开就是原文。',
+      link: { label: '去新闻中心', href: '/news' } },
     { q: '有哪些招聘岗位？', keywords: ['招聘', '工作', '岗位', '实习', '校招', '社招', '应聘', '简历'],
-      a: '社会招聘与校园招聘入口都在「加入我们」页，也可以先看看我们的活动墙和员工故事。',
+      a: '社会招聘与校园招聘入口都在「加入我们」页。',
       link: { label: '看职位', href: '/join#positions' } },
-    { q: '怎么联系你们？', keywords: ['联系', '电话', '邮箱', '合作', '商务', '咨询'],
-      a: '商务合作请到「合作」页选择合作类型，会显示对应负责人；服务热线 010-51667567。',
-      link: { label: '去合作页', href: '/partner' } },
+    { q: '公司在哪里？电话多少？', keywords: ['电话', '地址', '热线', '总部', '在哪'],
+      a: '总部在北京市东城区安定门东大街28号雍和大厦E座6层，服务热线 010-51667567。想洽谈合作，跟我说“我想合作”就好。',
+      link: { label: '看公司总部', href: '/partner#hq' } },
   ],
 };
 
@@ -860,7 +892,11 @@ export const ui = {
   mobileNav: '移动端导航',
   openMenu: '打开菜单',
   toggleTheme: '切换深色 / 浅色',
-  stockPending: '股价待接入行情',
+  stockOpen: '今开',
+  stockHigh: '最高',
+  stockLow: '最低',
+  stockCap: '总市值',
+  stockPending: '中文在线实时股价（腾讯财经）',
   crumbs: '面包屑',
   pageNav: '本页导航',
   next: '下一章 · NEXT',
@@ -921,7 +957,7 @@ export const ui = {
   // AI 助手
   aiNote: '原型 · 预设问答，未接入大模型',
   close: '关闭',
-  aiPlaceholder: '输入你的问题，例如：怎么洽谈授权？',
+  aiPlaceholder: '输入问题，或说“我想合作”',
   aiInput: '输入问题',
   send: '发送',
   aiFab: 'AI 助手',
