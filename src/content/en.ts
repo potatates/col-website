@@ -76,7 +76,7 @@ const about: Page = {
           pillars: ['Strong Content', 'Winning IP', 'Global First', 'AI Empowerment'], pillarsLabel: 'Strategy' },
         { type: 'stats', items: [
           { value: '5.6', unit: 'M', label: 'Digital content titles' },
-          { value: '4.5', unit: 'M', label: 'Online original authors' },
+          { value: '4', unit: 'M+', label: 'Contracted authors' },
           { value: '490', unit: 'K+ hrs', label: 'Audio content' },
         ], note: 'Source: COL Group corporate presentation (Sept 2026)' },
       ],
@@ -138,7 +138,7 @@ const literature: Page = {
       blocks: [
         { type: 'stats', items: [
           { value: '5.6', unit: 'M', label: 'Digital content titles' },
-          { value: '4.5', unit: 'M', label: 'Online original authors' },
+          { value: '4', unit: 'M+', label: 'Contracted authors' },
           { value: '600', unit: '+', label: 'Publishing houses' },
           { value: '2,000', unit: '+', label: 'Acclaimed authors' },
         ], note: 'Source: COL Group corporate presentation (Sept 2026)' },
@@ -242,10 +242,10 @@ const global: Page = {
       id: 'cases', label: 'Case Studies', en: 'CASES', title: 'International partnerships',
       blocks: [
         { type: 'cards', cols: 2, items: [
-          { tag: 'Connected TV', title: 'FlareFlow × Whale TV', img: 'whaletv', text: 'Launched on the Whale TV independent TV operating system in September 2026, starting with South America. Whale TV works with 400+ TV brands and has over 47.5 million monthly active devices.' },
-          { tag: 'Southeast Asia', title: 'Partnering with Thailand’s CP Group', img: 'thai', text: 'FlareFlow Mini launched a dedicated section on TATANG by TrueID, run by CP Group’s True, to accelerate local microdrama production.' },
-          { tag: 'Telecom', title: 'FlareFlow × AIS PLAY (Thailand)', img: 'ais', text: 'In November 2026 FlareFlow opened its own section on AIS PLAY, the entertainment platform of leading Thai telecom operator AIS, with Western, Chinese and Korean microdramas subtitled in Thai, on phones and TVs.' },
-          { tag: 'Singapore', title: 'Supermodel Me', img: 'supermodel', text: 'The world’s first mobile-native vertical reality microdrama, made with Singapore’s Refinery Media.' },
+          { tag: 'Connected TV', title: 'FlareFlow × Whale TV', img: 'case-whaletv', text: 'Launched on the Whale TV independent TV operating system in September 2026, starting with South America. Whale TV works with 400+ TV brands and has over 47.5 million monthly active devices.' },
+          { tag: 'Southeast Asia', title: 'Partnering with Thailand’s CP Group', img: 'case-thai', text: 'FlareFlow Mini launched a dedicated section on TATANG by TrueID, run by CP Group’s True, to accelerate local microdrama production.' },
+          { tag: 'Telecom', title: 'FlareFlow × AIS PLAY (Thailand)', img: 'case-ais', text: 'In November 2026 FlareFlow opened its own section on AIS PLAY, the entertainment platform of leading Thai telecom operator AIS, with Western, Chinese and Korean microdramas subtitled in Thai, on phones and TVs.' },
+          { tag: 'Singapore', title: 'Supermodel Me', img: 'case-supermodel', text: 'The world’s first mobile-native vertical reality microdrama, made with Singapore’s Refinery Media.' },
         ] },
       ],
     },
@@ -879,7 +879,7 @@ export const ui = {
   worksAria: 'Featured works',
   // One-line highlight on each business poster
   bizHook: {
-    literature: '5.6M titles · 4.5M original authors',
+    literature: '5.6M titles · 4M+ contracted authors',
     drama: 'Hengqin studio · Global microdrama · Screen adaptations',
     global: 'In 200+ countries and regions · Connecting the world through great stories',
     data: '600 TB multimodal data · All leading model makers',

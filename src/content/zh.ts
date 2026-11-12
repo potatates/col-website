@@ -138,7 +138,7 @@ const about: Page = {
           pillars: ['夯实内容', '决胜IP', '国际优先', 'AI赋能'], pillarsLabel: '发展战略' },
         { type: 'stats', items: [
           { value: '560', unit: '万种', label: '数字内容' },
-          { value: '450', unit: '万名', label: '网络原创作者' },
+          { value: '400', unit: '万+', label: '签约作者' },
           { value: '49', unit: '万+小时', label: '音频资源' },
         ], note: '数据来源：《中文在线集团介绍》（2026-09）' },
       ],
@@ -202,7 +202,7 @@ const literature: Page = {
       blocks: [
         { type: 'stats', items: [
           { value: '560', unit: '万种', label: '数字内容' },
-          { value: '450', unit: '万名', label: '网络原创作者' },
+          { value: '400', unit: '万+', label: '签约作者' },
           { value: '600', unit: '余家', label: '出版机构' },
           { value: '2,000', unit: '余位', label: '知名作家' },
         ], note: '数据来源：《中文在线集团介绍》（2026-09）' },
@@ -307,10 +307,10 @@ const global: Page = {
       id: 'cases', label: '合作案例', en: 'CASES', title: '海外合作案例',
       blocks: [
         { type: 'cards', cols: 2, items: [
-          { tag: '大屏', title: 'FlareFlow × Whale TV', img: 'whaletv', text: '2026年9月登陆Whale TV独立电视操作系统，率先覆盖南美；Whale TV合作400多个电视品牌、月活设备超4,750万台。' },
-          { tag: '东南亚', title: '携手泰国正大集团', img: 'thai', text: 'FlareFlow Mini登陆正大集团旗下True的TATANG by TrueID平台并开设专区，加速短剧本土化布局。' },
-          { tag: '电信运营商', title: 'FlareFlow × 泰国 AIS PLAY', img: 'ais', text: '2026年11月登陆泰国领先电信运营商AIS旗下数字娱乐平台AIS PLAY，开设独立专区，欧美、中国、韩国短剧均配泰语字幕，手机与电视大屏均可观看。' },
-          { tag: '新加坡', title: '《Supermodel Me》', img: 'supermodel', text: '联手新加坡Refinery Media打造全球首部移动原生竖屏真人秀微短剧。' },
+          { tag: '大屏', title: 'FlareFlow × Whale TV', img: 'case-whaletv', text: '2026年9月登陆Whale TV独立电视操作系统，率先覆盖南美；Whale TV合作400多个电视品牌、月活设备超4,750万台。' },
+          { tag: '东南亚', title: '携手泰国正大集团', img: 'case-thai', text: 'FlareFlow Mini登陆正大集团旗下True的TATANG by TrueID平台并开设专区，加速短剧本土化布局。' },
+          { tag: '电信运营商', title: 'FlareFlow × 泰国 AIS PLAY', img: 'case-ais', text: '2026年11月登陆泰国领先电信运营商AIS旗下数字娱乐平台AIS PLAY，开设独立专区，欧美、中国、韩国短剧均配泰语字幕，手机与电视大屏均可观看。' },
+          { tag: '新加坡', title: '《Supermodel Me》', img: 'case-supermodel', text: '联手新加坡Refinery Media打造全球首部移动原生竖屏真人秀微短剧。' },
         ] },
       ],
     },
@@ -951,7 +951,7 @@ export const ui = {
   worksAria: '代表作品',
   // 业务海报上的一句话亮点
   bizHook: {
-    literature: '560万种内容 · 450万名原创作者',
+    literature: '560万种内容 · 超400万名签约作者',
     drama: '横琴基地 · 出海短剧 · 影视改编',
     global: '覆盖 200+ 国家和地区 · 用好故事连接世界',
     data: '600TB 多模态数据 · 头部大模型厂商全覆盖',
