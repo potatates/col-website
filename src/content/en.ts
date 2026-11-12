@@ -773,11 +773,11 @@ export const nextOf: Record<string, Page> = {
 export const home = {
   intro: 'COL Group focuses on digital content production, copyright distribution, IP development and intellectual property protection. Guided by the strategy of “Strong Content, Winning IP, Global First, AI Empowerment”, we bring technology and culture together.',
   audiences: [
-    { label: 'Partners', hint: 'Licensing · Global', href: '/partner', icon: 'handshake' },
+    { label: 'Partners', hint: 'Licensing & global', href: '/partner', icon: 'handshake' },
     { label: 'Data clients', hint: 'AI training data', href: '/business#data', icon: 'data' },
-    { label: 'Creators', hint: 'Submit · Sign', href: '/business#literature-writers', icon: 'pen' },
+    { label: 'Creators', hint: 'Submit & sign', href: '/business#literature-writers', icon: 'pen' },
     { label: 'Audiences', hint: 'Our apps', href: '/business#products', icon: 'play' },
-    { label: 'Investors', hint: 'Reports · IR', href: '/investors', icon: 'chart' },
+    { label: 'Investors', hint: 'Reports & IR', href: '/investors', icon: 'chart' },
     { label: 'Job seekers', hint: 'Open roles', href: '/join', icon: 'bag' },
   ],
   news: news.sections[0].blocks[0].type === 'news' ? news.sections[0].blocks[0].items.slice(0, 3) : [],
@@ -860,7 +860,7 @@ export const ui = {
   stockPending: 'COL live share price (Tencent Finance)',
   crumbs: 'Breadcrumb',
   pageNav: 'On this page',
-  next: 'Up next · NEXT',
+  next: 'Up next',
   // Home
   heroL1: 'Better Content',
   heroL2: 'Better Life',
@@ -879,11 +879,11 @@ export const ui = {
   worksAria: 'Featured works',
   // One-line highlight on each business poster
   bizHook: {
-    literature: '5.6M titles · 4M+ contracted authors',
-    drama: 'Hengqin studio · Global microdrama · Screen adaptations',
-    global: 'In 200+ countries and regions · Connecting the world through great stories',
-    data: '600 TB multimodal data · All leading model makers',
-    ai: 'Xiaoyao AI · Ciyuan Shenbi',
+    literature: '5.6M titles and 4M+ contracted authors',
+    drama: 'Hengqin studio, global microdrama and screen adaptations',
+    global: 'In 200+ countries and regions, connecting the world through great stories',
+    data: '600 TB of multimodal data, serving all leading model makers',
+    ai: 'Xiaoyao AI and Ciyuan Shenbi',
   } as Record<string, string>,
   // Content blocks
   visitSite: 'Visit website',
@@ -916,7 +916,7 @@ export const ui = {
   ctaBandTitle: 'Have a partnership idea? Let’s talk',
   ctaBandSub: 'Content acquisition · IP licensing · Data solutions · International partnerships · Supplier onboarding',
   // Footer
-  footerWords: ['BETTER CONTENT', '更好内容', 'BETTER LIFE', '更好生活'],
+  footerWords: ['BETTER CONTENT', 'BETTER LIFE'],
   hotline: 'Hotline',
   fax: 'Fax',
   footerBiz: 'Business & Products',

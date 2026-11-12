@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Heading font comparison</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@500..800&family=Albert+Sans:wght@500..800&family=Outfit:wght@500..800&family=Plus+Jakarta+Sans:wght@500..800&family=Manrope:wght@500..800&family=Red+Hat+Display:wght@500..900&family=Lexend:wght@500..800&family=Urbanist:wght@500..900&family=Figtree:wght@400..700&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; }
+  body { font-family: 'Figtree', sans-serif; background: #f6f8fc; color: #0b1430; padding: 32px; width: 1440px; }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .f { background: #fff; border-radius: 12px; overflow: hidden; }
+  .name { display: flex; justify-content: space-between; padding: 12px 24px; font-size: 14px; font-weight: 600; color: #55607a; border-bottom: 1px solid #dde3ee; }
+  .name b { color: #0071ce; font-size: 15px; }
+  .hero { padding: 26px 24px 28px; color: #fff; background: radial-gradient(50% 90% at 100% 0%, #00c1de, transparent 70%), radial-gradient(40% 80% at 45% 100%, #6c4dff, transparent 70%), linear-gradient(135deg, #0053a6, #0071ce 40%, #3b3fd8); }
+  .hero div { font-size: 68px; font-weight: 800; line-height: .95; }
+  .rest { padding: 22px 24px 24px; display: grid; grid-template-columns: 1fr auto; gap: 12px 24px; align-items: end; }
+  .h2 { font-size: 44px; font-weight: 800; line-height: 1; }
+  .num { font-size: 52px; font-weight: 800; line-height: 1; background: linear-gradient(120deg, #00a9c4, #22c487); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .band { grid-column: 1 / -1; display: flex; justify-content: space-between; align-items: center; padding: 16px 20px; border-radius: 10px; color: #fff; background: linear-gradient(135deg, #f0569b, #a95cff); font-size: 34px; font-weight: 800; }
+  .band small { font: 600 15px 'Figtree'; letter-spacing: 0; }
+  .lbl { grid-column: 1 / -1; font-size: 13px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: #0071ce; }
+</style>
+</head>
+<body>
+<div class="grid" id="g"></div>
+<script>
+  const F = [['Sora', '-.045em', 'Wide, geometric, tech-leaning. Your current favourite'], ['Albert Sans', '-.03em', 'Neutral and safe, slightly narrow'], ['Outfit', '-.02em', 'Round and friendly, lighter feel than Sora'], ['Plus Jakarta Sans', '-.04em', 'Modern and warm, a little less wide than Sora'], ['Manrope', '-.04em', 'Clean and technical, squarer curves'], ['Red Hat Display', '-.025em', 'Sharp and confident, distinctive letter shapes'], ['Lexend', '-.045em', 'Very wide and open, closest relative to Sora'], ['Urbanist', '-.015em', 'Geometric and elegant, narrower']];
+  document.getElementById('g').innerHTML = F.map(([n, t, d], i) => `<div class="f"><div class="name"><b>${i + 1}. ${n}</b><span>${d}</span></div>
+    <div class="hero"><div style="font-family:'${n}';letter-spacing:${t}">Better Content<br>Better Life</div></div>
+    <div class="rest"><span class="lbl" style="font-family:'${n}'">Global microdrama</span><div class="h2" style="font-family:'${n}';letter-spacing:${t}">IP &amp; works</div><div class="num" style="font-family:'${n}';letter-spacing:${t}">5.6M 2,000+</div>
+    <div class="band" style="font-family:'${n}';letter-spacing:${t}">Film &amp; Microdrama <small>Hengqin studio, Global microdrama</small></div></div></div>`).join('');
+</script>
+</body>
+</html>

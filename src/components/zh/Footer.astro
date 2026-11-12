@@ -3,7 +3,7 @@
 import { u as asset } from '../../lib/url';
 import { useLang } from '../../lib/i18n';
 import { socialIcons } from '../../lib/social-icons';
-const { c, ui, l: u } = useLang(Astro.url);
+const { c, ui, l: u, lang } = useLang(Astro.url);
 const { site, navOrder, businessPages, contact, social, legal } = c;
 const year = new Date().getFullYear();
 const words = ui.footerWords;
@@ -19,7 +19,7 @@ const words = ui.footerWords;
   <div class="container">
     <div class="top">
       <div class="brand">
-        <img src={asset("/logo-white.png")} alt={site.name} class="logo" width="177" height="24" />
+        <img src={asset(lang === 'en' ? "/logo-en-white.png" : "/logo-white.png")} alt={site.name} class="logo" width={lang === 'en' ? 67 : 177} height="24" />
         <p class="muted">{site.fullName} · {site.stockCode}</p>
         {contact.address && <p class="muted">{contact.address}</p>}
       </div>

@@ -3,7 +3,9 @@
 import { u as asset } from '../../lib/url';
 import { useLang } from '../../lib/i18n';
 import type { Block } from '../../content/zh';
-const { ui, l: u } = useLang(Astro.url);
+const { ui, l: u, lang } = useLang(Astro.url);
+// 英文数字单位：M / K+ / % 这类紧跟数字、与数字同字号；hrs / RMB / TB 这类单词用小字（中文版不变）
+const unitParts = (unit: string) => { const m = unit.match(/^([KMBx%+]*)\s*(.*)$/)!; return { tight: m[1], word: m[2] }; };
 // 深色模式下黑色字的 logo 换成白字版本（public/products/*-dark.png）
 const DARK_LOGOS = ['flareflow', 'cyshenbi', '4yt', '17k']; // 17k-dark 为官方反白版
 import PosterImg from './PosterImg.astro';
@@ -128,7 +130,9 @@ const isNum = (v: string) => /^[\d,]+$/.test(v);
           <div class:list={['b-stats', `n${Math.min(b.items.length, 4)}`]}>
             {b.items.map((s) => (
               <div class="b-stat">
-                <div class="num"><span data-count={isNum(s.value) ? s.value : undefined}>{s.value}</span>{s.unit && <em>{s.unit}</em>}</div>
+                <div class="num"><span data-count={isNum(s.value) ? s.value : undefined}>{s.value}</span>{s.unit && (lang === 'en'
+                  ? <>{unitParts(s.unit).tight && <em class="u-tight">{unitParts(s.unit).tight}</em>}{unitParts(s.unit).word && <em class="u-word">{unitParts(s.unit).word}</em>}</>
+                  : <em>{s.unit}</em>)}</div>
                 <div class="num-label">{s.label}</div>
               </div>
             ))}

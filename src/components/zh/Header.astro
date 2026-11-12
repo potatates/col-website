@@ -16,8 +16,9 @@ const isActive = (key: string) => key === current || (key === 'business' && busi
 <header class="site-header" id="site-header">
   <div class="container bar">
     <a href={u("/")} class="logo" aria-label={`${site.name} ${ui.homeAria}`}>
-      <img src={asset("/logo-white.png")} alt={site.name} width="177" height="24" class="on-dark" />
-      <img src={asset("/logo.png")} alt="" width="177" height="24" class="on-light" aria-hidden="true" />
+      {/* 英文版用不带中文的 COL 标识 */}
+      <img src={asset(lang === 'en' ? "/logo-en-white.png" : "/logo-white.png")} alt={site.name} width={lang === 'en' ? 67 : 177} height="24" class="on-dark" />
+      <img src={asset(lang === 'en' ? "/logo-en.png" : "/logo.png")} alt="" width={lang === 'en' ? 67 : 177} height="24" class="on-light" aria-hidden="true" />
     </a>
 
     <nav class="nav" aria-label={ui.mainNav}>

@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Direction B — Editorial</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300..600;1,6..72,300..600&family=Inter:wght@400..600&display=swap" rel="stylesheet">
+<style>
+  :root { --brand:#0071ce; --brand-2:#00c1de; --violet:#6c4dff; --ink:#0b1430; --muted:#5a6379; --line:#d9deea; --bg:#fbfbf9;
+    --grad: linear-gradient(120deg, var(--brand), var(--brand-2) 45%, var(--violet));
+    --display: 'Newsreader', Georgia, serif; --text: 'Inter', 'Helvetica Neue', Arial, sans-serif; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: var(--text); font-size: 16px; line-height: 1.6; color: var(--ink); background: var(--bg); -webkit-font-smoothing: antialiased; }
+  img { display: block; max-width: 100%; } a { color: inherit; text-decoration: none; }
+  .wrap { max-width: 1240px; margin: 0 auto; padding: 0 24px; }
+  h1, h2, h3, .d { font-family: var(--display); font-weight: 400; letter-spacing: -.02em; line-height: 1.05; }
+  .eyebrow { font-size: 12px; font-weight: 500; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+  .rule { height: 3px; background: var(--grad); }
+
+  header .wrap { display: flex; align-items: center; height: 80px; border-bottom: 1px solid var(--line); }
+  header img { height: 24px; }
+  header nav { display: flex; gap: 32px; margin: 0 auto; font-size: 15px; }
+  header .cta { font-size: 15px; font-weight: 500; color: var(--brand); }
+
+  /* hero: paper-white, headline is the picture; posters become a tidy strip */
+  .hero { padding: 84px 0 0; }
+  .hero .top { display: grid; grid-template-columns: 1fr 320px; gap: 40px; align-items: end; }
+  .hero h1 { font-size: 124px; white-space: nowrap; font-weight: 300; letter-spacing: -.045em; line-height: .88; margin-top: 22px; }
+  .hero h1 em { font-style: italic; background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent; padding-right: .08em; }
+  .hero h1 span { display: block; }
+  .hero .side p { font-family: var(--display); font-size: 26px; line-height: 1.25; }
+  .hero .side .links { margin-top: 24px; display: flex; flex-direction: column; gap: 8px; font-weight: 500; }
+  .hero .side a { color: var(--brand); }
+  .strip { display: grid; grid-template-columns: repeat(7, 1fr); gap: 14px; margin-top: 64px; }
+  .strip img { width: 100%; aspect-ratio: 2/3; object-fit: cover; }
+  .strip img:nth-child(even) { margin-top: 36px; }
+
+  /* audience links: a plain inline index */
+  .aud { display: flex; gap: 36px; align-items: baseline; padding: 26px 0; border-bottom: 1px solid var(--line); margin-top: 56px; border-top: 1px solid var(--line); }
+  .aud a { font-family: var(--display); font-size: 22px; } .aud a small { font-family: var(--text); font-size: 13px; color: var(--muted); display: block; }
+
+  section { padding: 120px 0 0; }
+  .head { display: grid; grid-template-columns: 200px 1fr auto; align-items: baseline; padding-top: 18px; border-top: 1px solid var(--ink); margin-bottom: 40px; }
+  .head h2 { font-size: 60px; }
+  .more { font-weight: 500; color: var(--brand); }
+
+  /* businesses: numbered index, no cards. Colour survives as a small swatch */
+  .biz a { display: grid; grid-template-columns: 200px 1fr 1.1fr 40px; align-items: baseline; padding: 26px 0; border-bottom: 1px solid var(--line); }
+  .biz .n { display: flex; align-items: center; gap: 14px; font-size: 13px; color: var(--muted); letter-spacing: .08em; }
+  .biz .n i { width: 34px; height: 10px; border-radius: 5px; }
+  .biz h3 { font-size: 46px; }
+  .biz p { color: var(--muted); font-size: 17px; max-width: 46ch; }
+  .biz .go { text-align: right; font-size: 22px; }
+
+  /* news: headlines carry the section; one picture only */
+  .news { display: grid; grid-template-columns: 200px 1fr 1fr; gap: 0 40px; }
+  .news .lead { grid-column: 2; } .news .lead img { width: 100%; aspect-ratio: 3/2; object-fit: cover; }
+  .news h3 { font-size: 32px; line-height: 1.12; margin-top: 10px; }
+  .news .list a { display: block; padding: 0 0 28px; margin-bottom: 28px; border-bottom: 1px solid var(--line); }
+  .news .lead .eyebrow { display: block; margin-top: 18px; }
+
+  /* IP: catalogue grid, italic serif titles, plain captions */
+  .ip { display: grid; grid-template-columns: repeat(6, 1fr); gap: 24px; }
+  .ip img { width: 100%; aspect-ratio: 2/3; object-fit: cover; }
+  .ip .eyebrow { display: block; margin-top: 14px; font-size: 11px; }
+  .ip h3 { font-size: 22px; font-style: italic; line-height: 1.12; margin: 4px 0 8px; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+  .ip p { font-size: 14px; line-height: 1.45; color: var(--muted); }
+
+  .divider { margin-top: 120px; padding: 14px 0; background: var(--ink); color: #fff; font-size: 12px; letter-spacing: .12em; text-transform: uppercase; text-align: center; }
+  .subnav { display: flex; gap: 28px; padding: 20px 0; border-bottom: 1px solid var(--line); font-size: 15px; color: var(--muted); }
+  .subnav .on { color: var(--ink); font-weight: 500; box-shadow: 0 21px 0 -19px var(--ink); }
+  .chapter { padding: 72px 0 56px; display: grid; grid-template-columns: 200px 1fr; }
+  .chapter h2 { font-size: 136px; font-weight: 300; letter-spacing: -.045em; line-height: .9; }
+  .chapter h2 em { font-style: italic; }
+  .chapter p { font-family: var(--display); font-size: 30px; line-height: 1.25; max-width: 30ch; margin-top: 28px; }
+  .chapter .bar { width: 120px; height: 10px; border-radius: 5px; margin-top: 12px; }
+  .stats { display: grid; grid-template-columns: 200px repeat(4, 1fr); border-top: 1px solid var(--ink); border-bottom: 1px solid var(--line); }
+  .stats div { padding: 26px 0 22px; }
+  .stats b { display: block; font-family: var(--display); font-weight: 300; font-size: 84px; letter-spacing: -.04em; line-height: 1; }
+  .stats span { display: block; margin-top: 6px; font-size: 15px; color: var(--muted); }
+  .src { font-size: 13px; color: var(--muted); margin: 10px 0 0 200px; }
+  .plat { margin-top: 56px; }
+  .plat article { display: grid; grid-template-columns: 200px 300px 1fr; padding: 30px 0; border-top: 1px solid var(--line); align-items: baseline; }
+  .plat h3 { font-size: 34px; line-height: 1.1; padding-right: 24px; }
+  .plat p { font-size: 17px; max-width: 62ch; } .plat .go { display: inline-block; margin-top: 12px; color: var(--brand); font-weight: 500; }
+  footer { height: 100px; }
+</style>
+</head>
+<body>
+<div class="rule"></div>
+<header><div class="wrap"><img src="../../../public/logo.png" alt="COL"><nav id="nav"></nav><a class="cta">Partner with us →</a></div></header>
+
+<div class="hero"><div class="wrap">
+  <div class="top">
+    <div><span class="eyebrow" id="tag"></span><h1><span>Better <em>Content</em></span><span>Better <em>Life</em></span></h1></div>
+    <div class="side"><p id="sub"></p><div class="links"><a>Partner with us →</a><a>Explore our works →</a></div></div>
+  </div>
+  <div class="strip" id="strip"></div>
+  <div class="aud" id="aud"></div>
+</div></div>
+
+<section><div class="wrap"><div class="head"><span class="eyebrow">01 — Businesses</span><h2>Our businesses</h2><a class="more">All businesses →</a></div><div class="biz" id="biz"></div></div></section>
+<section><div class="wrap"><div class="head"><span class="eyebrow">02 — News</span><h2>Latest news</h2><a class="more">All news →</a></div><div class="news" id="news"></div></div></section>
+<section><div class="wrap"><div class="head"><span class="eyebrow">03 — Catalogue</span><h2>IP &amp; works</h2><a class="more">All works →</a></div><div class="ip" id="ip"></div></div></section>
+
+<div class="divider">Business page excerpt · same style applied to a chapter, stats and platform list</div>
+<div class="wrap">
+  <div class="subnav"><a>Overview</a><a>Products</a><a class="on">Webnovel</a><a>Film &amp; Microdrama</a><a>Global</a><a>AI &amp; Creative Tools</a><a>Data Solutions</a></div>
+  <div class="chapter" id="chapter"></div>
+  <div class="head" style="margin-bottom:0;border-top:0"><span class="eyebrow">Platforms</span><h2 style="font-size:48px;padding-bottom:28px" id="sec"></h2></div>
+  <div class="stats" id="stats"></div><p class="src" id="src"></p>
+  <div class="plat" id="plat"></div>
+</div>
+<footer></footer>
+
+<script src="data.js"></script>
+<script>
+  $('#nav').innerHTML = D.nav.map(n => `<a>${n}</a>`).join('');
+  $('#tag').textContent = D.tag; $('#sub').textContent = D.sub;
+  $('#strip').innerHTML = D.hero.map(p => `<img src="${P}/posters/${p}.jpg">`).join('');
+  $('#aud').innerHTML = '<span class="eyebrow" style="width:164px">I am a…</span>' + D.aud.map(a => `<a>${a[0]}<small>${a[1].replace(' · ', ' & ')}</small></a>`).join('');
+  $('#biz').innerHTML = D.biz.map((b, i) => `<a><span class="n"><i style="background:${g(b.c)}"></i>0${i + 1}</span><h3>${b.t}</h3><p>${b.h.split(' · ').join(', ')}.</p><span class="go">→</span></a>`).join('');
+  const dt = n => new Date(n.d).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+  $('#news').innerHTML = `<a class="lead"><img src="${P}/news/${D.news[0].img}.jpg"><span class="eyebrow">${D.news[0].tag} · ${dt(D.news[0])}</span><h3>${D.news[0].t}</h3></a><div class="list">${D.news.slice(1).map(n => `<a><span class="eyebrow">${n.tag} · ${dt(n)}</span><h3>${n.t}</h3></a>`).join('')}</div>`;
+  $('#ip').innerHTML = D.ip.map(x => `<a><img src="${P}/posters/${x.p}.jpg"><span class="eyebrow">${x.g}</span><h3>${x.t}</h3><p>${x.s}</p></a>`).join('');
+  $('#chapter').innerHTML = `<div><span class="eyebrow">${D.ch.no}</span><div class="bar" style="background:${g(D.biz[0].c)}"></div></div><div><h2><em>${D.ch.t}</em></h2><p>${D.ch.lead}</p></div>`;
+  $('#sec').textContent = D.sec;
+  $('#stats').innerHTML = '<div></div>' + D.stats.map(s => `<div><b>${s[0]}</b><span>${s[1]}</span></div>`).join(''); $('#src').textContent = D.src;
+  $('#plat').innerHTML = D.plat.map(p => `<article><span class="eyebrow">${p.k}</span><h3>${p.t.replace(' + Mixiang + Qixiang', ', Mixiang & Qixiang')}</h3><div><p>${p.x}</p>${p.link ? '<a class="go">Visit website ↗</a>' : ''}</div></article>`).join('');
+</script>
+</body>
+</html>

@@ -1,6 +1,10 @@
 ---
 import { u } from '../lib/url';
 import '../styles/global.css';
+// 英文版：自托管字体（Outfit 标题 / Figtree 正文）与英文专用样式，全部限定在 html[lang='en'] 下
+import '@fontsource-variable/outfit';
+import '@fontsource-variable/figtree';
+import '../styles/en.css';
 import { ClientRouter } from 'astro:transitions';
 import AiChat from '../components/zh/AiChat.astro';
 
