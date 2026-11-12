@@ -135,6 +135,10 @@ html[lang='en'] .b-stats.n4 .b-stat:nth-child(n+5) { padding-top: 22px !importan
 html[lang='en'] .num { gap: 0 !important; flex-wrap: wrap !important; }
 html[lang='en'] .num span, html[lang='en'] .num em.u-tight { font-size: clamp(40px, 5vw, 76px) !important; font-weight: 800 !important; letter-spacing: -.03em !important; line-height: 1 !important; }
 html[lang='en'] .num em.u-tight { background: linear-gradient(120deg, var(--c2, var(--brand-2)), var(--c2, var(--brand-2))) !important; -webkit-background-clip: text !important; background-clip: text !important; color: transparent !important; }
+
+/* gradient text is clipped to its box, and tight letter spacing makes the box narrower than the last glyph: pad the right edge */
+html[lang='en'] .num span, html[lang='en'] .num em.u-tight, html[lang='en'] .pl-big { padding-right: .06em !important; }
+html[lang='en'] .num em.u-tight { margin-left: -.06em !important; }
 html[lang='en'] .num em.u-word { font-size: 20px !important; font-weight: 700 !important; margin-left: 8px !important; }
 html[lang='en'] .num-label { font-size: 16px !important; font-weight: 600 !important; color: var(--ink) !important; line-height: 1.35 !important; margin-top: 8px !important; }
 html[lang='en'] .ft-stats dt em, html[lang='en'] .pl-big em { font-size: 1em !important; font-weight: inherit !important; margin-left: 0 !important; color: transparent !important; -webkit-text-fill-color: transparent !important; }
