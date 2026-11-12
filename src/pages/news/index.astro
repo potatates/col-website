@@ -1,0 +1,6 @@
+---
+import SectionPage from '../../layouts/SectionPage.astro';
+import { useLang } from '../../lib/i18n';
+const { pages } = useLang(Astro.url).c;
+---
+<SectionPage page={pages.news} />

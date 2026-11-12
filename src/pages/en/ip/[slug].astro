@@ -1,0 +1,9 @@
+---
+// 英文版：与中文共用同一组件，语言由网址 /en 决定
+import IpDetail from '../../../components/zh/IpDetail.astro';
+import { home } from '../../../content/zh';
+export function getStaticPaths() {
+  return home.wall.map((x) => ({ params: { slug: x.slug } }));
+}
+---
+<IpDetail slug={Astro.params.slug!} />

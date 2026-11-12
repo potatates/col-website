@@ -5,7 +5,7 @@
 import { bizColor, type Page, type Block, type Stat } from './zh';
 
 export { bizColor };
-export type { Stat, Card, Cover, Person, IP, Block, Section, Page } from './zh';
+export type { Stat, Card, Cover, Person, IP, Block, Section, Page, NewsItem } from './zh';
 
 /* ============ Site info ============ */
 
@@ -20,8 +20,6 @@ export const site = {
 };
 
 export const contact = {
-  phone: '010-51667567',
-  fax: '010-85195550',
   address: '6/F, Block E, Yonghe Plaza, 28 Andingmen East Street, Dongcheng District, Beijing 100007, China',
   icp: ['京ICP证010590号', '京ICP备09030667号-23', '京网文（2023）4750-133号', '京公网安备 11010102003415号'],
 };
@@ -68,30 +66,31 @@ const about: Page = {
     {
       id: 'intro', label: 'Profile', en: 'PROFILE', title: 'A leading digital content group in China',
       blocks: [
-        { type: 'text', lead: true, paras: ['Founded in 2000, COL Group listed on the ChiNext board of the Shenzhen Stock Exchange on January 21, 2015 (stock code: 300364), becoming known as “China’s first digital publishing stock”. Our core businesses are digital content production, copyright distribution, IP development and intellectual property protection. Guided by the strategy of “Strong Content, Winning IP, Global First, AI Empowerment”, we bring technology and culture together.'] },
-        // Note: the current site uses two sets of figures; align with financial reports before launch
+        { type: 'profile',
+          lead: 'Our core businesses are digital content production, copyright distribution, IP development and intellectual property protection, bringing technology and culture together.',
+          facts: [
+            { k: 'Founded', v: '2000', sub: 'At Tsinghua University' },
+            { k: 'Listed', v: 'Jan 21, 2015', sub: 'SZSE ChiNext board' },
+            { k: 'Stock code', v: '300364', sub: 'China’s first digital publishing stock' },
+          ],
+          pillars: ['Strong Content', 'Winning IP', 'Global First', 'AI Empowerment'], pillarsLabel: 'Strategy' },
         { type: 'stats', items: [
-          { value: '5.6', unit: 'M+', label: 'Digital content titles' },
-          { value: '4', unit: 'M+', label: 'Registered creators' },
-          { value: '490', unit: 'K+', label: 'Hours of audio content' },
-          { value: '827', unit: '', label: 'Employees (end of 2025)' },
-        ], note: 'Sources: col.com company profile, 2025 Annual Report, 2025 CSR Report; content and audio figures to be aligned' },
-        { type: 'text', paras: [
-          'COL sources licensed digital content from its own original-writing platforms, well-known authors and rights holders. Its original platforms include 17K, Siyuetian, the sci-fi imprint “Qixiang Universe” and the mystery imprint “Mixiang Project”.',
-          'With literary IP at the core, we develop stories while they are still being serialized and adapt them across every format: audio, comics, motion comics, animation, microdrama, film and TV, games and merchandise. This takes us from producing single webnovels to managing the full lifecycle of literary IP.',
-          'COL has subsidiaries in the United States, Singapore and Japan, and its overseas microdrama platform FlareFlow reaches more than 200 countries and regions. We keep investing in large models and multimodal AI, and launched our own large model, “Zhongwen Xiaoyao”, in 2023.',
-        ] },
+          { value: '5.6', unit: 'M', label: 'Digital content titles' },
+          { value: '4.5', unit: 'M', label: 'Online original authors' },
+          { value: '490', unit: 'K+ hrs', label: 'Audio content' },
+        ], note: 'Source: COL Group corporate presentation (Sept 2026)' },
       ],
     },
     {
       id: 'culture', label: 'Culture', en: 'CULTURE', title: 'Better Content, Better Life',
       blocks: [
-        { type: 'cards', cols: 4, items: [
-          { tag: 'Mission', title: 'Better Content, Better Life', text: '更好内容，更好生活' },
-          { tag: 'Vision', title: 'Build a sustainable organization, create a cultural universe', text: '打造百年组织，创造文化宇宙' },
-          { tag: '10-Year Goal', title: 'The leader in digital content', text: '数字文化内容领跑者' },
-          { tag: 'Values', title: 'Customer Value, Innovation, Truthfulness, Evolution', text: '为客户持续创造价值、创新、求真务实、自我进化' },
-        ] },
+        { type: 'culture',
+          mission: { k: 'Mission', v: 'Better Content, Better Life', en: '更好内容，更好生活' },
+          items: [
+            { k: 'Vision', v: 'Build a sustainable organization, create a cultural universe', en: '打造百年组织，创造文化宇宙' },
+            { k: 'Values', v: 'Customer Value, Innovation, Truthfulness, Evolution', en: '为客户持续创造价值、创新、求真务实、自我进化' },
+            { k: '10-Year Goal', v: 'The leader in digital content', en: '数字文化内容领跑者' },
+          ] },
       ],
     },
     {
@@ -114,39 +113,13 @@ const about: Page = {
       ],
     },
     { id: 'strategy', label: 'Strategy', en: 'STRATEGY', title: 'Driven by AI and globalization', blocks: [
-      { type: 'cards', cols: 4, items: [
-        { tag: '01', title: 'Strong Content', text: '5.6 million+ licensed content titles and 4 million+ registered creators.', href: '/business#literature' },
-        { tag: '02', title: 'Winning IP', text: 'Turning IP from a one-off asset into a renewable one.', href: '/ip' },
-        { tag: '03', title: 'Global First', text: 'FlareFlow, UniReel and the Hengqin base form an international microdrama infrastructure.', href: '/business#global' },
-        { tag: '04', title: 'AI Empowerment', text: 'Xiaoyao covers about 60% of the literary production process and cuts production time by 75%.', href: '/business#ai' },
+      { type: 'pillars', items: [
+        { no: '01', title: 'Strong Content', text: 'Building a high-quality digital content ecosystem', big: '5.6', unit: 'M', label: 'Digital content titles', href: '/business#literature' },
+        { no: '02', title: 'Winning IP', text: 'Turning IP from a one-off asset into a renewable one', big: '6', unit: 'B+', label: 'Views of the Yi Pin Bu Yi series', href: '/ip' },
+        { no: '03', title: 'Global First', text: 'FlareFlow and the Hengqin base form an international microdrama infrastructure', big: '200', unit: '+', label: 'Countries and regions', href: '/business#global' },
+        { no: '04', title: 'AI Empowerment', text: 'Xiaoyao covers about 60% of the literary production process and cuts production time by 75%', big: '75', unit: '%', label: 'Shorter production time', href: '/business#ai' },
       ] },
     ] },
-    {
-      id: 'honors', label: 'Honors', en: 'HONORS', title: 'Honors',
-      blocks: [
-        { type: 'honors', items: [
-          { year: '2025', items: ['The Legend of Hei 2 named “Most Commercially Valuable Animation IP of 2025” and a Top 10 work at the China Animation & Comic Golden Dragon Award', 'Yi Pin Bu Yi (The Commoner) named a “Microdrama of 2025” by Zongyi Bao and won “Most Commercially Valuable Microdrama” at the Beijing International Film Festival', 'A FlareFlow original won “Best Female Leadership Narrative” at the 2025 International Short Drama Festival'] },
-          { year: '2024', items: ['Sereal+ named one of China’s “Top 10 Overseas Microdrama Platforms” at the China International New Media Short Film Festival', '“Best Suspense Microdrama” and “Best Visual Effects” at the Hainan Island International Film Festival'] },
-          { year: '2023', items: ['Overseas Online Literature Platform Award (Online Literature Center, China Writers Association)', 'One of China’s 50 most valuable companies in “AIGC × content”', 'Selected for Beijing’s General Artificial Intelligence Industry Innovation Partner Program'] },
-          { year: '2021', items: ['Private publishing enterprise for national reading promotion during the 13th Five-Year Plan', '“Digital Rural Library” named one of China’s top 10 reading-for-poverty-alleviation projects', 'Outstanding Digital Publishing Brand 2020–2021'] },
-          { year: '2018', items: ['“Outstanding Publishing Unit” at the 4th China Government Award for Publishing', 'One of the “Top 30 Capital Cultural Enterprises” (3rd edition)'] },
-          { year: '2012', items: ['“National Copyright Demonstration Unit” by the National Copyright Administration', 'Zhongguancun Top 100 Emerging Enterprises'] },
-        ] },
-      ],
-    },
-    {
-      id: 'licenses', label: 'Licenses', en: 'LICENSES', title: 'Licenses & Permits',
-      blocks: [
-        { type: 'cards', cols: 3, items: [
-          { tag: 'Value-added Telecom', title: '京ICP证010590号', text: 'Value-added Telecommunications Business License' },
-          { tag: 'Online Culture', title: '京网文（2023）4750-133号', text: 'Online Culture Business License' },
-          { tag: 'ICP Filing', title: '京ICP备09030667号-23', text: 'Website ICP filing number' },
-          { tag: 'Public Security Filing', title: '京公网安备 11010102003415号', text: 'Public security website filing' },
-          { tag: 'Business License', title: 'Business License', text: 'View', href: 'https://cdn.static.17k.com/material_picture/2025/1756720858269.png', external: true },
-          { tag: 'To be provided', title: 'Publication Business License and others', text: 'Other industry licenses to be provided by Legal' },
-        ] },
-      ],
-    },
   ],
 };
 
@@ -158,26 +131,28 @@ const literature: Page = {
   href: '/business#literature',
   title: 'Webnovel',
   en: 'WEBNOVEL',
-  intro: 'Licensed content from our own original platforms, well-known authors and rights holders, distributed as digital reading products across devices, platforms and media.',
+  intro: 'Over 5.6 million content titles in a “one core, many verticals” ecosystem: an all-genre flagship plus specialist platforms that reach every kind of reader.',
   sections: [
     {
       id: 'platforms', label: 'Platforms', en: 'PLATFORMS', title: 'Original platforms & products',
       blocks: [
+        { type: 'stats', items: [
+          { value: '5.6', unit: 'M', label: 'Digital content titles' },
+          { value: '4.5', unit: 'M', label: 'Online original authors' },
+          { value: '600', unit: '+', label: 'Publishing houses' },
+          { value: '2,000', unit: '+', label: 'Acclaimed authors' },
+        ], note: 'Source: COL Group corporate presentation (Sept 2026)' },
         { type: 'cards', cols: 3, items: [
-          { id: '17k', tag: 'Flagship', title: '17K', text: 'Our core original-content platform, covering every genre: fantasy, urban romance, wuxia and xianxia, campus stories and more.', href: 'https://www.17k.com', external: true },
-          { id: '4yt', tag: 'Women’s fiction', title: 'Siyuetian', text: 'An original fiction site for period stories aimed at women readers. The microdrama adaptation of its hit “My Whole Family Can Hear My Thoughts” passed 390 million Douyin views within 24 hours.', href: 'https://www.4yt.net', external: true },
-          { id: 'haili', tag: 'Stories', title: 'Haili Stories', text: 'Home to the mystery imprint “Mixiang Project” and the sci-fi imprint “Qixiang Universe”. Runs the Haili Stories novel contest and the Mixiang Award, which launched works such as “Misplaced”, “To the End” and “A Lone Lamp in the Long Night”.', href: 'https://haili.chineseall.net', external: true },
+          { id: '17k', tag: 'Flagship original platform', title: '17K', text: 'Recognized as a “key webnovel platform” by the Publicity Department of the CPC Central Committee, covering every genre from fantasy and urban romance to wuxia, xianxia and campus stories. 100+ IPs with over 100 million clicks; 100M+ registered users.', href: 'https://www.17k.com', external: true },
+          { id: '4yt', tag: 'Period fiction for women', title: 'Siyuetian', text: 'An original fiction site for period stories aimed at women readers, with 150,000+ resident authors and 200,000+ titles.', href: 'https://www.4yt.net', external: true },
+          { id: 'haili', tag: 'Genre fiction', title: 'Haili Stories + Mixiang + Qixiang', text: 'Haili Stories encourages diverse local genre fiction and finds promising new writers. Its mystery imprint “Mixiang Project” runs the Mixiang Story Award; its sci-fi imprint “Qixiang Universe” nurtures sci-fi IP and helps authors earn from their work.' },
         ] },
       ],
     },
     {
       id: 'writers', label: 'Writers', en: 'WRITERS', title: 'Writers & submissions',
-      intro: 'In 2013 we founded the Online Literature University (Nobel laureate Mo Yan served as its first honorary president), whose open courses keep training professional webnovel writers.',
+      intro: 'Home to 2,000+ acclaimed authors including Eryue He, Alai, Xiong Zhaozheng, Bi Feiyu, Liu Cixin and Zhou Meisen. Platform author Fengyu Jiuqiu sits on the 10th National Committee of the China Writers Association, and Shanliang de Mifeng was nominated for the Mao Dun New Talent Award for online literature.',
       blocks: [
-        { type: 'stats', items: [
-          { value: '4', unit: 'M+', label: 'Registered creators' },
-          { value: '50', unit: 'K+', label: 'Open-course trainee sessions' },
-        ] },
         { type: 'cards', cols: 2, items: [
           { tag: 'Creators', title: 'Submit or sign with us', text: 'Start writing in the 17K author zone.', href: 'https://www.17k.com', external: true },
         ] },
@@ -185,13 +160,13 @@ const literature: Page = {
     },
     {
       id: 'audio', label: 'Audio', en: 'AUDIO', title: 'Audio content',
-      intro: 'Our wholly owned subsidiary Hongda Yitai is one of China’s earliest audio content producers. Our “AI narrator” supports solo, duo and multi-voice audiobooks.',
+      intro: '200+ professional narrators record our audiobooks, and our in-house AI voice technology turns content into audio quickly and at low cost.',
       blocks: [
         { type: 'stats', items: [
-          { value: '490', unit: 'K+', label: 'Hours of audio content' },
-          { value: '200', unit: 'K+ hrs', label: 'Audiobooks recorded by AI narrators' },
-          { value: '5', unit: 'B+', label: 'Plays of the Martial God Asura audiobook' },
-        ], note: 'Sources: 2024 Annual Report, 2025 Interim Report' },
+          { value: '490', unit: 'K+ hrs', label: 'Audio content' },
+          { value: '200', unit: 'K+ hrs', label: 'Recorded by AI narrators' },
+          { value: '5', unit: 'B', label: 'Lifetime plays of the Martial God Asura audiobook' },
+        ], note: 'Source: COL Group corporate presentation (Sept 2026)' },
       ],
     },
   ],
@@ -208,10 +183,11 @@ const drama: Page = {
     {
       id: 'platforms', label: 'Platforms', en: 'PLATFORMS', title: 'Microdrama platforms',
       blocks: [
-        { type: 'cards', cols: 3, items: [
-          { tag: 'Global microdrama', title: 'FlareFlow', text: 'Launched in April 2025 and available in 200+ countries and regions. By the end of June 2026 it had over 52 million registered users and nearly 7,000 titles, and had reached monthly operating breakeven. In September 2025 it topped the US App Store free entertainment chart.', href: 'https://apps.apple.com/app/id6744237126', external: true },
-          { tag: 'Japan microdrama', title: 'UniReel', text: 'Launched by COL JAPAN in November 2024, it reached No. 2 on Japan’s iOS entertainment chart on launch night. Together with LINE Yahoo, Hakuhodo DY Media Partners and others it formed a microdrama committee, whose first title was co-produced with Nippon TV.' },
-          { tag: 'China microdrama', title: 'Microdrama production', text: 'The Yi Pin Bu Yi (The Commoner) series has passed 6 billion views; more than 10 titles, including “The Simple Son-in-Law of Great Qian” and “My 26-Year-Old Tenant”, have each passed 1 billion; over 1,200 AI microdramas released.' },
+        { type: 'features', items: [
+          { tag: 'Global microdrama', title: 'FlareFlow', text: 'Launched in April 2025 and available in 200+ countries and regions, FlareFlow has reached monthly operating breakeven. In September 2025 it topped the US App Store free entertainment chart.', href: 'https://flareflow.tv/#/', external: true,
+            stats: [{ value: '52', unit: 'M+', label: 'Registered users' }, { value: '7,000', label: 'Titles (nearly)' }, { value: '200', unit: '+', label: 'Countries and regions' }] },
+          { tag: 'China microdrama', title: 'Microdrama production', text: 'Our live-action microdramas keep an industry-leading 50% hit rate across period comedy, urban romance and palace drama. More than 10 titles, including “The Simple Son-in-Law of Great Qian” and “My 26-Year-Old Tenant”, have each passed 1 billion views.', href: '/ip#wall', linkLabel: 'See featured works',
+            stats: [{ value: '6', unit: 'B+', label: 'Views of the Yi Pin Bu Yi series' }, { value: '10', unit: '+', label: 'Titles over 1B views' }, { value: '1,200', unit: '+', label: 'AI microdramas' }] },
         ] },
       ],
     },
@@ -223,9 +199,10 @@ const drama: Page = {
           { value: '94', unit: '', label: 'Standing sets for overseas microdrama' },
           { value: '10', unit: '+', label: 'Leading North American production partners' },
         ] },
-        { type: 'cards', cols: 2, items: [
-          { tag: 'Originals', title: 'Raising His Mistress\'s Child', text: 'A FlareFlow original with over 200 million views worldwide, winner of “Best Female Leadership Narrative” at the 2025 International Short Drama Festival. The Korean version stars Han Chae-young.' },
-          { tag: 'Studio', title: 'Hengqin International Film & TV City', text: 'Hosts ongoing film, TV and microdrama shoots, with partners including TVB.' },
+        { type: 'features', items: [
+          { tag: 'Studio', title: 'Hengqin International Film & TV City', text: 'The world’s first international microdrama production base, open since February 2026. In the Guangdong–Hong Kong–Macao Greater Bay Area, it has stages styled after many countries and 192 crew apartments, and offers one-stop services from content and review to shooting, operations, post-production and distribution in China and abroad.', video: 'hengqin' },
+          { tag: 'AI at scale', title: 'Industrial AI production', text: 'Our in-house AIGC pipeline standardizes production and combines tools, capacity and content, so IP moves across formats quickly and at scale.',
+            stats: [{ value: '80', unit: '%', label: 'Shorter production time' }, { value: '90', unit: '%', label: 'Lower production cost' }, { value: '1,200', label: 'AI microdramas (nearly)' }] },
         ] },
       ],
     },
@@ -265,10 +242,10 @@ const global: Page = {
       id: 'cases', label: 'Case Studies', en: 'CASES', title: 'International partnerships',
       blocks: [
         { type: 'cards', cols: 2, items: [
-          { tag: 'Connected TV', title: 'FlareFlow × Whale TV', text: 'Launched on the Whale TV independent TV operating system in September 2026, starting with South America. Whale TV works with 400+ TV brands and has over 47.5 million monthly active devices.' },
-          { tag: 'Southeast Asia', title: 'Partnering with Thailand’s CP Group', text: 'Accelerating local microdrama production.' },
-          { tag: 'Japan', title: 'COL JAPAN × UniReel', text: 'Formed a microdrama committee with LINE Yahoo, Hakuhodo DY Media Partners and HUUM; the first title was co-produced with Nippon TV. Earlier titles were sold to DMM.com.' },
-          { tag: 'Singapore', title: 'Supermodel Me', text: 'A reality microdrama produced with Refinery Media.' },
+          { tag: 'Connected TV', title: 'FlareFlow × Whale TV', img: 'whaletv', text: 'Launched on the Whale TV independent TV operating system in September 2026, starting with South America. Whale TV works with 400+ TV brands and has over 47.5 million monthly active devices.' },
+          { tag: 'Southeast Asia', title: 'Partnering with Thailand’s CP Group', img: 'thai', text: 'FlareFlow Mini launched a dedicated section on TATANG by TrueID, run by CP Group’s True, to accelerate local microdrama production.' },
+          { tag: 'Telecom', title: 'FlareFlow × AIS PLAY (Thailand)', img: 'ais', text: 'In November 2026 FlareFlow opened its own section on AIS PLAY, the entertainment platform of leading Thai telecom operator AIS, with Western, Chinese and Korean microdramas subtitled in Thai, on phones and TVs.' },
+          { tag: 'Singapore', title: 'Supermodel Me', img: 'supermodel', text: 'The world’s first mobile-native vertical reality microdrama, made with Singapore’s Refinery Media.' },
         ] },
       ],
     },
@@ -287,8 +264,8 @@ const ai: Page = {
       id: 'products', label: 'AI Products', en: 'PRODUCTS', title: 'AI products',
       blocks: [
         { type: 'cards', cols: 3, items: [
-          { tag: 'Large model', title: 'Zhongwen Xiaoyao / Xiaoyao AI', text: 'Our in-house large model supports writing in 14 languages. It serves 50,000+ creators in over 100 countries and regions and has helped produce more than 2.5 billion words.', href: 'https://xiaoyao.ai', external: true },
-          { tag: 'Creation platform', title: 'Ciyuan Shenbi', text: 'A full-stack AI content creation platform built on Xiaoyao AI, covering script breakdown, storyboards, image and video generation, and voice-over.' },
+          { tag: 'Large model', title: 'Zhongwen Xiaoyao / Xiaoyao AI', text: 'Launched in 2023 as the world’s first large model for 10,000-word fiction, it supports writing in 14 languages. It serves 50,000+ creators in over 100 countries and regions and has helped produce more than 2.5 billion words.', href: 'https://xiaoyao.ai', external: true },
+          { tag: 'Creation platform', title: 'Ciyuan Shenbi', text: 'An all-in-one AI animation tool launched in early 2026: from picking IP and scripts to storyboards, characters, images, video, voice-over and distribution, AI assists every step.', href: 'https://www.ciyuanshenbi.com', external: true },
           { tag: 'Marketing', title: 'Xiaoyao AI Agent', text: 'End-to-end AI ad delivery: creative generation, dynamic budget allocation and real-time monitoring. It produces 100–300 creatives per overseas microdrama and makes campaigns over 20x more efficient.' },
         ] },
       ],
@@ -300,8 +277,8 @@ const ai: Page = {
           { value: '90', unit: '%+', label: 'Lower AI translation cost' },
           { value: '40', unit: '%', label: 'Higher production efficiency' },
           { value: '75', unit: '%+', label: 'Lower per-minute cost of 3D animation' },
-          { value: '1.4', unit: 'M+', label: 'Content items reviewed by AI in 2025' },
-        ], note: 'Sources: 2026 Chairman’s Letter to Shareholders, 2025 CSR Report' },
+          { value: '80', unit: '%', label: 'Shorter production time per AI microdrama' },
+        ], note: 'Sources: 2026 Chairman’s Letter to Shareholders, COL Group corporate presentation (Sept 2026)' },
       ],
     },
   ],
@@ -356,15 +333,14 @@ const businessIndex: Page = {
   sections: [
     {
       id: 'overview', label: 'Overview', en: 'OVERVIEW', title: 'Great stories, going global',
-      intro: 'Webnovels are where IP begins; microdrama and global expansion drive growth; AI and IP protection run through it all.',
+      intro: 'Webnovels are where IP begins; microdrama and global expansion drive growth; AI runs through it all.',
       blocks: [
         { type: 'steps', items: [
           { title: 'Webnovel', text: '17K · Siyuetian · Haili Stories', color: bizColor.literature },
           { title: 'Film & Microdrama', text: 'FlareFlow · Animation · Film & TV', color: bizColor.drama },
           { title: 'Global', text: '200+ countries and regions · 40%+ overseas revenue', color: bizColor.global },
           { title: 'AI & Creative Tools', text: 'Xiaoyao AI · Ciyuan Shenbi', color: bizColor.ai },
-          { title: 'IP Protection', text: 'Nearly 10,000 lawsuits · Blockchain evidence', color: bizColor.ipr },
-          { title: 'Data Solutions', text: '600 TB of data · Dozens of AI model partners', color: bizColor.data },
+          { title: 'Data Solutions', text: '600 TB of data · Serving all leading Chinese model makers', color: bizColor.data },
         ] },
       ],
     },
@@ -377,11 +353,11 @@ businessIndex.sections.push({
   intro: 'Our flagship products in global microdrama, AI creation and webnovels.',
   blocks: [
     { type: 'cards', featured: true, items: [
-      { logo: 'flareflow', tag: 'Global microdrama', title: 'FlareFlow', text: 'Launched in April 2025 in 200+ countries and regions and 14 languages, with over 52 million registered users. Topped the US free entertainment chart in September 2025.', href: 'https://apps.apple.com/app/id6744237126', external: true, color: bizColor.global },
-      { logo: 'cyshenbi', tag: 'AI animation', title: 'Ciyuan Shenbi', text: 'An all-in-one AI animation tool launched in early 2026: AI assists from script and storyboard to voice-over, with built-in global distribution.', href: '#', external: true, color: bizColor.ai },
-      { logo: 'xiaoyao', tag: 'AI large model', title: 'Xiaoyao AI', text: 'Built on our in-house “Zhongwen Xiaoyao” model, supporting writing in 14 languages for 50,000+ creators.', href: 'https://xiaoyao.ai', external: true, color: bizColor.ai },
+      { logo: 'flareflow', tag: 'Global microdrama', title: 'FlareFlow', text: 'Launched in April 2025 in 200+ countries and regions and 14 languages, with over 52 million registered users. Topped the US free entertainment chart in September 2025.', href: 'https://flareflow.tv/#/', external: true, color: bizColor.global },
+      { logo: 'cyshenbi', tag: 'AI animation', title: 'Ciyuan Shenbi', text: 'An all-in-one AI animation tool launched in early 2026: AI assists from script and storyboard to voice-over, with built-in global distribution.', href: 'https://www.ciyuanshenbi.com', external: true, color: bizColor.ai },
+      { logo: 'xiaoyao', tag: 'AI large model', title: 'Xiaoyao AI', text: '“Zhongwen Xiaoyao”, the world’s first large model for 10,000-word fiction, supports writing in 14 languages for 50,000+ creators.', href: 'https://xiaoyao.ai', external: true, color: bizColor.ai },
       { logo: '17k', tag: 'Webnovel', title: '17K', text: 'Our core original-content platform, recognized as a “key webnovel platform” by the Publicity Department of the CPC Central Committee.', href: 'https://www.17k.com', external: true, color: bizColor.literature },
-      { logo: '4yt', tag: 'Webnovel', title: 'Siyuetian', text: 'Original period fiction for women readers.', href: 'https://www.4yt.net', external: true, color: bizColor.literature },
+      { logo: '4yt', tag: 'Webnovel', title: 'Siyuetian', text: 'Original period fiction for women readers, with 150,000+ resident authors.', href: 'https://www.4yt.net', external: true, color: bizColor.literature },
     ] },
   ],
 });
@@ -395,18 +371,86 @@ const ipPage: Page = {
   href: '/ip',
   title: 'IP & Works',
   en: 'IP & WORKS',
-  intro: 'From serialized webnovels to audio, animation, microdrama, film and TV. Explore our IP and start a licensing conversation, all on one page.',
+  intro: 'From serialized webnovels to audio, animation, microdrama, film and TV. Explore our IP and start a licensing conversation, all in one place.',
   sections: [
     {
       id: 'wall', label: 'IP Wall', en: 'IP WALL', title: 'Featured IP',
       blocks: [
-        { type: 'ipwall', note: 'Posters and figures from the COL Group corporate presentation (Sept 2026) and official COL articles.', items: [
-          { title: 'The Legend of Hei', genre: 'Film & Series', forms: ['Animated series', 'Film', 'Merchandise'], tags: ['The Legend of Hei 2: RMB 533M+ box office', 'Released in 10+ countries and regions'], poster: 'luoxiaohei' },
-          { title: 'Martial God Asura', genre: 'Animation', forms: ['Webnovel', 'Audio', '3D animation'], tags: ['Season 2 topped Tencent Video’s fantasy animation chart', '5B+ audio plays'], poster: 'xiuluowushen' },
-          { title: 'Yi Pin Bu Yi (The Commoner)', genre: 'Microdrama', forms: ['Webnovel', 'Microdrama'], tags: ['6B+ views across the first four seasons', 'Zongyi Bao Microdrama of the Year 2025'], poster: 'yipinbuyi' },
-          { title: 'I Woke Up as the Villainess in an Otome Game System and Flirted My Way Through the Interstellar', genre: 'Microdrama', forms: ['AI 3D animation'], tags: ['No. 1 on the Huolong AI animation chart'], poster: 'yiyou' },
-          { title: 'Raising His Mistress\'s Child', genre: 'Microdrama', forms: ['FlareFlow', 'Premium English'], tags: ['200M+ views worldwide', 'Best Female Leadership Narrative, International Short Drama Festival'], poster: 'raising' },
-          { title: '99 Charms, 99 Heartbreaks', genre: 'Microdrama', forms: ['FlareFlow'], tags: ['Best Drama, Vertical Shorts Festival (Los Angeles)'], poster: 'charms99' },
+        { type: 'ipwall', note: 'Posters and figures from the COL Group corporate presentation (Sept 2026) and COL’s periodic reports. Click a poster to learn about the work.', items: [
+          { slug: 'luoxiaohei', title: 'The Legend of Hei', genre: 'Film & Series', forms: ['Animated series', 'Film', 'Merchandise'], tags: ['The Legend of Hei 2: RMB 533M+ box office', 'Released in 10+ countries and regions'], poster: 'luoxiaohei',
+            intro: 'In 2023 COL acquired a controlling stake in Hanmu Chunhua, the studio behind The Legend of Hei. The franchise now spans an animated series, spin-off comics, feature films and merchandise, growing into a complete IP universe.',
+            stats: [
+              { value: '533', unit: 'M RMB', label: 'The Legend of Hei 2 mainland box office' },
+              { value: '8.7', label: 'Douban rating' },
+              { value: '10', unit: '+', label: 'Overseas release markets' },
+              { value: '40', unit: '+', label: 'Brand collaborations for the film' },
+            ],
+            highlights: [
+              { k: '2011', v: 'The animated series premieres and goes on to pass 1 billion views' },
+              { k: '2012', v: 'Director MTJJ founds the studio Hanmu Chunhua' },
+              { k: '2019', v: 'The first film grosses over RMB 315 million and is selected for the 44th Annecy International Animation Film Festival (the only Chinese-language film selected)' },
+              { k: '2020', v: 'The Japanese dub, released by Aniplex in Japanese cinemas nationwide, earns over JPY 580 million' },
+              { k: '2025', v: 'The Legend of Hei 2 opens in mainland China on July 18, grosses over RMB 533 million, and is released in 10+ markets including the US, Canada, Malaysia, Australia, New Zealand, Thailand, Japan, Indonesia and France' },
+              { k: '2025', v: 'Qualifies for the Academy Award for Best Animated Feature, the only Chinese animation on the list. The Japanese dub passes JPY 100 million in three days and ranks No. 1 on Filmarks’ first-day satisfaction chart' },
+              { k: '2026', v: 'Wins the Gold Award for animated film at the 22nd China International Cartoon & Animation Festival (Golden Monkey Award), and screens at the 2026 UK–China Film Week' },
+              { k: 'Brands', v: 'Collaborations with 40+ brands including Honor of Kings, Pizza Hut, Pop Mart, MINISO, Akko and Game for Peace, across food, toys, fashion, tech and intangible heritage' },
+            ],
+            video: 'luoxiaohei2-trailer', images: ['luoxiaohei2'], source: 'COL Group corporate presentation (Sept 2026), pp. 18–19' },
+          { slug: 'xiuluowushen', title: 'Martial God Asura', genre: 'Animation', forms: ['Webnovel', 'Audio', '3D animation'], tags: ['Season 2 topped Tencent Video’s fantasy animation chart', '5B audio plays'], poster: 'xiuluowushen',
+            intro: 'A flagship webnovel IP developed across every format, from webnovel and audio to 3D animation. It shows how COL develops IP while stories are still being serialized.',
+            stats: [
+              { value: '5', unit: 'B', label: 'Lifetime audiobook plays' },
+              { value: 'TOP2', label: 'Tencent Video animation chart (season 1)' },
+            ],
+            highlights: [
+              { k: 'Audio', v: 'The audiobook has 5 billion lifetime plays, the most of any COL audio title' },
+              { k: '2023', v: 'The 3D animation premieres on Tencent Video, reaching No. 7 on the site’s trending searches and No. 2 on its animation chart on day one' },
+              { k: '2026', v: 'Season 2 launches on February 24 and immediately tops Tencent Video’s fantasy animation chart, reaching the top 3 of its Chinese animation, trending and 3D charts' },
+            ],
+            source: 'COL Group corporate presentation (Sept 2026), pp. 16–17' },
+          { slug: 'yipinbuyi', title: 'Yi Pin Bu Yi (The Commoner)', genre: 'Microdrama', forms: ['Webnovel', 'Microdrama'], tags: ['6B+ views across the first four seasons', 'Zongyi Bao Microdrama of the Year 2025'], poster: 'yipinbuyi',
+            intro: 'A breakout microdrama series adapted from a 17K novel, and a model for how quality literary IP and premium microdrama lift each other.',
+            stats: [
+              { value: '6', unit: 'B+', label: 'Views across the first four seasons' },
+              { value: '3', unit: 'B+', label: 'Views of season 1' },
+              { value: '900', unit: '%+', label: 'Season 1 project ROI' },
+              { value: '10', unit: 'M+', label: 'Saves' },
+            ],
+            highlights: [
+              { k: 'Awards', v: 'Selected as a “Beijing Audiovisual” key online project; named Microdrama of the Year in Zongyi Bao’s 2025 influence list' },
+              { k: 'Awards', v: 'Outstanding Popular Microdrama at the 2025 Cross-Strait WE Microdrama Competition; on Beijing Radio & TV’s list of 45 must-watch titles for Spring Festival' },
+              { k: '2026', v: 'Season 2 passed 116 million effective views the day after launch and topped Hongguo’s overall microdrama chart' },
+              { k: 'AI', v: 'An AI-remastered version has completed rating review' },
+            ],
+            video: 'yipinbuyi', vertical: true, images: ['yipinbuyi1'], source: 'COL Group corporate presentation (Sept 2026), p. 20; 2026 Interim Report' },
+          { slug: 'yiyou', title: 'I Woke Up as the Villainess in an Otome Game System and Flirted My Way Through the Interstellar', genre: 'Microdrama', forms: ['AI 3D animation'], tags: ['No. 1 on the Huolong AI animation chart'], poster: 'yiyou',
+            intro: 'A COL-produced AI 3D animated series for women viewers, extending our AI animation from action-driven stories to romance.',
+            stats: [
+              { value: 'TOP1', label: 'Huolong trending and search charts' },
+              { value: '5', label: 'Language markets where it hit No. 1' },
+            ],
+            highlights: [
+              { k: 'China', v: 'In March 2026 it topped both the Huolong AI animation trending and search charts, holding No. 1 for days' },
+              { k: 'Global', v: 'Quickly reached No. 1 on the daily charts in English, Spanish, French, Italian and Japanese, a record for Chinese AI animation overseas' },
+            ],
+            source: 'COL Group corporate presentation (Sept 2026), p. 17; 2026 Interim Report' },
+          { slug: 'raising', title: 'Raising His Mistress\'s Child', genre: 'Microdrama', forms: ['FlareFlow', 'Premium English'], tags: ['200M+ views worldwide', 'Best Female Leadership Narrative, International Short Drama Festival'], poster: 'raising',
+            intro: 'A FlareFlow original that drew hundreds of millions of views and over USD 1 million in top-ups, and a model for proving a story globally and then remaking it locally.',
+            stats: [
+              { value: '200', unit: 'M+', label: 'Worldwide views across the series' },
+            ],
+            highlights: [
+              { k: 'Award', v: 'Best Female Leadership Narrative at the 2025 International Short Drama Festival' },
+              { k: 'Korea', v: 'Remade as a Korean-language version starring Han Chae-young' },
+              { k: 'Press', v: 'Covered by the international entertainment outlet Variety' },
+            ],
+            video: 'raising', vertical: true, source: '2025 Annual Report, 2026 Interim Report' },
+          { slug: 'charms99', title: '99 Charms, 99 Heartbreaks', genre: 'Microdrama', forms: ['FlareFlow'], tags: ['Best Drama, Vertical Shorts Festival (Los Angeles)'], poster: 'charms99',
+            intro: 'A FlareFlow premium microdrama that went from a Chinese original to an English version to a fully localized remake, a model for how FlareFlow localizes.',
+            highlights: [
+              { k: 'Award', v: 'Chosen from 200+ entries as Best Drama at the Vertical Shorts Festival in Los Angeles' },
+            ],
+            source: 'COL press release (Sept 17, 2026)' },
         ] },
       ],
     },
@@ -414,7 +458,7 @@ const ipPage: Page = {
       id: 'trailers', label: 'Trailers & Screeners', en: 'TRAILERS', title: 'Trailers & screeners',
       intro: 'Screeners for partners and trailers for audiences.',
       blocks: [
-        { type: 'videos', note: 'Screeners for other titles are available on request via the Partner page.', items: [
+        { type: 'videos', note: 'Screeners for other titles are available on request via the AI assistant.', items: [
           { title: 'The Legend of Hei 2', sub: 'Animated feature · Trailer', src: 'luoxiaohei2-trailer' },
           { title: 'Magic Emperor’s Grand Steward', sub: 'AI animation · Xianxia long-form series', src: 'mohuang' },
           { title: 'The Great Song', sub: 'AI live-action historical microdrama', src: 'dasong' },
@@ -458,15 +502,13 @@ const ipPage: Page = {
       id: 'license', label: 'Licensing', en: 'LICENSING', title: 'Licensing',
       intro: 'Choose a licensing type to reach the right contact.',
       blocks: [
-        { type: 'cards', cols: 4, items: [
+        { type: 'cards', cols: 3, arrow: true, items: [
           { tag: '01', title: 'Film & TV Adaptation', href: lic('Film & TV Adaptation') },
           { tag: '02', title: 'Animation Adaptation', href: lic('Animation Adaptation') },
           { tag: '03', title: 'Game Adaptation', href: lic('Game Adaptation') },
           { tag: '04', title: 'Publishing / E-books', href: lic('Publishing / E-books') },
           { tag: '05', title: 'Audio', href: lic('Audio') },
-          { tag: '06', title: 'Consumer Products / Merchandise', href: lic('Consumer Products / Merchandise') },
-          { tag: '07', title: 'Brand Collaborations', href: lic('Brand Collaborations') },
-          { tag: '+', title: 'Request Screeners', href: lic('Request Screeners') },
+          { tag: '06', title: 'Brand Collaborations / Merchandise', href: lic('Brand Collaborations / Merchandise') },
         ] },
       ],
     },
@@ -499,9 +541,12 @@ const dataPage: Page = {
         { type: 'stats', items: [
           { value: '600', unit: 'TB', label: 'Text, audio, image and video data' },
           { value: '5.6', unit: 'M+', label: 'Licensed digital content titles' },
-          { value: 'Dozens', unit: '', label: 'Large-model company partners' },
+          { value: '7', unit: '', label: 'New high-quality dataset types (H1 2026)' },
           { value: '85', unit: '%', label: 'Share of new data that is specialized, high-difficulty' },
-        ], note: 'Sources: 2025 Interim Report, 2026 Interim Report' },
+        ], note: 'Sources: 2025 Annual Report, 2026 Interim Report' },
+        { type: 'cards', cols: 2, items: [
+          { tag: 'Partner', title: 'Discuss a data partnership', text: 'Tell our AI assistant what data you need and it will pass it to the Data Solutions team.', href: toPartner('data', 'Data Solutions') },
+        ] },
       ],
     },
   ],
@@ -511,7 +556,7 @@ const dataPage: Page = {
 businessIndex.title = 'Our Businesses';
 businessIndex.en = 'BUSINESS';
 businessIndex.intro = 'IP + AI + Global: great IP at the core, AI across every step, and stories that travel the world.';
-businessPages.push(literature, drama, global, ai, ipr, dataPage);
+businessPages.push(literature, drama, global, ai, dataPage);
 
 /* ============ Newsroom /news ============ */
 
@@ -525,9 +570,30 @@ const news: Page = {
   intro: 'The latest from COL Group, press coverage and media resources.',
   sections: [
     { id: 'official', label: 'Press Releases', en: 'PRESS', title: 'Press releases', blocks: [{ type: 'news', items: [
+      { date: '2026-10-12', title: 'COL partners with Thailand’s CP Group to accelerate local microdrama production', tag: 'Global', img: 'thai', slug: '2026-10-12-cp-group', text: 'FlareFlow Mini launched a dedicated section on TATANG by TrueID, run by CP Group’s True. The partners will work together on AIGC localization, training Thai creators with local universities, and distribution.',
+        body: [
+          { p: 'COL’s strategic partnership with Thailand’s CP Group has reached a new milestone: FlareFlow Mini is now live on TATANG by TrueID, a local Thai microdrama platform, with its own dedicated section bringing localized vertical microdramas to Thai viewers.' },
+          { p: 'It is a key step in turning the partnership, announced in August, into action.' },
+          { p: 'CP Group is one of Thailand’s largest conglomerates, with businesses in telecoms, digital technology, retail, digital payments and media across 23 countries, and deep local resources and channels in Southeast Asia. Its subsidiary True Corporation is a leading Thai telecom and digital technology company, and TATANG by TrueID is True’s local microdrama platform, curating international microdramas for Thai audiences. Backed by CP Group’s consumer ecosystem in telecoms, payments, retail and brand marketing, TATANG is well placed to reach viewers.' },
+          { p: 'The partnership moves forward on three fronts at once, content localization, talent development and distribution, connecting production, creation and distribution.' },
+          { h: 'Content: real localization, not just translation' },
+          { p: 'COL and CP Group will adapt FlareFlow and other hit titles for Thailand. Rather than simply translating, the teams will rewrite characters, settings, dialogue and cultural context for Thai audiences, using AIGC in production and combining COL’s IP and microdrama expertise with CP Group’s local creator network and market resources.' },
+          { h: 'Talent: training creators with Thai universities' },
+          { p: 'The two companies plan to work with leading Thai academic institutions on a microdrama talent program, training young local creators in storytelling, production and creative skills, and building a path from education into the industry.' },
+          { h: 'Distribution: a FlareFlow section on TATANG' },
+          { p: 'FlareFlow Mini is now live on TATANG with its own FlareFlow section. Building on the CP and True consumer ecosystem, the partners will make FlareFlow content easier to find in Thailand and bring more localized microdramas to Thai viewers.' },
+          { p: 'FlareFlow now has more than 52 million registered users worldwide. Starting from Thailand, the two companies will continue to expand localized content and distribution across Southeast Asia.' },
+        ] },
+      { date: '2026-10-08', title: 'COL named to Cyzone’s “2026 China Globalization New Force Top 100” for the second year running', tag: 'Awards', img: 'global100', slug: '2026-10-08-global100', text: 'Listed among the 40 “leading” companies. Overseas revenue grew 123.94% in 2025 to over 40% of the total, and FlareFlow topped the US entertainment charts.',
+        body: [
+          { p: 'At the 5th Global Digital Trade Expo in Hangzhou, Cyzone released its “2026 Digital Trade · China Globalization New Force Top 100” list. Thanks to continued progress in taking microdrama overseas, COL made the list again and was ranked among the “leading” companies.' },
+          { p: 'The list combines questionnaires, interviews, expert review and third-party data checks, scoring companies on the depth of their global footprint, product competitiveness, scale, compliance and brand awareness. Companies are split into “leading” and “growing” groups; the 40 “leading” companies each earned at least USD 15 million overseas in 2025 and have built scale in overseas markets.' },
+          { h: 'Microdrama going global' },
+          { p: 'The listing reflects COL’s steady progress in global microdrama. Its overseas platform FlareFlow launched in April 2025 and in the same year reached No. 1 on both the US Google Play and App Store free entertainment charts. It has over 33 million registered users across 200+ countries and regions. In 2025, COL’s overseas revenue grew 123.94% year on year to more than 40% of total revenue.' },
+          { quote: 'Going global doesn’t mean watching overseas data from home. You have to enter the local market, understand local users and build local teams.', by: 'Tong Zhilei, Founder, Chairman and President of COL Group' },
+          { p: 'With IP as its anchor and AI as its sail, COL will keep building a global microdrama ecosystem and bringing great stories to audiences worldwide.' },
+        ] },
       { date: '2026-10-16', title: 'COL at MIPCOM Cannes: FlareFlow partners with Digicel to expand in Central and South America', tag: 'Global', img: 'cannes', text: 'FlareFlow exhibited at MIPCOM and signed with Caribbean telecom operator Digicel to grow across Central and South America.' },
-      { date: '2026-10-12', title: 'COL partners with Thailand’s CP Group to accelerate local microdrama production', tag: 'Global', img: 'thai', href: 'https://www.col.com/article/2110230650349912064', text: 'FlareFlow Mini launched a dedicated section on TATANG by TrueID, run by CP Group’s True. The partners will work together on AIGC localization, training Thai creators with local universities, and distribution.' },
-      { date: '2026-10-08', title: 'COL named to Cyzone’s “2026 China Globalization New Force Top 100” for the second year running', tag: 'Awards', img: 'global100', href: 'https://www.col.com/article/2110229921233076224', text: 'Listed among the 40 “leading” companies. Overseas revenue grew 123.94% in 2025 to over 40% of the total, and FlareFlow topped the US entertainment charts.' },
       { date: '2026-09-24', title: 'Hong Kong crime thriller “Black and White Undercover 3” starts filming as Hengqin International Film & TV City keeps growing', tag: 'Film & TV', img: 'hengqin', href: 'https://www.col.com/article/2110228778050355200', text: 'Starring Andy On and Eric Tsang. The studio has 90+ standing sets and 17,000 m² of stages, and is expanding into Hengqin–Macau co-productions, tourism and AI virtual production.' },
       { date: '2026-09-17', title: 'FlareFlow’s 99 Charms, 99 Heartbreaks wins Best Microdrama at the Vertical Shorts Festival in Los Angeles', tag: 'Microdrama', img: 'flareflow-award', href: 'https://www.col.com/article/2110227594900111360', text: 'Chosen from 200+ entries. The show went from a Chinese original to an English version to a fully localized remake, a model for how FlareFlow localizes.' },
       { date: '2026-09-11', title: 'FlareFlow arrives on Whale TV, bringing hit microdramas to South American TV screens', tag: 'Global', img: 'whaletv', href: 'https://www.col.com/article/2110226608613720064', text: 'FlareFlow is now on the Whale TV smart-TV OS, starting in South America. Whale TV works with 400+ TV brands and 47.5M+ monthly active devices.' },
@@ -570,7 +636,7 @@ const investors: Page = {
   href: '/investors',
   title: 'Investor Relations',
   en: 'INVESTOR RELATIONS',
-  intro: 'AI as our technology foundation, content as our core asset, globalization as our direction. A-share code 300364.SZ.',
+  intro: '',
   sections: [
     { id: 'highlights', label: 'Highlights', en: 'HIGHLIGHTS', title: 'Investment highlights', blocks: [
       { type: 'stats', items: irHighlights, note: 'Sources: 2026 Chairman’s Letter to Shareholders, 2026 Interim Report' },
@@ -601,7 +667,7 @@ const investors: Page = {
       ] },
     ] },
     { id: 'ir-contact', label: 'Contact IR', en: 'CONTACT IR', title: 'Investor contacts', blocks: [
-      { type: 'contact', items: [{ k: 'IR email', v: 'ir@col.com' }, { k: 'IR phone', v: '010-84195757' }], cta: { label: 'Ask on CNINFO Hudongyi', href: cninfo } },
+      { type: 'contact', items: [{ k: 'IR email', v: 'ir@col.com' }], cta: { label: 'Ask on CNINFO Hudongyi', href: cninfo } },
     ] },
   ],
 };
@@ -617,46 +683,8 @@ const join: Page = {
   en: 'JOIN US',
   intro: 'We keep raising our talent density and investing in young talent to keep the organization energetic and creative.',
   sections: [
-    { id: 'culture', label: 'Philosophy', en: 'PHILOSOPHY', title: 'How we grow talent', blocks: [
-      { type: 'cards', cols: 2, items: [
-        { tag: 'Talent strategy', title: 'Raising talent density', text: 'Investing in young talent to keep the organization energetic and creative.' },
-        { tag: 'Development', title: 'A home for professional talent', text: 'Finding and developing expert leaders and building a strong professional pipeline.' },
-      ] },
-      { type: 'tags', title: 'Learning & development', items: ['Mentorship program', 'Knowledge base', 'Hit Makers Club', 'Innovation conference', 'High-potential program', 'New-hire onboarding', 'Frontline manager training', 'Internal trainer program', 'Guest talks'] },
-    ] },
-    { id: 'activities', label: 'Life at COL', en: 'ACTIVITIES', title: 'Life at COL', blocks: [
-      { type: 'gallery', note: 'Photos to be provided by Brand / HR; public use to be approved by Legal and HR.', items: [
-        { tag: 'Annual party', caption: 'Annual party' },
-        { tag: 'Awards', caption: 'COL Star / Rising Star awards' },
-        { tag: 'Team building', caption: 'Team trips' },
-        { tag: 'Competitions', caption: 'Innovation contest' },
-        { tag: 'Clubs', caption: 'Sports clubs: badminton, basketball, walking' },
-        { tag: 'AI training', caption: 'AI training and sharing sessions' },
-        { tag: 'Awards', caption: 'Performance celebrations' },
-        { tag: 'Annual party', caption: 'Work anniversary celebrations' },
-      ] },
-    ] },
-    { id: 'people', label: 'Our People', en: 'OUR PEOPLE', title: 'Our people', blocks: [
-      { type: 'cards', cols: 3, items: [
-        { tag: 'International business', title: 'Embracing change and challenge', text: 'Building our international business opens up new horizons and opportunities. I’ve found teammates to build with and friends to share stories with.' },
-        { tag: 'Growth', title: 'Stepping out of my comfort zone', text: 'Only after joining COL did I discover how many sides of myself there were to explore.' },
-        { tag: 'Creative', title: 'From hobby to career', text: 'The company gave me the chance and the platform to try, and I keep pushing further in work I love.' },
-      ] },
-      { type: 'text', paras: ['Employee photos and names will be added once consent is obtained.'] },
-    ] },
-    { id: 'workplace', label: 'Workplace', en: 'WORKPLACE', title: 'Where we work', blocks: [
-      { type: 'gallery', items: [
-        { tag: 'Workplace', caption: 'Beijing · Yonghe Plaza' },
-        { tag: 'Workplace', caption: 'Hengqin international microdrama production base' },
-      ] },
-    ] },
-    { id: 'positions', label: 'Open Roles', en: 'CAREERS', title: 'Experienced & campus hiring', blocks: [
-      { type: 'steps', items: [{ title: 'Browse roles' }, { title: 'Apply' }, { title: 'Interview' }] },
-      { type: 'cards', cols: 2, items: [
-        { id: 'social', tag: 'Experienced hires', title: 'View open roles', text: 'Browse current openings on our careers site (in Chinese).', href: 'https://zhongwenzaixian.zhiye.com/', external: true },
-        { id: 'campus', tag: 'Campus hiring', title: 'View campus roles', text: 'Opportunities for new graduates.', href: 'https://zhongwenzaixian.zhiye.com/campus', external: true },
-      ] },
-      { type: 'contact', items: [{ k: 'HR email', v: 'To be provided' }] },
+    { id: 'positions', label: 'Open Roles', en: 'CAREERS', title: 'Open roles', blocks: [
+      { type: 'spotlight', kicker: 'CAREERS', title: 'See our open roles', text: 'Job descriptions and applications are on COL’s official careers site (in Chinese).', cta: 'Go to the careers site', href: 'https://zhongwenzaixian.zhiye.com/' },
     ] },
   ],
 };
@@ -671,24 +699,24 @@ const partner: Page = {
   href: '/partner',
   title: 'Partner With Us',
   en: 'PARTNER WITH US',
-  intro: 'Content acquisition, IP licensing, data, global partnerships, suppliers and media: find the right person, or just ask our AI assistant.',
+  intro: 'Content acquisition, IP licensing, data, global partnerships, suppliers and media: pick an area and our AI assistant will pass your request to the right team.',
   sections: [
-    { id: 'types', label: 'Contacts', en: 'CONTACTS', title: 'Contact the right team', blocks: [
+    { id: 'types', label: 'Ways to Partner', en: 'PARTNERSHIP', title: 'Ways to work with us', intro: 'From content and IP to data and global distribution, across the whole content value chain. Pick an area and tell our AI assistant what you need.', blocks: [
       { type: 'contacts', items: [
-        { id: 'content', tag: 'Content', title: 'Content Acquisition / Distribution', text: 'Acquiring and distributing web fiction, audio and microdrama content; platform and device channel partnerships.', people: [{ name: 'To be confirmed', role: 'Head of Content Partnerships' }] },
-        { id: 'license', tag: 'IP Licensing', title: 'IP Licensing', text: 'Film & TV, animation, games, publishing, audio, consumer products and brand collaborations, plus screener requests.', people: [{ name: 'To be confirmed', role: 'Head of IP Licensing' }] },
-        { id: 'data', tag: 'Data', title: 'Data Solutions', text: 'Data and corpus services for AI and large-model companies. See “Data Solutions”.', people: [{ name: 'To be confirmed', role: 'Head of Data Solutions' }] },
-        { id: 'overseas', tag: 'Global BD', title: 'International Partnerships', text: 'Overseas content acquisition, distribution and IP partnerships.', people: [{ name: 'To be confirmed', role: 'Head of International Partnerships' }] },
-        { id: 'investment', tag: 'Investment', title: 'Investment', text: 'Strategic direct investment and industry fund partnerships.', people: [{ name: 'To be confirmed', role: 'Head of Investment' }] },
-        { id: 'supplier', tag: 'Suppliers', title: 'Become a Supplier', text: 'Onboarding for content, technology, production and channel suppliers (onboarding guide to be provided).', people: [{ name: 'To be confirmed', role: 'Supplier onboarding' }] },
-        { id: 'media', tag: 'Media', title: 'Media Inquiries', text: 'Interview and coverage requests. Media resources are in the Newsroom.', people: [{ name: 'To be confirmed', role: 'Brand & PR' }] },
+        { id: 'content', tag: 'Content', title: 'Content Acquisition / Distribution', text: 'Acquisition and distribution of webnovels, audio and microdramas, and platform and device partnerships.', color: bizColor.literature },
+        { id: 'license', tag: 'IP Licensing', title: 'IP Licensing', text: 'Film & TV, animation, games, publishing, audio and brand collaborations.', color: bizColor.drama },
+        { id: 'data', tag: 'Data', title: 'Data Solutions', text: 'Licensed, custom and annotated data for AI and large-model companies.', color: bizColor.data },
+        { id: 'overseas', tag: 'Global BD', title: 'International Partnerships', text: 'Global distribution, acquisition and co-production of microdramas and webnovels, plus FlareFlow partnerships.', color: bizColor.global },
+        { id: 'investment', tag: 'Investment', title: 'Investment', text: 'Strategic direct investment and industry funds across content, AI and global expansion.', color: bizColor.ai },
+        { id: 'supplier', tag: 'Suppliers', title: 'Become a Supplier', text: 'Onboarding for content, technology, production and channel suppliers.', color: bizColor.ipr },
+        { id: 'media', tag: 'Media', title: 'Media Inquiries', text: 'Interview and coverage requests, and media materials.', color: bizColor.global },
       ] },
     ] },
     { id: 'form', label: 'Send a Message', en: 'MESSAGE', title: 'Send us a message', intro: 'Choose a partnership type and leave your details, and the right person will get in touch.', blocks: [
       { type: 'form', topics: ['Content Acquisition / Distribution', 'IP Licensing', 'Data Solutions', 'International Partnerships', 'Investment', 'Become a Supplier', 'Media Inquiries', 'Other'] },
     ] },
     { id: 'hq', label: 'Headquarters', en: 'HEADQUARTERS', title: 'Headquarters', blocks: [
-      { type: 'contact', items: [{ k: 'Address', v: '6/F, Block E, Yonghe Plaza, 28 Andingmen East Street, Dongcheng District, Beijing, China' }, { k: 'Hotline', v: contact.phone }] },
+      { type: 'contact', items: [{ k: 'Address', v: '6/F, Block E, Yonghe Plaza, 28 Andingmen East Street, Dongcheng District, Beijing, China' }] },
     ] },
   ],
 };
@@ -700,7 +728,7 @@ function reorder(p: Page, ids: string[]) {
   const rank = (id: string) => (ids.includes(id) ? ids.indexOf(id) : ids.length);
   p.sections = [...p.sections].sort((a, b) => rank(a.id) - rank(b.id));
 }
-reorder(about, ['intro', 'culture', 'history', 'strategy', 'honors', 'licenses']);
+reorder(about, ['intro', 'culture', 'history', 'strategy']);
 reorder(ipPage, ['wall', 'trailers', 'cases', 'license', 'library']);
 reorder(dataPage, ['services', 'scale']);
 reorder(investors, ['highlights', 'letter', 'filings', 'ir-contact']);
@@ -716,21 +744,6 @@ reorder(investors, ['highlights', 'letter', 'filings', 'ir-contact']);
 // 在线留言表单已移除（10/22）：咨询改由 AI 助手转交
 partner.sections = partner.sections.filter((x) => !x.blocks.some((b) => b.type === 'form'));
 // Partner page: AI assistant entry (it forwards your request to the right contact)
-// Partner page top: overview of partnership areas, each jumps to its contact card
-partner.sections.unshift({
-  id: 'overview', label: 'Overview', en: 'OVERVIEW', title: 'Ways to work with us',
-  intro: 'From content and IP to data and global distribution, across the whole content value chain. Pick an area to reach the right team.',
-  blocks: [{ type: 'cards', cols: 4, items: [
-    { tag: 'Global', title: 'International Partnerships', text: 'Global distribution, acquisition and co-production of microdramas and webnovels, plus FlareFlow partnerships.', href: '#overseas', color: bizColor.global },
-    { tag: 'Data', title: 'Data Solutions', text: 'Licensed, custom and annotated data for AI and large-model companies.', href: '#data', color: bizColor.data },
-    { tag: 'IP', title: 'IP Licensing', text: 'Film & TV, animation, games, publishing, audio, consumer products and brand collaborations.', href: '#license', color: bizColor.drama },
-    { tag: 'Content', title: 'Content & Distribution', text: 'Acquisition and distribution of webnovels, audio and microdramas, and platform partnerships.', href: '#content', color: bizColor.literature },
-    { tag: 'Investment', title: 'Investment', text: 'Strategic direct investment and industry funds across content, AI and global expansion.', href: '#investment', color: bizColor.ai },
-    { tag: 'Suppliers', title: 'Become a Supplier', text: 'Onboarding for content, technology, production and channel suppliers.', href: '#supplier', color: bizColor.ipr },
-    { tag: 'Media', title: 'Media Inquiries', text: 'Interview and coverage requests, and media materials.', href: '#media', color: bizColor.global },
-    { tag: 'AI', title: 'Not sure who to ask?', text: 'Chat with our AI assistant and it will pass your request to the right person.', href: '#types', color: bizColor.ai },
-  ] }],
-});
 partner.sections.unshift({ id: 'ask-ai', label: 'Ask AI', en: 'ASK AI', bare: true, blocks: [{ type: 'aichat', title: 'Not sure who to contact? Just ask our AI assistant', text: 'Tell the AI what you’d like to work on. It will summarize your request and pass it to the right person, so you don’t need to look up contacts yourself.', cta: 'Chat with the AI assistant' }] });
 
 /* ============ Navigation ============ */
@@ -792,10 +805,10 @@ export const aiAssistant = {
   },
   faq: [
     { q: 'What does COL do?', keywords: ['what do', 'what does', 'about', 'company', 'who are', 'business', 'overview', 'introduction'],
-      a: 'COL Group is an AI-driven global leader in digital entertainment. Founded at Tsinghua University in 2000, it listed on the ChiNext board of the Shenzhen Stock Exchange in 2015 (300364). Its businesses span webnovels, film and microdrama, global, AI creative tools, IP protection and data solutions.',
+      a: 'COL Group is an AI-driven global leader in digital entertainment. Founded at Tsinghua University in 2000, it listed on the ChiNext board of the Shenzhen Stock Exchange in 2015 (300364). Its businesses span webnovels, film and microdrama, global, AI creative tools and data solutions.',
       link: { label: 'See our businesses', href: '/business' } },
     { q: 'How do I license your IP?', keywords: ['ip', 'adaptation', 'legend of hei', 'commoner', 'yi pin bu yi'],
-      a: 'The IP & Works page has our IP wall, trailers and adaptation cases. To discuss licensing, say “I want to partner” and fill in a short card. I’ll pass it to the licensing team.',
+      a: 'The IP & Works page has our IP wall, trailers and adaptation cases; click any poster to learn about that work. To discuss licensing, say “I want to partner” and fill in a short card. I’ll pass it to the licensing team.',
       link: { label: 'See IP & Works', href: '/ip#wall' } },
     { q: 'What products do you have?', keywords: ['product', 'app', '17k', 'xiaoyao', 'download', 'read', 'watch'],
       a: 'Our main products are FlareFlow (global microdrama), Ciyuan Shenbi (AI animation), Xiaoyao AI (AI creation), 17K and 4yt (webnovels).',
@@ -804,22 +817,22 @@ export const aiAssistant = {
       a: 'FlareFlow is COL’s global microdrama platform, available in 200+ countries and regions, with over 52 million registered users as of June 2026.',
       link: { label: 'See our global business', href: '/business#global' } },
     { q: 'What AI training data do you offer?', keywords: ['data', 'dataset', 'corpus', 'corpora', 'training', 'llm', 'model', 'annotation', 'labeling'],
-      a: 'We offer core datasets, premium custom data and training-data annotation for AI and large-model companies: 600 TB of text, audio, image and video data, with dozens of large-model partners.',
+      a: 'We offer core datasets, premium custom data and training-data annotation for AI and large-model companies: 600 TB of text, audio, image and video data, serving all of China’s leading large-model makers.',
       link: { label: 'See Data Solutions', href: '/business#data' } },
     { q: 'Where can I see reports and the share price?', keywords: ['report', 'financial', 'annual', 'quarterly', 'announcement', 'filing', 'investor', 'stock', 'share', 'price', '300364', 'shareholder'],
       a: 'The Investor Relations page has the live share price, investment highlights, the Chairman’s letter and periodic reports (linked to the original PDFs on CNINFO). COL’s A-share code is 300364.',
       link: { label: 'Go to Investor Relations', href: '/investors' } },
     { q: 'What is COL’s history?', keywords: ['history', 'milestone', 'founded', 'tsinghua', 'culture', 'award', 'honor', 'strategy'],
-      a: 'The About page covers our story, culture, three stages of growth, strategy, and awards and licenses.',
+      a: 'The About page covers our story, culture, three stages of growth and strategy.',
       link: { label: 'See our milestones', href: '/about#history' } },
     { q: 'What’s new?', keywords: ['news', 'latest', 'update', 'event', 'announce', 'press release'],
       a: 'Our latest updates are in the Newsroom. Each story has a photo and summary and opens the original article.',
       link: { label: 'Go to the Newsroom', href: '/news' } },
     { q: 'What jobs are open?', keywords: ['job', 'jobs', 'career', 'careers', 'hiring', 'role', 'internship', 'graduate', 'campus', 'apply', 'resume', 'cv'],
-      a: 'Experienced and campus hiring links are on the Join Us page.',
+      a: 'Our open roles are linked from the Join Us page.',
       link: { label: 'See open roles', href: '/join#positions' } },
-    { q: 'Where are you? What’s your number?', keywords: ['phone', 'address', 'hotline', 'headquarters', 'office', 'where are', 'located'],
-      a: 'Our headquarters is at 6/F, Block E, Yonghe Plaza, 28 Andingmen East Street, Dongcheng District, Beijing. Hotline: 010-51667567. To discuss a partnership, just say “I want to partner”.',
+    { q: 'Where are you based?', keywords: ['phone', 'address', 'hotline', 'headquarters', 'office', 'where are', 'located'],
+      a: 'Our headquarters is at 6/F, Block E, Yonghe Plaza, 28 Andingmen East Street, Dongcheng District, Beijing. To discuss a partnership, just say “I want to partner”.',
       link: { label: 'See headquarters', href: '/partner#hq' } },
   ],
 };
@@ -854,12 +867,11 @@ export const ui = {
   worksAria: 'Featured works',
   // One-line highlight on each business poster
   bizHook: {
-    literature: '5.6M+ licensed titles · 4M+ creators',
+    literature: '5.6M titles · 4.5M original authors',
     drama: 'Hengqin studio · Global microdrama · Screen adaptations',
     global: 'In 200+ countries and regions · Connecting the world through great stories',
-    data: '600 TB multimodal data · Dozens of AI model partners',
+    data: '600 TB multimodal data · All leading model makers',
     ai: 'Xiaoyao AI · Ciyuan Shenbi',
-    ipr: 'Nearly 10,000 infringement lawsuits',
   } as Record<string, string>,
   // Content blocks
   visitSite: 'Visit website',
@@ -872,6 +884,17 @@ export const ui = {
   readSource: 'Read the article',
   cninfoAll: 'View all on CNINFO',
   talkLicense: 'Discuss licensing',
+  newsOwn: 'Published here',
+  readArticle: 'Read the article',
+  askAiAbout: 'Chat with our AI assistant',
+  backToList: 'Back to',
+  ipHighlights: 'Highlights',
+  ipTrailer: 'Trailer',
+  ipGallery: 'Poster',
+  ipLicense: 'Discuss licensing this title',
+  ipMore: 'More works',
+  sourceLabel: 'Source',
+  newsMore: 'More news',
   play: 'Play',
   videoSoon: 'Video coming soon',
   sendInquiry: 'Send inquiry',
@@ -904,6 +927,6 @@ export const ui = {
   quoteLoading: 'Loading quote',
   quoteLive: 'Live',
   quoteFail: 'Quote unavailable',
-  quoteMeta: ['Change', 'Market cap', 'Turnover'],
+  quoteMeta: ['Change', 'Market cap'],
   quoteMore: 'Full quote',
 };

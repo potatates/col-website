@@ -19,7 +19,6 @@ const { pages, site } = c;
     <div class="q-meta">
       <span>{ui.quoteMeta[0]} <b data-stock="pct">--</b></span>
       <span>{ui.quoteMeta[1]} <b data-stock="cap">--</b></span>
-      <span>{ui.quoteMeta[2]} <b data-stock="amount">--</b></span>
       <a href="https://quote.eastmoney.com/sz300364.html" target="_blank" rel="noopener">{ui.quoteMore} ↗</a>
     </div>
   </div>
@@ -53,4 +52,6 @@ const { pages, site } = c;
   /* 题图底色较深：涨跌用更亮的红绿 */
   .quote :global(.stock-up) { color: #ff7a7f !important; }
   .quote :global(.stock-down) { color: #4ade80 !important; }
+  :global(html[lang="en"]) .quote :global(.stock-up) { color: #4ade80 !important; }
+  :global(html[lang="en"]) .quote :global(.stock-down) { color: #ff7a7f !important; }
 </style>

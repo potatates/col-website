@@ -1,0 +1,9 @@
+---
+// 作品详情页：每个 IP 墙条目一页
+import IpDetail from '../../components/zh/IpDetail.astro';
+import { home } from '../../content/zh';
+export function getStaticPaths() {
+  return home.wall.map((x) => ({ params: { slug: x.slug } }));
+}
+---
+<IpDetail slug={Astro.params.slug!} />

@@ -56,6 +56,9 @@ a { color: inherit; text-decoration: none; }
 /* 股价涨跌：沿用 A 股习惯，红涨绿跌 */
 .stock-up { color: #e5484d !important; }
 .stock-down { color: #16a34a !important; }
+/* 英文版按国际习惯：绿涨红跌 */
+html[lang="en"] .stock-up { color: #16a34a !important; }
+html[lang="en"] .stock-down { color: #e5484d !important; }
 img { max-width: 100%; display: block; }
 ::selection { background: var(--violet); color: #fff; }
 
@@ -290,3 +293,7 @@ html[lang='en'] .fit .jr-card p { font-size: 12px !important; }
 html[lang='en'] .ipf-body small { order: -1 !important; font-size: 11.5px !important; letter-spacing: .14em !important; text-transform: uppercase !important; font-weight: 500 !important; }
 html[lang='en'] .ipf-body small .f, html[lang='en'] .ipf-tags em:nth-child(n+2) { display: none !important; }
 html[lang='en'] .step strong { font-weight: 500 !important; font-size: 17px !important; letter-spacing: -.01em !important; }
+
+/* 只有一个板块的栏目页：无左侧导航，内容整宽 */
+.page-solo { padding-top: 24px; }
+.page-solo .block-section { padding-top: 0; }

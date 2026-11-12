@@ -19,6 +19,7 @@ interface Props {
 const { page, crumbs = [] } = Astro.props;
 const next = nextOf[page.key];
 const theme = page.theme ?? ['#0071ce', '#00c1de'];
+const solo = page.sections.length === 1;
 ---
 <BaseLayout title={`${page.title}_${site.name}`} description={page.intro}>
   <Header current={page.key} />
@@ -27,12 +28,13 @@ const theme = page.theme ?? ['#0071ce', '#00c1de'];
       <slot name="aside" slot="aside" />
     </PageHero>
 
-    <div class="container page-grid">
-      <SideNav title={page.title} items={page.sections.map((s) => ({ id: s.id, label: s.label }))} />
+    {/* 只有一个板块的页面（如加入我们）：不显示左侧页内导航，内容整宽居中 */}
+    <div class:list={['container', solo ? 'page-solo' : 'page-grid']}>
+      {!solo && <SideNav title={page.title} items={page.sections.map((s) => ({ id: s.id, label: s.label }))} />}
       <div class="page-body">
         {page.sections.map((s) => (
           <section id={s.id} class:list={['block-section', { bare: s.bare }]}>
-            {!s.bare && (
+            {!s.bare && !solo && (
               <div class="s-head reveal">
                 <span class="s-ghost" aria-hidden="true">{s.en}</span>
                 <h2 class="s-title">{s.title ?? s.label}</h2>

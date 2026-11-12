@@ -1,0 +1,118 @@
+---
+// 作品详情页（/ip/<slug>）：点击 IP 墙海报进入。介绍作品本身（非授权页）：简介、数据、亮点、预告片、海报。
+// 内容来自 zh.ts / en.ts 中 IP 墙条目的 intro / stats / highlights / video / images 字段。
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Header from './Header.astro';
+import Footer from './Footer.astro';
+import PageHero from './PageHero.astro';
+import Blocks from './Blocks.astro';
+import PosterImg from './PosterImg.astro';
+import CtaBand from './CtaBand.astro';
+import { u as asset } from '../../lib/url';
+import { useLang } from '../../lib/i18n';
+import type { IP } from '../../content/zh';
+
+interface Props { slug: string }
+const { c, ui, l: u } = useLang(Astro.url);
+const { site, pages, home } = c;
+const wall = home.wall as IP[];
+const ip = wall.find((x) => x.slug === Astro.props.slug)!;
+const others = wall.filter((x) => x.slug !== ip.slug);
+const theme = pages.ip.theme ?? ['#6c4dff', '#ff5c9a'];
+---
+<BaseLayout title={`${ip.title}_${site.name}`} description={ip.intro ?? ip.tags.join(' · ')}>
+  <Header current="ip" />
+  <main style={`--c1:${theme[0]};--c2:${theme[1]}`}>
+    <PageHero title={ip.title} en={`${ip.genre} · ${ip.forms.join(' / ')}`} intro={ip.intro ?? ''} crumbs={[{ label: pages.ip.title, href: '/ip' }]} theme={theme}>
+      <div slot="aside" class="ipd-poster">
+        <div class="cover has-poster">{ip.poster && <PosterImg name={ip.poster} alt={ip.title} />}</div>
+      </div>
+    </PageHero>
+
+    <div class="container ipd">
+      {ip.stats?.length ? <section class="ipd-sec"><Blocks blocks={[{ type: 'stats', items: ip.stats }]} /></section> : null}
+
+      {ip.highlights?.length ? (
+        <section class="ipd-sec">
+          <h2 class="ipd-h">{ui.ipHighlights}</h2>
+          <ol class="ipd-list">
+            {ip.highlights.map((h, i) => (
+              <li class="reveal" style={`--d:${i * 60}ms`}>
+                {h.k && <span class="ipd-k">{h.k}</span>}
+                <p>{h.v}</p>
+              </li>
+            ))}
+          </ol>
+        </section>
+      ) : null}
+
+      {(ip.video || ip.images?.length) ? (
+        <section class="ipd-sec">
+          <h2 class="ipd-h">{ip.video ? ui.ipTrailer : ui.ipGallery}</h2>
+          <div class:list={['ipd-media', { vertical: ip.vertical }]}>
+            {ip.video && (
+              <video controls preload="none" playsinline poster={asset(`/videos/${ip.video}.jpg`)} src={asset(`/videos/${ip.video}.mp4`)}></video>
+            )}
+            {ip.images?.map((img) => <img src={asset(`/posters/${img}.jpg`)} alt={ip.title} loading="lazy" />)}
+          </div>
+        </section>
+      ) : null}
+
+      <div class="ipd-actions reveal">
+        <button type="button" class="btn btn-primary" data-ai-chat data-topic="license">{ui.ipLicense} <span class="arrow">→</span></button>
+        <a href={u('/ip#wall')} class="btn btn-outline">{ui.backToList} {pages.ip.title}</a>
+      </div>
+      {ip.source && <p class="ipd-src">{ui.sourceLabel}：{ip.source}</p>}
+
+      <section class="ipd-sec">
+        <h2 class="ipd-h">{ui.ipMore}</h2>
+        <div class="ipd-more">
+          {others.map((x) => (
+            <a href={u(`/ip/${x.slug}`)} class="ipd-mcard">
+              <div class="cover has-poster">{x.poster && <PosterImg name={x.poster} alt={x.title} />}</div>
+              <strong>{x.title}</strong>
+            </a>
+          ))}
+        </div>
+      </section>
+    </div>
+    <CtaBand />
+  </main>
+  <Footer />
+</BaseLayout>
+
+<style>
+  .ipd-poster { justify-self: end; width: min(300px, 100%); }
+  .ipd-poster .cover { aspect-ratio: 3 / 4; border-radius: 24px; box-shadow: 0 40px 70px -30px rgba(0,0,0,.55); transform: rotate(2deg); }
+  .ipd { padding-top: 20px; padding-bottom: 40px; }
+  .ipd-sec { margin-top: 64px; }
+  .ipd-sec:first-child { margin-top: 0; }
+  .ipd-h { font-size: clamp(24px, 2.6vw, 32px); font-weight: 900; color: var(--ink); margin-bottom: 24px; }
+  .ipd-list { list-style: none; display: grid; gap: 12px; max-width: 900px; }
+  .ipd-list li { display: grid; grid-template-columns: 76px 1fr; gap: 18px; align-items: baseline; padding: 20px 24px; border-radius: 20px; background: var(--surface); box-shadow: 0 10px 26px -20px rgba(10,22,48,.3); }
+  .ipd-list li:not(:has(.ipd-k)) { grid-template-columns: 1fr; }
+  .ipd-k { font-size: 15px; font-weight: 900; background: linear-gradient(120deg, var(--c1), var(--c2)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .ipd-list p { font-size: 16px; line-height: 1.8; color: var(--text); }
+  .ipd-media { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; align-items: start; }
+  .ipd-media.vertical { grid-template-columns: repeat(3, 1fr); }
+  .ipd-media video { width: 100%; aspect-ratio: 16 / 9; border-radius: 22px; background: #000; object-fit: cover; }
+  .ipd-media.vertical video { aspect-ratio: 9 / 16; }
+  .ipd-media img { width: 100%; border-radius: 22px; box-shadow: 0 20px 40px -26px rgba(10,22,48,.45); }
+  .ipd-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 56px; }
+  .ipd-actions button { border: 0; cursor: pointer; font: inherit; font-weight: 600; }
+  .ipd-src { margin-top: 16px; font-size: 12px; color: var(--muted); }
+  .ipd-more { display: grid; grid-template-columns: repeat(5, 1fr); gap: 18px; }
+  .ipd-mcard .cover { aspect-ratio: 3 / 4; border-radius: 18px; transition: transform .5s var(--spring), box-shadow .4s; }
+  .ipd-mcard:hover .cover { transform: translateY(-6px); box-shadow: 0 26px 44px -22px rgba(10,22,48,.5); }
+  .ipd-mcard strong { display: block; margin-top: 10px; font-size: 14px; line-height: 1.4; color: var(--ink); }
+  @media (max-width: 1080px) {
+    .ipd-poster { justify-self: start; width: 200px; }
+    .ipd-more { grid-template-columns: repeat(3, 1fr); }
+  }
+  @media (max-width: 768px) {
+    .ipd-media, .ipd-media.vertical { grid-template-columns: 1fr; }
+    .ipd-media.vertical video { max-width: 320px; }
+    .ipd-list li { grid-template-columns: 1fr; gap: 4px; padding: 18px; }
+    .ipd-more { grid-template-columns: repeat(2, 1fr); }
+  }
+</style>

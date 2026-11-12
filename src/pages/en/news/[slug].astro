@@ -1,0 +1,10 @@
+---
+// 英文版：与中文共用同一组件，语言由网址 /en 决定
+import NewsArticle from '../../../components/zh/NewsArticle.astro';
+import { pages } from '../../../content/zh';
+export function getStaticPaths() {
+  return pages.news.sections.flatMap((s) => s.blocks).flatMap((b) => (b.type === 'news' ? b.items : []))
+    .filter((n) => n.slug && n.body).map((n) => ({ params: { slug: n.slug! } }));
+}
+---
+<NewsArticle slug={Astro.params.slug!} />
