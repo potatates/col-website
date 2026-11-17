@@ -239,6 +239,11 @@ const news = home.news;
     .audience { margin-top: -40px; border-radius: 22px; }
     .aud-label { width: 100%; }
   }
+  /* 手机：IP 卡只显示第一个数据标签，最多两行，卡片高度一致（B5） */
+  @media (max-width: 768px) {
+    .ipf-tags em:nth-child(n+2) { display: none; }
+    .ipf-tags em { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  }
   /* 窄屏：去掉入口小图标，提示文字一行放得下 */
   @media (max-width: 480px) {
     .aud { grid-template-columns: 1fr; }
