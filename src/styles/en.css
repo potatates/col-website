@@ -105,6 +105,16 @@ html[lang='en'] .ipf-tags em, html[lang='en'] .ip-tag { background: none !import
 html[lang='en'] .ip-meta, html[lang='en'] .ipf-tags { flex-direction: column !important; gap: 2px !important; }
 html[lang='en'] .ip-grid { gap: 28px 24px !important; }
 
+/* IP wall cards: category label, title (two lines), one proof point (two lines). Full details are on each work's page */
+html[lang='en'] .ip-card { display: flex !important; flex-direction: column !important; }
+html[lang='en'] .ip-meta { display: contents !important; }
+html[lang='en'] .ip-genre { order: 1 !important; width: auto !important; margin-top: 14px !important; font-family: var(--display) !important; font-size: 12px !important; font-weight: 700 !important; letter-spacing: .1em !important; text-transform: uppercase !important; color: var(--brand) !important; }
+html[lang='en'] .ip-title { order: 2 !important; margin-top: 4px !important; }
+html[lang='en'] .ip-tag { order: 3 !important; margin-top: 6px !important; display: -webkit-box !important; -webkit-line-clamp: 2 !important; -webkit-box-orient: vertical !important; overflow: hidden !important; }
+html[lang='en'] .ip-tag ~ .ip-tag { display: none !important; }
+html[lang='en'] .ip-card.hide { display: none !important; } /* keep the genre filter working */
+html[lang='en'] .b-ipwall .b-note { margin-top: 28px !important; }
+
 /* ---------- Page hero, page menu, chapters ---------- */
 html[lang='en'] .page-hero h1 { font-size: clamp(44px, 6.4vw, 96px) !important; line-height: 1 !important; letter-spacing: -.02em !important; }
 html[lang='en'] .page-hero p { font-size: 20px !important; line-height: 1.45 !important; max-width: 56ch !important; }

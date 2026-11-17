@@ -389,7 +389,8 @@ const isNum = (v: string) => /^[\d,]+$/.test(v);
                 </div>
                 <strong class="ip-title">{x.title}</strong>
                 <div class="ip-meta">
-                  <span class="ip-genre">{x.genre}{x.forms.length > 0 && ` · ${x.forms.join(' / ')}`}</span>
+                  {/* 英文版卡片只留题材（小标签）+ 一条核心数据，完整信息在作品详情页 */}
+                  <span class="ip-genre">{x.genre}{lang !== 'en' && x.forms.length > 0 && ` · ${x.forms.join(' / ')}`}</span>
                   {x.tags.map((t) => <span class="ip-tag">{t}</span>)}
                 </div>
               </a>
