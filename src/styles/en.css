@@ -49,7 +49,6 @@ html[lang='en'] .aud-label, html[lang='en'] .aud-ic { display: none !important; 
 html[lang='en'] .aud { display: flex !important; flex-direction: column !important; justify-content: center !important; align-items: stretch !important; text-align: left !important; padding: 0 20px !important; border-radius: 0 !important; border-left: 1px solid rgba(255,255,255,.16) !important; }
 html[lang='en'] .aud-label + .aud { border-left: 0 !important; padding-left: 0 !important; }
 html[lang='en'] .aud strong { color: #fff !important; font-size: 18px !important; display: flex !important; justify-content: space-between !important; }
-html[lang='en'] .aud strong::after { content: '→' !important; font-weight: 400 !important; }
 html[lang='en'] .aud small { color: rgba(255,255,255,.75) !important; font-size: 14px !important; }
 html[lang='en'] .aud:hover { background: rgba(255,255,255,.08) !important; transform: none !important; }
 
