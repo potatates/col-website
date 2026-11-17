@@ -269,3 +269,34 @@ html[lang='en'] .na-card strong { font-size: 17px !important; line-height: 1.25 
   html[lang='en'] .aud:nth-child(3n+2) { border-left: 1px solid rgba(255,255,255,.16) !important; padding-left: 16px !important; }
   html[lang='en'] .aud:nth-child(even) { border-left: 0 !important; padding-left: 0 !important; }
 }
+
+/* ---------- Phone fixes (390 px audit, docs/phone-view-issues.md) ---------- */
+@media (max-width: 768px) {
+  /* A12: an odd last figure spans both columns instead of sitting alone */
+  html[lang='en'] .b-stat:last-child:nth-child(odd) { grid-column: 1 / -1 !important; }
+  /* C1: number and unit stay on one line; phone figures at about 9% of screen width */
+  html[lang='en'] .num { flex-wrap: nowrap !important; white-space: nowrap !important; }
+  html[lang='en'] .num span, html[lang='en'] .num em.u-tight { font-size: clamp(32px, 9vw, 40px) !important; }
+  html[lang='en'] .num em.u-word { font-size: 17px !important; margin-left: 6px !important; }
+}
+
+@media (max-width: 600px) {
+  /* C5 + A1: bigger hero headline; the posters sit below the text. The audience bar does not overlap the hero here, so less bottom room is needed */
+  html[lang='en'] .hero h1 { font-size: 52px !important; }
+  html[lang='en'] .hero { padding-bottom: 290px !important; }
+  html[lang='en'] .floaters { bottom: 24px !important; }
+  /* C2: home section headings small enough for the "All ..." link to stay on the same line */
+  html[lang='en'] main > .block-section .s-title { font-size: 28px !important; white-space: nowrap !important; }
+  html[lang='en'] main > .block-section .s-title::before { margin-right: 8px !important; font-size: 13px !important; }
+  html[lang='en'] main > .block-section .s-head-row { flex-wrap: nowrap !important; align-items: flex-end !important; gap: 12px !important; }
+  html[lang='en'] main > .block-section .s-head-row .btn-outline { flex-shrink: 0 !important; margin-left: auto !important; font-size: 14px !important; }
+  /* C3: product rows stack: logo, then category and name, description, link */
+  html[lang='en'] .b-cards.featured > .card { grid-template-columns: 1fr !important; }
+  html[lang='en'] .b-cards.featured .card-logo { grid-column: 1 !important; grid-row: 1 !important; height: 44px !important; margin-bottom: 8px !important; }
+  html[lang='en'] .b-cards.featured .card-tag { grid-column: 1 !important; grid-row: 2 !important; }
+  html[lang='en'] .b-cards.featured .card-title { grid-column: 1 !important; grid-row: 3 !important; font-size: 26px !important; }
+  html[lang='en'] .b-cards.featured .card-text { grid-row: 4 !important; }
+  html[lang='en'] .b-cards.featured .card-go { grid-row: 5 !important; }
+  /* C4: "More works" three across */
+  html[lang='en'] .ipd-more { grid-template-columns: repeat(3, 1fr) !important; gap: 12px !important; }
+}
