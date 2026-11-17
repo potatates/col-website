@@ -112,7 +112,7 @@ Checked after the fixes at 390 × 844 with an iPhone user agent (light mode), al
 | A8 | Fixed | Last timeline entry left-aligned in the stacked layout. |
 | A9 | Fixed | Screeners note spans the full row under the videos. Vertical videos were already two per row. |
 | A10 | Fixed | "Back to top" button on phones and tablets (≤768 px), above the AI button, appears after two screens. Not shown on desktop. |
-| A11 | Fixed (phones) | Price in white; change and percentage in small dark pills with lighter red/green (#ff9a9a, #7ee2a8). Red/green meaning still differs per language. Applied under 768 px only, so the desktop card is unchanged. |
+| A11 | Fixed (phones) | Price, change and percentage in lighter red/green (#ff9a9a, #7ee2a8); change and percentage sit in small dark pills. The audit suggested a white price; kept coloured at the user's request. Red/green meaning still differs per language. Applied under 768 px only, so the desktop card is unchanged. |
 | A12 | Fixed | Phone stats rows are two columns; an odd last figure spans both. |
 | B1 | Fixed | Under 520 px, 中 / EN / New moved into the top of the menu drawer as three buttons. Header keeps logo, dark-mode button and menu button (menu button now at 338 to 382 px on a 390 px screen). |
 | B2 | Fixed | Outlined English word behind headings hidden under 768 px. |
