@@ -214,6 +214,21 @@ a.cover:hover::after { opacity: 1; }
   .cursor { display: none; }
 }
 
+/* 回到顶部：只在手机上出现，位于 AI 助手按钮上方 */
+.to-top { display: none; }
+@media (max-width: 768px) {
+  .to-top {
+    display: grid; place-items: center; position: fixed; right: 12px; bottom: 66px; z-index: 59;
+    width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--line); cursor: pointer;
+    background: var(--glass); backdrop-filter: blur(12px); color: var(--ink); font-size: 18px; font-weight: 700;
+    box-shadow: 0 8px 20px -12px rgba(10,22,48,.4);
+    opacity: 0; visibility: hidden; transform: translateY(8px); transition: opacity .25s, transform .3s var(--spring), visibility .25s;
+  }
+  .to-top.on { opacity: 1; visibility: visible; transform: none; }
+  /* 板块标题背后的描边英文大字：手机上会被裁掉并压住标题，隐藏 */
+  .s-ghost { display: none; }
+}
+
 @media (max-width: 768px) {
   .container { padding: 0 16px; }
   .block-section { padding: 72px 0; }

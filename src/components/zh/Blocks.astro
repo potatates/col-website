@@ -738,6 +738,7 @@ const isNum = (v: string) => /^[\d,]+$/.test(v);
     .jr-dot { left: -31px; top: 8px; transform: none; opacity: 1; }
     .jr-node.era .jr-dot { left: -35px; }
     .jr-card, .jr-node.up .jr-card, .jr-node:not(.up) .jr-card { position: static; width: auto; translate: none; opacity: 1; transform: none; }
+    .jr-node.last .jr-card { text-align: left; }
     .jr-year { font-size: 32px; }
     .jr-card p { font-size: 14px; }
   }
@@ -1047,13 +1048,25 @@ const isNum = (v: string) => /^[\d,]+$/.test(v);
     .pf-main { padding: 26px 24px; }
     .cu-mission { padding: 32px 26px; }
     .b-steps::before { display: none; }
-    /* 带颜色的步骤（业务总览）：手机上排成两行，每行三个 */
-    .b-steps:has(.step.colored) { grid-template-columns: repeat(3, 1fr); gap: 24px 10px; }
-    .step.colored .step-no { width: 44px; height: 44px; font-size: 14px; margin-bottom: 6px; }
-    .step.colored strong { font-size: 15px; }
-    .step.colored span:last-child:not(.step-no) { font-size: 12px; line-height: 1.5; }
-    .step.colored::after { left: 50px; right: -6px; top: 21px; }
-    .step.colored:nth-child(3n)::after { display: none; }
+    /* 带颜色的步骤（业务总览）：手机上改为竖排列表，左侧序号圆点，右侧名称和一句说明 */
+    .b-steps:has(.step.colored) { grid-template-columns: 1fr; gap: 18px; }
+    .step.colored { display: grid; grid-template-columns: 44px 1fr; column-gap: 14px; row-gap: 2px; align-items: start; }
+    .step.colored .step-no { grid-row: 1 / span 2; width: 44px; height: 44px; font-size: 14px; margin-bottom: 0; }
+    .step.colored strong { font-size: 17px; line-height: 1.3; padding-top: 2px; }
+    .step.colored span:last-child:not(.step-no) { font-size: 15px; line-height: 1.5; }
+    .step.colored::after { left: 21px; right: auto; top: 50px; bottom: -14px; width: 2px; height: auto; background: linear-gradient(180deg, var(--c2), transparent); }
+    /* 关键数字小方块：两列，第三个占满一行；字号收小，单位可换行，不再被裁掉 */
+    .ft-stats { grid-template-columns: 1fr 1fr; }
+    .ft-stats > div:last-child:nth-child(odd) { grid-column: 1 / -1; }
+    .ft-stats dt { font-size: 24px; white-space: normal; overflow-wrap: anywhere; }
+    /* 装饰圆圈不再压住文字 */
+    .sp-ring, .sp-blob { display: none; }
+    /* 预告片：说明文字单独占满一行 */
+    .b-videos .b-note { grid-column: 1 / -1; }
+    /* 数字行：两列，单数时最后一个占满一行 */
+    .b-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+    .b-stat { min-width: 0; }
+    .b-stat:last-child:nth-child(odd) { grid-column: 1 / -1; }
     .b-timeline { grid-template-columns: 1fr 1fr; }
     .b-timeline li:nth-child(even) { margin-top: 0; }
     .b-honors { columns: 1; }

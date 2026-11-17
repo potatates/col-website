@@ -45,6 +45,8 @@ const docTitle = lang === 'en' ? title.replace('_', ' | ') : title;
     <div class="aura" aria-hidden="true"><div class="aura-grid"></div></div>
     <slot />
     <AiChat />
+    {/* 手机长页面：滚过两屏后出现“回到顶部”（桌面不显示） */}
+    <button class="to-top" id="to-top" type="button" aria-label={lang === 'en' ? 'Back to top' : '回到顶部'} title={lang === 'en' ? 'Back to top' : '回到顶部'}>↑</button>
     <div class="cursor" id="cursor" aria-hidden="true"></div>
 
     <script>
@@ -326,15 +328,20 @@ const docTitle = lang === 'en' ? title.replace('_', ' | ') : title;
         // 页头：滚动后变白、进度条、移动端菜单
         const header = document.getElementById('site-header');
         const bar = document.getElementById('progress');
+        const toTop = document.getElementById('to-top');
         const onScroll = () => {
           const y = window.scrollY;
           header?.classList.toggle('scrolled', y > 40);
+          toTop?.classList.toggle('on', y > innerHeight * 2);
           const max = document.documentElement.scrollHeight - innerHeight;
           if (bar) bar.style.transform = `scaleX(${max > 0 ? y / max : 0})`;
         };
         onScroll();
         addEventListener('scroll', onScroll, { passive: true });
         cleanups.push(() => removeEventListener('scroll', onScroll));
+        const goTop = () => window.scrollTo({ top: 0, behavior: 'smooth' });
+        toTop?.addEventListener('click', goTop);
+        cleanups.push(() => toTop?.removeEventListener('click', goTop));
 
         // 发展历程：吸附期间前 70% 的滚动让曲线横向推进、逐个点亮；之后缩成一屏全景并停留，往回滚则恢复（窄屏为竖向列表，不处理）
         const journeys = [...document.querySelectorAll<HTMLElement>('[data-journey]')];
@@ -448,6 +455,14 @@ const docTitle = lang === 'en' ? title.replace('_', ' | ') : title;
           update();
           addEventListener('scroll', update, { passive: true });
           cleanups.push(() => removeEventListener('scroll', update));
+          // 手机横向导航条：未滑到最右端时右侧渐隐（样式见 SideNav）
+          document.querySelectorAll<HTMLElement>('.rail-list').forEach((list) => {
+            const mark = () => list.toggleAttribute('data-end', list.scrollLeft + list.clientWidth >= list.scrollWidth - 4);
+            mark();
+            list.addEventListener('scroll', mark, { passive: true });
+            addEventListener('resize', mark);
+            cleanups.push(() => { list.removeEventListener('scroll', mark); removeEventListener('resize', mark); });
+          });
         }
 
         // 实时股价：先用东方财富公开行情接口（push2.eastmoney.com，支持跨域 fetch）；
