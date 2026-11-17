@@ -161,7 +161,7 @@ const isNum = (v: string) => /^[\d,]+$/.test(v);
                   </span>
                 )}
                 {c.tag && <span class="card-tag">{c.tag}</span>}
-                <span class="card-title">{c.title}</span>
+                <span class:list={['card-title', { hang: /^[《「『“【〈（]/.test(c.title) }]}>{c.title}</span>
                 {c.text && <span class="card-text">{c.text}</span>}
                 {live && (b.arrow
                   ? <span class="card-arrow" aria-hidden="true">→</span>
@@ -457,7 +457,7 @@ const isNum = (v: string) => /^[\d,]+$/.test(v);
               {c.color && <span class="card-stripe" aria-hidden="true"></span>}
               <span class="cc-badge" aria-live="polite"></span>
               <span class="card-tag">{c.tag}</span>
-              <span class="card-title">{c.title}</span>
+              <span class:list={['card-title', { hang: /^[《「『“【〈（]/.test(c.title) }]}>{c.title}</span>
               <span class="card-text">{c.text}</span>
               {c.people?.length ? <div class="cc-people">
                 {c.people.map((p) => (
@@ -549,7 +549,7 @@ const isNum = (v: string) => /^[\d,]+$/.test(v);
           {b.items.map((d, i) => (
             <div class="dl card reveal" style={`--d:${(i % 4) * 60}ms`}>
               <span class="dl-icon" aria-hidden="true">↓</span>
-              <span class="card-title">{d.title}</span>
+              <span class:list={['card-title', { hang: /^[《「『“【〈（]/.test(d.title) }]}>{d.title}</span>
               <span class="card-text">{d.meta}</span>
             </div>
           ))}

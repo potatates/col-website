@@ -91,6 +91,9 @@ img { max-width: 100%; display: block; }
 .s-body { display: flex; flex-direction: column; gap: 28px; }
 .s-head-row { display: flex; justify-content: space-between; align-items: flex-end; gap: 24px; flex-wrap: wrap; }
 
+/* 以《「“等开头的标题：中文字体里这些符号只占全角格子的右半边，标题看起来缩进了半个字；往左挪回，和其他标题对齐 */
+html:not([lang='en']) .hang { text-indent: -.45em; }
+
 /* ---------- 卡片 ---------- */
 .card {
   position: relative; isolation: isolate;
