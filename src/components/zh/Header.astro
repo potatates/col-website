@@ -182,17 +182,20 @@ const isActive = (key: string) => key === current || (key === 'business' && busi
   @media (max-width: 1180px) {
     .nav { display: none; }
     .menu-btn { display: block; }
-    /* 菜单抽屉：整屏一页看完。一级栏目大字、无分隔线；各业务是一排小标签；“合作”是底部的整宽按钮；语言切换是最下方的小分段控件 */
+    /* 菜单抽屉：整屏一页看完。一级栏目大字、细分隔线；各业务是一排小标签；“合作”是底部的整宽按钮；语言切换是最下方的小分段控件 */
     .drawer {
       display: flex; flex-wrap: wrap; align-content: flex-start; gap: 0 8px; background: var(--surface); color: var(--text);
       max-height: 0; overflow: auto; padding: 0 20px; transition: max-height .45s var(--ease), padding .45s var(--ease);
     }
     .open .drawer { min-height: calc(100vh - 76px); min-height: calc(100dvh - 76px); max-height: calc(100vh - 76px); max-height: calc(100dvh - 76px); padding: 10px 20px 28px; border-top: 1px solid var(--line); }
-    .drawer > a { flex: 0 0 100%; padding: 11px 0; font-size: 24px; font-weight: 700; line-height: 1.2; color: var(--ink); }
+    .drawer > a { flex: 0 0 100%; padding: 14px 0; font-size: 24px; font-weight: 700; line-height: 1.2; color: var(--ink); }
+    /* 一级栏目之间加细分隔线（业务小标签、合作按钮不加） */
+    .drawer > a:not(.sub):not(.cta) { border-top: 1px solid var(--line); }
+    .drawer > a:first-of-type:not(.sub):not(.cta) { border-top: 0; }
     .drawer > a.cur { color: var(--brand); }
-    .drawer > a.sub { flex: 0 0 auto; display: inline-flex; align-items: center; gap: 8px; margin: 2px 0 8px; padding: 8px 14px; border-radius: 999px; background: var(--bg); font-size: 14px; font-weight: 500; color: var(--text); }
+    .drawer > a.sub { flex: 0 0 auto; display: inline-flex; align-items: center; gap: 8px; margin: 0 0 8px; padding: 8px 14px; border-radius: 999px; background: var(--bg); font-size: 14px; font-weight: 500; color: var(--text); }
     .drawer a.sub i { flex-shrink: 0; width: 8px; height: 8px; border-radius: 50%; background: linear-gradient(135deg, var(--c1), var(--c2)); }
-    .drawer > a.cta { margin-top: 14px; padding: 15px 20px; border-radius: 14px; text-align: center; font-size: 17px; color: #fff; background: linear-gradient(120deg, var(--brand), var(--brand-2)); }
+    .drawer > a.cta { margin-top: 6px; padding: 15px 20px; border-radius: 14px; text-align: center; font-size: 17px; color: #fff; background: linear-gradient(120deg, var(--brand), var(--brand-2)); }
     /* 手机：菜单按钮、语言链接的可点区域不小于 44px */
     .menu-btn { width: 44px; height: 44px; margin-right: -8px; }
     .menu-btn span { left: 11px; right: 11px; }
