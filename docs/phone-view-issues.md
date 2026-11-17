@@ -118,7 +118,7 @@ Checked after the fixes at 390 × 844 with an iPhone user agent (light mode), al
 | B2 | Fixed | Outlined English word behind headings hidden under 768 px. |
 | B3 | Fixed | Tile text keeps 72 px clear on the right (Chinese only) and wraps. |
 | B4 | Fixed | Quick-link icons hidden under 480 px; each hint fits on one line. |
-| B5 | Skipped | Needs the team's OK (hides the second tag on phones). |
+| B5 | Fixed | Approved by the user: on phones (≤768 px) the home IP cards show only the first tag, cut to two lines. Desktop keeps both tags. |
 | B6 | Fixed | Done after the user asked for tall cards to be compacted: smaller logo, tag and name on one line, tighter spacing. Chinese only (English has C3). About 1,650 px down to 1,090 px for five products. |
 | C1 | Fixed | Number and unit stay on one line; phone figures 32 to 40 px. |
 | C2 | Fixed | Home section headings 28 px (30 px still wrapped "Our Businesses"), "All …" link on the same line, right-aligned. |
