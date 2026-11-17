@@ -1075,6 +1075,24 @@ const isNum = (v: string) => /^[\d,]+$/.test(v);
     .theme em { grid-row: 1 / span 2; width: 28px; height: 28px; font-size: 13px; }
     .theme strong { line-height: 1.4; padding-top: 2px; }
     .theme span { line-height: 1.5; }
+    /* 发展历程：每年一行，年份在左、说明在右；“第几次创业”是小标题 */
+    .jr-sticky { padding: 22px 18px 22px 16px; }
+    .jr-track { gap: 14px; padding-left: 20px; }
+    .jr-card { display: grid; grid-template-columns: 50px 1fr; column-gap: 10px; align-items: baseline; }
+    .jr-era { grid-column: 1 / -1; font-size: 15px; margin-bottom: 4px; }
+    .jr-node.era:not(.first) { margin-top: 10px; }
+    .jr-year { font-size: 18px; line-height: 1.4; }
+    .jr-card p { margin-top: 0; font-size: 14px; line-height: 1.5; }
+    .jr-dot { width: 12px; height: 12px; left: -27px; top: 7px; box-shadow: 0 0 0 4px var(--jr-ring); }
+    .jr-node.era .jr-dot { width: 18px; height: 18px; left: -30px; top: 1px; }
+    /* 深色业务支柱卡：标题、数字和说明收紧，数字与标签同一行 */
+    .pl-item { display: grid; grid-template-columns: auto 1fr; grid-template-areas: "no no" "title title" "big label" "text text"; column-gap: 10px; row-gap: 2px; align-items: baseline; padding: 20px 22px; }
+    .pl-no { grid-area: no; }
+    .pl-title { grid-area: title; font-size: 22px; margin-bottom: 6px; padding-right: 44px; }
+    .pl-big { grid-area: big; font-size: 38px; }
+    .pl-label { grid-area: label; }
+    .pl-text { grid-area: text; margin-top: 10px; padding-top: 10px; font-size: 14px; line-height: 1.55; }
+    .pl-go { top: 20px; right: 20px; width: 32px; height: 32px; }
     .b-timeline { grid-template-columns: 1fr 1fr; }
     .b-timeline li:nth-child(even) { margin-top: 0; }
     .b-honors { columns: 1; }
