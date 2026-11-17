@@ -113,4 +113,11 @@ const words = ui.footerWords;
   .bottom { padding-top: 12px; font-size: 12px; color: rgba(255,255,255,.4); }
   @media (max-width: 1080px) { .top { grid-template-columns: 1fr 1fr; } .brand { grid-column: 1 / -1; } }
   @media (max-width: 640px) { .top { grid-template-columns: 1fr; } .footer { border-radius: 28px 28px 0 0; padding-top: 64px; } .social { grid-template-columns: repeat(5, 44px); } }
+  /* 手机：链接上下留出 8px，可点区域更大 */
+  @media (max-width: 640px) {
+    .col { gap: 0; }
+    .col > a, .links a, .licenses a, .links .soon { padding: 8px 0; }
+    .label { margin-bottom: 6px; }
+    .licenses, .links { gap: 0 16px; align-items: center; }
+  }
 </style>

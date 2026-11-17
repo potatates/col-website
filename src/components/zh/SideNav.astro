@@ -78,4 +78,9 @@ const { ui } = useLang(Astro.url);
     .rail-link.active, .rail-item.open > .rail-link { color: #fff; background: linear-gradient(120deg, var(--c1, var(--brand)), var(--c2, var(--brand-2))); }
   }
   @media (max-width: 768px) { .rail { margin: 0 -16px; } .rail-list { padding: 0 16px; } }
+  /* 横向条：右侧渐隐，提示还能往右滑；滑到最右端时取消（data-end 由 BaseLayout 脚本设置） */
+  @media (max-width: 1080px) {
+    .rail-list { -webkit-mask-image: linear-gradient(90deg, #000 calc(100% - 48px), transparent); mask-image: linear-gradient(90deg, #000 calc(100% - 48px), transparent); }
+    .rail-list[data-end] { -webkit-mask-image: none; mask-image: none; }
+  }
 </style>

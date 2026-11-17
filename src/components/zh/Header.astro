@@ -65,6 +65,12 @@ const isActive = (key: string) => key === current || (key === 'business' && busi
   <div class="progress" id="progress" aria-hidden="true"></div>
 
   <nav class="drawer" id="drawer" aria-label={ui.mobileNav}>
+    {/* 窄屏（<520px）页头放不下语言切换，移到抽屉顶部 */}
+    <div class="drawer-lang">
+      <a href={sw.zh} class:list={{ on: lang === 'zh' }} lang="zh-CN" data-astro-reload={sw.isNew ? true : undefined}>中文</a>
+      <a href={sw.en} class:list={{ on: lang === 'en' && !sw.isNew }} lang="en" data-astro-reload={sw.isNew ? true : undefined}>EN</a>
+      <a href={sw.neu} class:list={{ on: lang === 'en' && sw.isNew }} lang="en" data-astro-reload>New</a>
+    </div>
     <a href={u("/")}>{ui.home}</a>
     {navOrder.map((page) => (
       <>
@@ -166,6 +172,7 @@ const isActive = (key: string) => key === current || (key === 'business' && busi
   .open .menu-btn span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
 
   .drawer { display: none; }
+  .drawer-lang { display: none; }
 
   @media (max-width: 1280px) { .stock { display: none; } }
   /* 英文导航更长：字号、间距收紧一档 */
@@ -181,5 +188,22 @@ const isActive = (key: string) => key === current || (key === 'business' && busi
     .open .drawer { max-height: calc(100vh - 76px); }
     .drawer a { padding: 16px 20px; font-size: 20px; font-weight: 700; border-top: 1px solid var(--line); }
     .drawer a.sub { padding: 10px 20px 10px 40px; font-size: 15px; font-weight: 500; color: var(--muted); border-top: 0; }
+    /* 手机：菜单按钮、语言链接的可点区域不小于 44px */
+    .menu-btn { width: 44px; height: 44px; margin-right: -8px; }
+    .menu-btn span { left: 11px; right: 11px; }
+    .menu-btn span:nth-child(1) { top: 15px; }
+    .menu-btn span:nth-child(2) { top: 21px; }
+    .menu-btn span:nth-child(3) { top: 27px; }
+    .tools { gap: 8px; }
+    .lang { gap: 0; }
+    .lang a { display: inline-grid; place-items: center; min-width: 32px; min-height: 44px; padding: 0 4px; }
+    .theme-btn { width: 40px; height: 40px; }
+  }
+  @media (max-width: 520px) {
+    .tools .lang { display: none; }
+    .drawer-lang { display: flex; gap: 8px; padding: 12px 20px; }
+    .drawer .drawer-lang a { flex: 1; display: grid; place-items: center; min-height: 44px; padding: 0; border: 1px solid var(--line); border-radius: 999px; font-size: 15px; font-weight: 600; }
+    .drawer .drawer-lang a.on { background: var(--night); border-color: var(--night); color: #fff; }
+    :global([data-theme="dark"]) .drawer .drawer-lang a.on { background: var(--brand); border-color: var(--brand); }
   }
 </style>
