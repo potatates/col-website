@@ -450,11 +450,38 @@ const docTitle = lang === 'en' ? title.replace('_', ' | ') : title;
           cleanups.push(() => removeEventListener('scroll', update));
         }
 
-        // 实时股价：用 <script> 读取腾讯财经公开行情（qt.gtimg.cn 不支持跨域 fetch，但可作为脚本加载，
-        // 返回 v_sz300364="51~中文在线~300364~现价~昨收~今开~…"），填入页头小标签和投资者关系页。每分钟刷新一次。
+        // 实时股价：先用东方财富公开行情接口（push2.eastmoney.com，支持跨域 fetch）；
+        // 失败时退回腾讯财经（qt.gtimg.cn，以 <script> 加载；部分网络会重置该连接，2026-11 起常见）。
+        // 填入页头小标签和投资者关系页，每分钟刷新一次。
         if (document.querySelector('[data-stock]')) {
           const en = isEn();
-          const loadStock = () => {
+          let got = false;
+          type Q = { price: number; prev: number; open: number; high: number; low: number; chg: number; pct: number; capYi: number; hh: string; mm: string; mo: string; dd: string };
+          const paint = (q: Q) => {
+            got = true;
+            const sign = q.chg > 0 ? '+' : '';
+            const vals: Record<string, string> = {
+              price: q.price.toFixed(2),
+              chg: `${sign}${q.chg.toFixed(2)}`,
+              pct: `${sign}${q.pct.toFixed(2)}%`,
+              open: q.open.toFixed(2),
+              high: q.high.toFixed(2),
+              low: q.low.toFixed(2),
+              cap: en ? `CNY ${(q.capYi / 10).toFixed(2)} bn` : `${q.capYi.toFixed(2)} 亿元`,
+              time: q.hh ? `${en ? 'As of' : '更新于'} ${q.mo}-${q.dd} ${q.hh}:${q.mm} ·` : '',
+            };
+            document.querySelectorAll<HTMLElement>('[data-stock]').forEach((el) => {
+              const k = el.dataset.stock!;
+              if (k === 'status') { el.textContent = q.hh ? `${el.dataset.stockLive} · ${q.hh}:${q.mm}` : el.dataset.stockLive!; return; }
+              if (!(k in vals)) return;
+              el.textContent = vals[k];
+              if (k === 'price' || k === 'chg' || k === 'pct') {
+                el.classList.toggle('stock-up', q.chg > 0);
+                el.classList.toggle('stock-down', q.chg < 0);
+              }
+            });
+          };
+          const fromTencent = () => {
             const tag = document.createElement('script');
             tag.src = `https://qt.gtimg.cn/q=sz300364&_=${Date.now()}`;
             tag.charset = 'gbk';
@@ -462,42 +489,31 @@ const docTitle = lang === 'en' ? title.replace('_', ' | ') : title;
               tag.remove();
               const f = String((window as any).v_sz300364 ?? '').split('~');
               if (!Number(f[3])) return;
-              const chg = Number(f[31]);
-              const sign = chg > 0 ? '+' : '';
               const t = f[30] ?? '';
-              const vals: Record<string, string> = {
-                price: Number(f[3]).toFixed(2),
-                chg: `${sign}${chg.toFixed(2)}`,
-                pct: `${sign}${Number(f[32]).toFixed(2)}%`,
-                open: Number(f[5]).toFixed(2),
-                high: Number(f[33]).toFixed(2),
-                low: Number(f[34]).toFixed(2),
-                cap: en ? `CNY ${(Number(f[45]) / 10).toFixed(2)} bn` : `${Number(f[45]).toFixed(2)} 亿元`,
-                // 成交额：接口单位为万元
-                amount: en ? `CNY ${(Number(f[37]) / 100).toFixed(0)} M` : `${(Number(f[37]) / 10000).toFixed(2)} 亿元`,
-                time: t.length >= 12 ? `${en ? 'As of' : '更新于'} ${t.slice(4, 6)}-${t.slice(6, 8)} ${t.slice(8, 10)}:${t.slice(10, 12)} ·` : '',
-              };
-              document.querySelectorAll<HTMLElement>('[data-stock]').forEach((el) => {
-                const k = el.dataset.stock!;
-                if (k === 'status') {
-                  el.textContent = `${el.dataset.stockLive} · ${t.slice(8, 10)}:${t.slice(10, 12)}`;
-                  return;
-                }
-                if (!(k in vals)) return;
-                el.textContent = vals[k];
-                if (k === 'price' || k === 'chg' || k === 'pct') {
-                  el.classList.toggle('stock-up', chg > 0);
-                  el.classList.toggle('stock-down', chg < 0);
-                }
-              });
+              paint({ price: +f[3], prev: +f[4], open: +f[5], high: +f[33], low: +f[34], chg: +f[31], pct: +f[32], capYi: +f[45],
+                mo: t.slice(4, 6), dd: t.slice(6, 8), hh: t.slice(8, 10), mm: t.slice(10, 12) });
             };
             document.head.appendChild(tag);
           };
+          const loadStock = () => {
+            fetch(`https://push2.eastmoney.com/api/qt/stock/get?secid=0.300364&fltt=2&fields=f43,f44,f45,f46,f60,f86,f116,f169,f170&_=${Date.now()}`)
+              .then((r) => r.json())
+              .then((j) => {
+                const d = j?.data;
+                if (!d || !Number(d.f43)) throw new Error('no data');
+                // 时间按北京时间显示
+                const parts = Object.fromEntries(new Intl.DateTimeFormat('en-GB', { timeZone: 'Asia/Shanghai', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false })
+                  .formatToParts(new Date(d.f86 * 1000)).map((p) => [p.type, p.value]));
+                paint({ price: d.f43, prev: d.f60, open: d.f46, high: d.f44, low: d.f45, chg: d.f169, pct: d.f170, capYi: d.f116 / 1e8,
+                  mo: parts.month, dd: parts.day, hh: parts.hour, mm: parts.minute });
+              })
+              .catch(fromTencent);
+          };
           loadStock();
           const timer = setInterval(loadStock, 60_000);
-          // 8 秒后仍没有数据（接口被网络拦截等）：行情卡片标签改为“行情暂不可用”，保留“完整行情”链接
+          // 8 秒后仍没有数据（两个接口都被网络拦截等）：行情卡片标签改为“行情暂不可用”，保留“完整行情”链接
           const failTimer = setTimeout(() => {
-            if (Number((window as any).v_sz300364?.split('~')[3])) return;
+            if (got) return;
             document.querySelectorAll<HTMLElement>('[data-stock-fail]').forEach((el) => { el.textContent = el.dataset.stockFail!; });
           }, 8000);
           cleanups.push(() => { clearInterval(timer); clearTimeout(failTimer); });
