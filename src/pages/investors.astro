@@ -54,9 +54,8 @@ const { pages, site } = c;
   .quote :global(.stock-down) { color: #4ade80 !important; }
   :global(html[lang="en"]) .quote :global(.stock-up) { color: #4ade80 !important; }
   :global(html[lang="en"]) .quote :global(.stock-down) { color: #ff7a7f !important; }
-  /* 手机：股价用白色，涨跌放进浅色小胶囊，红绿再提亮一档，在蓝底上看得清 */
+  /* 手机：涨跌放进深色小胶囊，股价和涨跌的红绿再提亮一档，在蓝底上看得清 */
   @media (max-width: 768px) {
-    :global(html) .quote .q-price span.price { color: #fff !important; }
     .q-chg { font-size: 15px; padding: 3px 10px; border-radius: 999px; background: rgba(10,22,48,.35); }
     .q-chg:empty { display: none; }
     .q-meta b { padding: 1px 8px; border-radius: 999px; background: rgba(10,22,48,.35); }
