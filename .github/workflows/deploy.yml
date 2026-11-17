@@ -29,6 +29,19 @@ jobs:
         env:
           BASE_PATH: /${{ github.event.repository.name }}
           SITE_URL: https://${{ github.repository_owner }}.github.io
+      # Preview of the new English design: the en-redesign branch is built separately and
+      # published under /new/ (…/col-website/new/en/). The main site above is not affected.
+      # After pushing to en-redesign, re-run this workflow on main to refresh the preview.
+      - uses: actions/checkout@v4
+        with:
+          ref: en-redesign
+          path: _new
+      - run: npm ci && npm run build
+        working-directory: _new
+        env:
+          BASE_PATH: /${{ github.event.repository.name }}/new
+          SITE_URL: https://${{ github.repository_owner }}.github.io
+      - run: rm -rf dist/new && cp -r _new/dist dist/new
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist

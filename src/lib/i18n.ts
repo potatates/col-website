@@ -38,6 +38,18 @@ export function switchPath(url: URL, to: Lang): string {
   return withPrefix(p, to === 'zh' ? '' : prefix || '/en')!;
 }
 
+// 页头的 中 / EN / New 切换：中、EN 指向现行站点，New 指向英文新版预览（由 en-redesign 分支构建，部署在 <站点>/new 下）。
+// 两套构建共用这段逻辑：新版预览的部署子路径以 /new 结尾，据此判断当前是哪一套。
+export function switcherLinks(url: URL) {
+  const isNew = /\/new$/.test(base);
+  const root = isNew ? base.slice(0, -4) : base;
+  const prefix = prefixOf(url);
+  let p = url.pathname.slice(base.length) || '/';
+  if (prefix) p = p.slice(prefix.length) || '/';
+  if (!p.endsWith('/') && !/\.[a-z0-9]+$/i.test(p)) p += '/';
+  return { isNew, zh: `${root}${p}`, en: `${root}/en${p}`, neu: `${root}/new/en${p}` };
+}
+
 export function useLang(url: URL) {
   const lang = langOf(url);
   const prefix = prefixOf(url);
