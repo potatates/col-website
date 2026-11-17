@@ -1093,6 +1093,17 @@ const isNum = (v: string) => /^[\d,]+$/.test(v);
     .pl-label { grid-area: label; }
     .pl-text { grid-area: text; margin-top: 10px; padding-top: 10px; font-size: 14px; line-height: 1.55; }
     .pl-go { top: 20px; right: 20px; width: 32px; height: 32px; }
+    /* 中文重点产品卡（B6）：标识缩小，标签与名称同一行，整体更紧凑 */
+    :global(html:not([lang='en'])) .b-cards.featured > .card { display: grid; grid-template-columns: auto 1fr; grid-template-areas: "logo logo" "tag title" "text text" "go go"; column-gap: 10px; row-gap: 6px; align-items: center; padding: 22px 20px 18px; }
+    :global(html:not([lang='en'])) .b-cards.featured .card-logo { grid-area: logo; height: 34px !important; margin-bottom: 6px; }
+    :global(html:not([lang='en'])) .b-cards.featured .card-tag { grid-area: tag; }
+    :global(html:not([lang='en'])) .b-cards.featured .card-title { grid-area: title; font-size: 18px; }
+    :global(html:not([lang='en'])) .b-cards.featured .card-text { grid-area: text; line-height: 1.7; }
+    :global(html:not([lang='en'])) .b-cards.featured .card-go { grid-area: go; padding-top: 4px; }
+    :global(html:not([lang='en'])) .b-cards.featured .card:not(:has(.card-tag)) .card-title { grid-column: 1 / -1; }
+    /* 功能卡里的数字小方块再收紧一点 */
+    .ft-stats > div { padding: 12px; border-radius: 16px; }
+    .ft-stats dd { margin-top: 4px; }
     .b-timeline { grid-template-columns: 1fr 1fr; }
     .b-timeline li:nth-child(even) { margin-top: 0; }
     .b-honors { columns: 1; }
