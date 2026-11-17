@@ -283,8 +283,8 @@ html[lang='en'] .na-card strong { font-size: 17px !important; line-height: 1.25 
 @media (max-width: 600px) {
   /* C5 + A1: bigger hero headline; the posters sit below the text. The audience bar does not overlap the hero here, so less bottom room is needed */
   html[lang='en'] .hero h1 { font-size: 52px !important; }
-  html[lang='en'] .hero { padding-bottom: 290px !important; }
-  html[lang='en'] .floaters { bottom: 24px !important; }
+  html[lang='en'] .hero { padding-bottom: 236px !important; }
+  html[lang='en'] .floaters { bottom: 28px !important; }
   /* C2: home section headings small enough for the "All ..." link to stay on the same line */
   html[lang='en'] main > .block-section .s-title { font-size: 28px !important; white-space: nowrap !important; }
   html[lang='en'] main > .block-section .s-title::before { margin-right: 8px !important; font-size: 13px !important; }
@@ -299,4 +299,25 @@ html[lang='en'] .na-card strong { font-size: 17px !important; line-height: 1.25 
   html[lang='en'] .b-cards.featured .card-go { grid-row: 5 !important; }
   /* C4: "More works" three across */
   html[lang='en'] .ipd-more { grid-template-columns: repeat(3, 1fr) !important; gap: 12px !important; }
+}
+
+/* ---------- Phone: tighter cards, menu and timeline in the English type style ---------- */
+@media (max-width: 768px) {
+  html[lang='en'] .card { padding: 18px !important; }
+  html[lang='en'] .card-title { font-size: 19px !important; line-height: 1.2 !important; }
+  html[lang='en'] .card-text { line-height: 1.5 !important; }
+  html[lang='en'] .b-cards.c3:not(.arrow-cards):not(:has(.has-img)) > .card, html[lang='en'] .b-cards.c4:not(.arrow-cards):not(:has(.has-img)) > .card, html[lang='en'] .b-cards.featured > .card { padding: 16px 0 !important; }
+  html[lang='en'] .ch-head { padding: 24px 20px !important; }
+  html[lang='en'] .ch-title { font-size: 40px !important; }
+  html[lang='en'] .ch-intro { font-size: 16px !important; }
+  html[lang='en'] .b-spot { padding: 32px 22px !important; }
+  html[lang='en'] .jr-era { font-size: 11.5px !important; letter-spacing: .1em !important; }
+  html[lang='en'] .jr-year { font-size: 22px !important; }
+  html[lang='en'] .card, html[lang='en'] .ft, html[lang='en'] .pf-main, html[lang='en'] .cu-mission, html[lang='en'] .cu-item, html[lang='en'] .b-spot, html[lang='en'] .b-letter, html[lang='en'] .b-quote, html[lang='en'] .b-contact, html[lang='en'] .ch-head, html[lang='en'] .next, html[lang='en'] .cta, html[lang='en'] .news-row { border-radius: 12px !important; }
+}
+@media (max-width: 1180px) {
+  html[lang='en'] .drawer > a { font-family: var(--display) !important; font-weight: 700 !important; letter-spacing: -.015em !important; }
+  html[lang='en'] .drawer > a.sub { font-family: var(--font) !important; font-weight: 500 !important; letter-spacing: 0 !important; border-radius: 8px !important; }
+  html[lang='en'] .drawer > a.cta, html[lang='en'] .drawer-lang { border-radius: 10px !important; }
+  html[lang='en'] .drawer .drawer-lang a { border-radius: 7px !important; }
 }
