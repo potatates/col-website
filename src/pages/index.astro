@@ -250,21 +250,15 @@ const news = home.news;
     .aud-ic { display: none; }
     .aud small { grid-column: 1; }
   }
-  /* 手机首屏：文字在上，7 张海报在下半部排成两行小拼贴；首屏约八成高度，下一板块露头 */
+  /* 手机首屏：文字在上；7 张海报排成整齐的一行，缓慢左右漂移（不再叠成拼贴）。首屏不占满整屏，下一板块露头 */
   @media (max-width: 600px) {
-    .hero { min-height: 0; align-items: flex-start; padding: 100px 0 326px; }
-    .floaters { opacity: 1; inset: auto 12px 52px; height: 250px; }
-    .floater { left: var(--px) !important; top: var(--py) !important; width: var(--pw) !important; }
-    .floater:nth-child(2) { --px: 0%; --py: 0%; --pw: 88px; }
-    .floater:nth-child(4) { --px: 25%; --py: 2%; --pw: 88px; }
-    .floater:nth-child(7) { --px: 51%; --py: 0%; --pw: 88px; }
-    .floater:nth-child(5) { --px: 76%; --py: 4%; --pw: 88px; }
-    .floater:nth-child(1) { --px: 9%; --py: 40%; --pw: 104px; }
-    .floater:nth-child(3) { --px: 37%; --py: 44%; --pw: 100px; }
-    .floater:nth-child(6) { --px: 64%; --py: 40%; --pw: 100px; }
-    .floater .cover { box-shadow: 0 16px 28px -14px rgba(10,20,60,.6); }
-    .ring { display: none; }
-    .sun { display: none; }
-    @keyframes bob { 50% { transform: translateY(-8px); } }
+    .hero { min-height: 0; align-items: flex-start; padding: 100px 0 272px; }
+    .floaters { opacity: 1; inset: auto auto 60px 0; display: flex; align-items: flex-start; gap: 12px; width: max-content; padding: 0 16px; animation: strip 40s ease-in-out infinite alternate; }
+    .floater { position: static; flex: none; width: 112px !important; animation: none; translate: none !important; }
+    .floater:nth-child(even) { margin-top: 14px; }
+    .floater .cover { rotate: none; border-radius: 12px; box-shadow: 0 16px 28px -14px rgba(10,20,60,.6); }
+    .ring, .sun, .scroll-hint { display: none; }
+    @keyframes strip { to { transform: translateX(calc(100vw - 100%)); } }
   }
+  @media (max-width: 600px) and (prefers-reduced-motion: reduce) { .floaters { animation: none; } }
 </style>
