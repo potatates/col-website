@@ -119,11 +119,21 @@ Checked after the fixes at 390 × 844 with an iPhone user agent (light mode), al
 | B3 | Fixed | Tile text keeps 72 px clear on the right (Chinese only) and wraps. |
 | B4 | Fixed | Quick-link icons hidden under 480 px; each hint fits on one line. |
 | B5 | Skipped | Needs the team's OK (hides the second tag on phones). |
-| B6 | Skipped | Optional; not done without the team's OK. |
+| B6 | Fixed | Done after the user asked for tall cards to be compacted: smaller logo, tag and name on one line, tighter spacing. Chinese only (English has C3). About 1,650 px down to 1,090 px for five products. |
 | C1 | Fixed | Number and unit stay on one line; phone figures 32 to 40 px. |
 | C2 | Fixed | Home section headings 28 px (30 px still wrapped "Our Businesses"), "All …" link on the same line, right-aligned. |
 | C3 | Fixed | Product rows stack on phones: logo, category, name, description, link. |
 | C4 | Fixed | "More works" three across on phones. |
 | C5 | Fixed | Hero headline 52 px on phones. |
+
+### Added after the user's review of the preview
+
+- Phone menu: coloured dot before each business, aligned under the section heading.
+- Stats: the tinted circle behind each number stays inside the left margin.
+- Chinese card titles starting with 《 「 “ line up with other titles (all widths).
+- Share price stays coloured on phones (A11 above).
+- Investors: the three shareholder-letter themes are compact rows.
+- About: the company timeline is one row per year (about 1,650 px down to 690 px); the dark pillar cards are tighter, figure and label on one line (about 2,150 px down to 750 px).
+- Business: figure boxes inside feature cards slightly tighter.
 
 Not checked: dark mode on a phone, tablets, landscape, real devices, the AI panel when open.
