@@ -230,9 +230,10 @@ html[lang='en'] .na-card strong { font-size: 17px !important; line-height: 1.25 
 }
 
 @media (max-width: 1000px) {
-  html[lang='en'] .audience { height: auto !important; margin-top: 0 !important; grid-template-columns: repeat(3, 1fr) !important; background: var(--night) !important; padding-top: 6px !important; padding-bottom: 6px !important; }
-  html[lang='en'] .aud { padding: 14px 16px !important; }
-  html[lang='en'] .aud:nth-child(3n+2) { border-left: 0 !important; padding-left: 0 !important; }
+  /* phones and tablets: each audience link is its own tile with a chevron, so it reads as a button */
+  html[lang='en'] .audience { height: auto !important; margin-top: 0 !important; grid-template-columns: repeat(3, 1fr) !important; gap: 8px !important; background: var(--night) !important; padding-top: 16px !important; padding-bottom: 16px !important; }
+  html[lang='en'] .aud, html[lang='en'] .aud-label + .aud { position: relative !important; padding: 12px 34px 12px 14px !important; border-left: 0 !important; border-radius: 10px !important; background: rgba(255,255,255,.09) !important; }
+  html[lang='en'] .aud::after { content: '›' !important; position: absolute !important; right: 13px !important; top: 50% !important; translate: 0 -54% !important; font-size: 22px !important; line-height: 1 !important; color: rgba(255,255,255,.7) !important; }
   html[lang='en'] .poster { grid-template-columns: 44px 1fr 28px !important; row-gap: 6px !important; padding: 20px !important; }
   html[lang='en'] .poster .p-hook { grid-column: 2 !important; grid-row: 2 !important; font-size: 15px !important; }
   html[lang='en'] .poster .p-go { grid-column: 3 !important; grid-row: 1 !important; }
@@ -266,8 +267,6 @@ html[lang='en'] .na-card strong { font-size: 17px !important; line-height: 1.25 
 
 @media (max-width: 560px) {
   html[lang='en'] .audience { grid-template-columns: repeat(2, 1fr) !important; }
-  html[lang='en'] .aud:nth-child(3n+2) { border-left: 1px solid rgba(255,255,255,.16) !important; padding-left: 16px !important; }
-  html[lang='en'] .aud:nth-child(even) { border-left: 0 !important; padding-left: 0 !important; }
 }
 
 /* ---------- Phone fixes (390 px audit, docs/phone-view-issues.md) ---------- */
