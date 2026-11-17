@@ -75,7 +75,7 @@ const isActive = (key: string) => key === current || (key === 'business' && busi
     <a href={u("/")}>{ui.home}</a>
     {navOrder.map((page) => (
       <>
-        <a href={u(page.href)}>{page.nav ?? page.title}</a>
+        <a href={u(page.href)} class:list={{ cur: isActive(page.key), cta: page.key === 'partner' }}>{page.nav ?? page.title}</a>
         {page.key === 'business' && businessPages.map((bp) => <a href={u(bp.href)} class="sub" style={`--c1:${bp.theme?.[0]};--c2:${bp.theme?.[1]}`}><i aria-hidden="true"></i>{bp.title}</a>)}
       </>
     ))}
@@ -182,16 +182,17 @@ const isActive = (key: string) => key === current || (key === 'business' && busi
   @media (max-width: 1180px) {
     .nav { display: none; }
     .menu-btn { display: block; }
+    /* 菜单抽屉：整屏一页看完。一级栏目大字、无分隔线；各业务是一排小标签；“合作”是底部的整宽按钮；语言切换是最下方的小分段控件 */
     .drawer {
-      display: flex; flex-direction: column; background: var(--surface); color: var(--text);
-      max-height: 0; overflow: auto; transition: max-height .45s var(--ease);
+      display: flex; flex-wrap: wrap; align-content: flex-start; gap: 0 8px; background: var(--surface); color: var(--text);
+      max-height: 0; overflow: auto; padding: 0 20px; transition: max-height .45s var(--ease), padding .45s var(--ease);
     }
-    .open .drawer { max-height: calc(100vh - 76px); }
-    .drawer a { padding: 16px 20px; font-size: 20px; font-weight: 700; border-top: 1px solid var(--line); }
-    .drawer a.sub { padding: 10px 20px 10px 40px; font-size: 15px; font-weight: 500; color: var(--muted); border-top: 0; }
-    /* 各业务前的彩色圆点，与桌面下拉菜单、页脚一致 */
-    .drawer a.sub { display: flex; align-items: center; gap: 10px; padding-left: 25px; }
-    .drawer a.sub i { flex-shrink: 0; width: 10px; height: 10px; border-radius: 50%; background: linear-gradient(135deg, var(--c1), var(--c2)); }
+    .open .drawer { min-height: calc(100vh - 76px); min-height: calc(100dvh - 76px); max-height: calc(100vh - 76px); max-height: calc(100dvh - 76px); padding: 10px 20px 28px; border-top: 1px solid var(--line); }
+    .drawer > a { flex: 0 0 100%; padding: 11px 0; font-size: 24px; font-weight: 700; line-height: 1.2; color: var(--ink); }
+    .drawer > a.cur { color: var(--brand); }
+    .drawer > a.sub { flex: 0 0 auto; display: inline-flex; align-items: center; gap: 8px; margin: 2px 0 8px; padding: 8px 14px; border-radius: 999px; background: var(--bg); font-size: 14px; font-weight: 500; color: var(--text); }
+    .drawer a.sub i { flex-shrink: 0; width: 8px; height: 8px; border-radius: 50%; background: linear-gradient(135deg, var(--c1), var(--c2)); }
+    .drawer > a.cta { margin-top: 14px; padding: 15px 20px; border-radius: 14px; text-align: center; font-size: 17px; color: #fff; background: linear-gradient(120deg, var(--brand), var(--brand-2)); }
     /* 手机：菜单按钮、语言链接的可点区域不小于 44px */
     .menu-btn { width: 44px; height: 44px; margin-right: -8px; }
     .menu-btn span { left: 11px; right: 11px; }
@@ -205,9 +206,8 @@ const isActive = (key: string) => key === current || (key === 'business' && busi
   }
   @media (max-width: 520px) {
     .tools .lang { display: none; }
-    .drawer-lang { display: flex; gap: 8px; padding: 12px 20px; }
-    .drawer .drawer-lang a { flex: 1; display: grid; place-items: center; min-height: 44px; padding: 0; border: 1px solid var(--line); border-radius: 999px; font-size: 15px; font-weight: 600; }
-    .drawer .drawer-lang a.on { background: var(--night); border-color: var(--night); color: #fff; }
-    :global([data-theme="dark"]) .drawer .drawer-lang a.on { background: var(--brand); border-color: var(--brand); }
+    .drawer-lang { order: 99; flex: 0 0 100%; display: flex; gap: 4px; margin-top: 18px; padding: 4px; border-radius: 14px; background: var(--bg); }
+    .drawer .drawer-lang a { flex: 1; display: grid; place-items: center; min-height: 40px; padding: 0; border-radius: 10px; font-size: 14px; font-weight: 600; color: var(--muted); }
+    .drawer .drawer-lang a.on { background: var(--surface); color: var(--ink); box-shadow: 0 2px 8px -4px rgba(10,22,48,.35); }
   }
 </style>
