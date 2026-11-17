@@ -1,6 +1,6 @@
 # Phone view: issue list
 
-Audit only. Nothing has been changed.
+Audit done 2026-11-17; fixes made the same day on branch `claude/phone-fixes-c7b198`. See "Status" at the end.
 
 - Checked at 390 × 844 (iPhone-size, emulated in Chrome), light mode.
 - Pages: Home, Business, IP & Works, About, Investors, News, Partner, Careers, one IP detail page, one news article.
@@ -93,3 +93,37 @@ Audit only. Nothing has been changed.
 2. A1, A2 and A5, which are visible on first look.
 3. A3, A6, A7, B2, B3, B5, C1.
 4. The rest.
+
+## Status
+
+Checked after the fixes at 390 × 844 with an iPhone user agent (light mode), all ten pages in Chinese and the new English, plus the open menu. No page scrolls sideways. Desktop (1440 px) screenshots of every page in both languages match the earlier ones apart from live content (stock price, video frames, number count-up).
+
+"Shared" fixes are in one commit that can go to `main` on its own; English-only fixes are in a separate commit.
+
+| # | Status | What was done |
+|---|---|---|
+| A1 | Fixed | Posters shown on phones (≤600 px) as two rows below the text, 88 to 104 px wide, same tilt. Hero is now about 88% of the screen in Chinese, 92% in English, so the next section shows. The dashed ring and yellow dot are hidden on phones. |
+| A2 | Fixed | AI button 44 px, 12 px from the corner, 85% opaque until opened; greeting bubble hidden on phones (≤640 px). |
+| A3 | Fixed | Right edge of the page menu bar fades out until scrolled to the end. Scrolling the active item into view already existed. |
+| A4 | Fixed | Five steps are a vertical list on phones: number circle left, name and line right, 15 px text. |
+| A5 | Fixed | Figure boxes two per row, third spans the row, figure 24 px, unit can wrap. |
+| A6 | Fixed | Decorative circles hidden under 768 px on chapter cards, "Up next" cards, the call-to-action band and the spotlight card. |
+| A7 | Partly | Menu button 44 × 44, language links 44 px tall, dark-mode button 40 px, footer links 8 px vertical padding. The AI prompt close button was not enlarged because the prompt is now hidden on phones; it is unchanged on desktop. |
+| A8 | Fixed | Last timeline entry left-aligned in the stacked layout. |
+| A9 | Fixed | Screeners note spans the full row under the videos. Vertical videos were already two per row. |
+| A10 | Fixed | "Back to top" button on phones and tablets (≤768 px), above the AI button, appears after two screens. Not shown on desktop. |
+| A11 | Fixed (phones) | Price in white; change and percentage in small dark pills with lighter red/green (#ff9a9a, #7ee2a8). Red/green meaning still differs per language. Applied under 768 px only, so the desktop card is unchanged. |
+| A12 | Fixed | Phone stats rows are two columns; an odd last figure spans both. |
+| B1 | Fixed | Under 520 px, 中 / EN / New moved into the top of the menu drawer as three buttons. Header keeps logo, dark-mode button and menu button (menu button now at 338 to 382 px on a 390 px screen). |
+| B2 | Fixed | Outlined English word behind headings hidden under 768 px. |
+| B3 | Fixed | Tile text keeps 72 px clear on the right (Chinese only) and wraps. |
+| B4 | Fixed | Quick-link icons hidden under 480 px; each hint fits on one line. |
+| B5 | Skipped | Needs the team's OK (hides the second tag on phones). |
+| B6 | Skipped | Optional; not done without the team's OK. |
+| C1 | Fixed | Number and unit stay on one line; phone figures 32 to 40 px. |
+| C2 | Fixed | Home section headings 28 px (30 px still wrapped "Our Businesses"), "All …" link on the same line, right-aligned. |
+| C3 | Fixed | Product rows stack on phones: logo, category, name, description, link. |
+| C4 | Fixed | "More works" three across on phones. |
+| C5 | Fixed | Hero headline 52 px on phones. |
+
+Not checked: dark mode on a phone, tablets, landscape, real devices, the AI panel when open.
