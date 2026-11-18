@@ -1,6 +1,7 @@
 ---
 // 内容块渲染器：所有栏目页的内容都通过这里渲染，保证全站视觉与交互一致
 import { u as asset } from '../../lib/url';
+import { inlineImg } from '../../lib/inline';
 import { useLang } from '../../lib/i18n';
 import type { Block } from '../../content/zh';
 const { ui, l: u } = useLang(Astro.url);
@@ -156,8 +157,8 @@ const isNum = (v: string) => /^[\d,]+$/.test(v);
                 {c.img && <img class="card-img" src={asset(`/news/${c.img}.jpg`)} alt="" loading="lazy" />}
                 {c.logo && (
                   <span class="card-logo">
-                    <img class="logo-light" src={asset(`/products/${c.logo}.png`)} alt={c.title} loading="lazy" />
-                    {DARK_LOGOS.includes(c.logo) && <img class="logo-dark" src={asset(`/products/${c.logo}-dark.png`)} alt="" aria-hidden="true" loading="lazy" />}
+                    <img class="logo-light" src={inlineImg(`/products/${c.logo}.png`)} alt={c.title} />
+                    {DARK_LOGOS.includes(c.logo) && <img class="logo-dark" src={inlineImg(`/products/${c.logo}-dark.png`)} alt="" aria-hidden="true" loading="lazy" />}
                   </span>
                 )}
                 {c.tag && <span class="card-tag">{c.tag}</span>}

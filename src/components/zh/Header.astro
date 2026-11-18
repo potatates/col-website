@@ -1,6 +1,7 @@
 ---
 // 页头：8 个一级栏目直接链接；只有“业务与产品”带下拉，列出各业务；“合作”为突出按钮
 import { u as asset } from '../../lib/url';
+import { inlineImg } from '../../lib/inline';
 import { useLang, switcherLinks } from '../../lib/i18n';
 
 const { c, ui, l: u, lang } = useLang(Astro.url);
@@ -17,8 +18,8 @@ const isActive = (key: string) => key === current || (key === 'business' && busi
 <header class="site-header" id="site-header">
   <div class="container bar">
     <a href={u("/")} class="logo" aria-label={`${site.name} ${ui.homeAria}`}>
-      <img src={asset("/logo-white.png")} alt={site.name} width="177" height="24" class="on-dark" />
-      <img src={asset("/logo.png")} alt="" width="177" height="24" class="on-light" aria-hidden="true" />
+      <img src={inlineImg("/logo-white.png")} alt={site.name} width="177" height="24" class="on-dark" />
+      <img src={inlineImg("/logo.png")} alt="" width="177" height="24" class="on-light" aria-hidden="true" />
     </a>
 
     <nav class="nav" aria-label={ui.mainNav}>

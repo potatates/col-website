@@ -106,9 +106,9 @@ const about: Page = {
           { era: 'Chapter Three', year: '2015', text: 'Listed on ChiNext in January as China’s first digital publishing stock; became a group company in September' },
           { year: '2016', text: 'Raised RMB 2 billion in a private placement and set up a US company, starting international expansion' },
           { year: '2021', text: 'Entered microdrama as a pioneer of vertical microdrama in China' },
-          { year: '2023', text: 'Launched the “Zhongwen Xiaoyao” large model' },
+          { year: '2023', text: 'Launched the “ZhongWen XiaoYao” large model' },
           { year: '2025', text: 'Launched FlareFlow, its overseas microdrama platform' },
-          { year: '2026', text: 'Launched Ciyuan Shenbi, a full-stack AI creation platform' },
+          { year: '2026', text: 'Launched CiYuan ShenBi, a full-stack AI creation platform' },
         ] },
       ],
     },
@@ -117,7 +117,7 @@ const about: Page = {
         { no: '01', title: 'Strong Content', text: 'Building a high-quality digital content ecosystem', big: '5.6', unit: 'M', label: 'Digital content titles', href: '/business#literature' },
         { no: '02', title: 'Winning IP', text: 'Turning IP from a one-off asset into a renewable one', big: '6', unit: 'B+', label: 'Views of the Yi Pin Bu Yi series', href: '/ip' },
         { no: '03', title: 'Global First', text: 'FlareFlow and the Hengqin base form an international microdrama infrastructure', big: '200', unit: '+', label: 'Countries and regions', href: '/business#global' },
-        { no: '04', title: 'AI Empowerment', text: 'Xiaoyao covers about 60% of the literary production process and cuts production time by 75%', big: '75', unit: '%', label: 'Shorter production time', href: '/business#ai' },
+        { no: '04', title: 'AI Empowerment', text: 'XiaoYao covers about 60% of the literary production process and cuts production time by 75%', big: '75', unit: '%', label: 'Shorter production time', href: '/business#ai' },
       ] },
     ] },
   ],
@@ -144,8 +144,8 @@ const literature: Page = {
         ], note: 'Source: COL Group corporate presentation (Sept 2026)' },
         { type: 'cards', cols: 3, items: [
           { id: '17k', tag: 'Flagship original platform', title: '17K', text: 'Recognized as a “key webnovel platform” by the Publicity Department of the CPC Central Committee, covering every genre from fantasy and urban romance to wuxia, xianxia and campus stories. 100+ IPs with over 100 million clicks; 100M+ registered users.', href: 'https://www.17k.com', external: true },
-          { id: '4yt', tag: 'Period fiction for women', title: 'Siyuetian', text: 'An original fiction site for period stories aimed at women readers, with 150,000+ resident authors and 200,000+ titles.', href: 'https://www.4yt.net', external: true },
-          { id: 'haili', tag: 'Genre fiction', title: 'Haili Stories + Mixiang + Qixiang', text: 'Haili Stories encourages diverse local genre fiction and finds promising new writers. Its mystery imprint “Mixiang Project” runs the Mixiang Story Award; its sci-fi imprint “Qixiang Universe” nurtures sci-fi IP and helps authors earn from their work.' },
+          { id: '4yt', tag: 'Period fiction for women', title: 'SiYueTian', text: 'An original fiction site for period stories aimed at women readers, with 150,000+ resident authors and 200,000+ titles.', href: 'https://www.4yt.net', external: true },
+          { id: 'haili', tag: 'Genre fiction', title: 'HaiLi Stories + MiXiang + QiXiang', text: 'HaiLi Stories encourages diverse local genre fiction and finds promising new writers. Its mystery imprint “MiXiang Project” runs the MiXiang Story Award; its sci-fi imprint “QiXiang Universe” nurtures sci-fi IP and helps authors earn from their work.' },
         ] },
       ],
     },
@@ -264,9 +264,9 @@ const ai: Page = {
       id: 'products', label: 'AI Products', en: 'PRODUCTS', title: 'AI products',
       blocks: [
         { type: 'cards', cols: 3, items: [
-          { tag: 'Large model', title: 'Zhongwen Xiaoyao / Xiaoyao AI', text: 'Launched in 2023 as the world’s first large model for 10,000-word fiction, it supports writing in 14 languages. It serves 50,000+ creators in over 100 countries and regions and has helped produce more than 2.5 billion words.', href: 'https://xiaoyao.ai', external: true },
-          { tag: 'Creation platform', title: 'Ciyuan Shenbi', text: 'An all-in-one AI animation tool launched in early 2026: from picking IP and scripts to storyboards, characters, images, video, voice-over and distribution, AI assists every step.', href: 'https://www.ciyuanshenbi.com', external: true },
-          { tag: 'Marketing', title: 'Xiaoyao AI Agent', text: 'End-to-end AI ad delivery: creative generation, dynamic budget allocation and real-time monitoring. It produces 100–300 creatives per overseas microdrama and makes campaigns over 20x more efficient.' },
+          { tag: 'Large model', title: 'ZhongWen XiaoYao / XiaoYao AI', text: 'Launched in 2023 as the world’s first large model for 10,000-word fiction, it supports writing in 14 languages. It serves 50,000+ creators in over 100 countries and regions and has helped produce more than 2.5 billion words.', href: 'https://xiaoyao.ai', external: true },
+          { tag: 'Creation platform', title: 'CiYuan ShenBi', text: 'An all-in-one AI animation tool launched in early 2026: from picking IP and scripts to storyboards, characters, images, video, voice-over and distribution, AI assists every step.', href: 'https://www.ciyuanshenbi.com', external: true },
+          { tag: 'Marketing', title: 'XiaoYao AI Agent', text: 'End-to-end AI ad delivery: creative generation, dynamic budget allocation and real-time monitoring. It produces 100–300 creatives per overseas microdrama and makes campaigns over 20x more efficient.' },
         ] },
       ],
     },
@@ -312,7 +312,7 @@ const ipr: Page = {
       blocks: [
         { type: 'cards', cols: 3, items: [
           { tag: 'WWW.QSHAO.NET', title: 'Quanshao', text: 'A one-stop global IP service platform with IP lawyers and investigation teams across China.', href: 'https://www.qshao.net', external: true },
-          { tag: 'Originality protection', title: 'Wuchao', text: 'Helps creators find infringement, prove plagiarism and take legal action.' },
+          { tag: 'Originality protection', title: 'WuChao', text: 'Helps creators find infringement, prove plagiarism and take legal action.' },
           { tag: 'WWW.BANQJ.COM', title: 'Banquanjie', text: 'SaaS for copyright registration, evidence storage and asset management.', href: 'https://www.banqj.com', external: true },
         ] },
       ],
@@ -336,10 +336,10 @@ const businessIndex: Page = {
       intro: 'Webnovels are where IP begins; microdrama and global expansion drive growth; AI runs through it all.',
       blocks: [
         { type: 'steps', items: [
-          { title: 'Webnovel', text: '17K · Siyuetian · Haili Stories', color: bizColor.literature },
+          { title: 'Webnovel', text: '17K · SiYueTian · HaiLi Stories', color: bizColor.literature },
           { title: 'Film & Microdrama', text: 'FlareFlow · Animation · Film & TV', color: bizColor.drama },
           { title: 'Global', text: '200+ countries and regions · 40%+ overseas revenue', color: bizColor.global },
-          { title: 'AI & Creative Tools', text: 'Xiaoyao AI · Ciyuan Shenbi', color: bizColor.ai },
+          { title: 'AI & Creative Tools', text: 'XiaoYao AI · CiYuan ShenBi', color: bizColor.ai },
           { title: 'Data Solutions', text: '600 TB of data · Serving all leading Chinese model makers', color: bizColor.data },
         ] },
       ],
@@ -354,10 +354,10 @@ businessIndex.sections.push({
   blocks: [
     { type: 'cards', featured: true, items: [
       { logo: 'flareflow', tag: 'Global microdrama', title: 'FlareFlow', text: 'Launched in April 2025 in 200+ countries and regions and 14 languages, with over 52 million registered users. Topped the US free entertainment chart in September 2025.', href: 'https://flareflow.tv/#/', external: true, color: bizColor.global },
-      { logo: 'cyshenbi', tag: 'AI animation', title: 'Ciyuan Shenbi', text: 'An all-in-one AI animation tool launched in early 2026: AI assists from script and storyboard to voice-over, with built-in global distribution.', href: 'https://www.ciyuanshenbi.com', external: true, color: bizColor.ai },
-      { logo: 'xiaoyao', tag: 'AI large model', title: 'Xiaoyao AI', text: '“Zhongwen Xiaoyao”, the world’s first large model for 10,000-word fiction, supports writing in 14 languages for 50,000+ creators.', href: 'https://xiaoyao.ai', external: true, color: bizColor.ai },
+      { logo: 'cyshenbi', tag: 'AI animation', title: 'CiYuan ShenBi', text: 'An all-in-one AI animation tool launched in early 2026: AI assists from script and storyboard to voice-over, with built-in global distribution.', href: 'https://www.ciyuanshenbi.com', external: true, color: bizColor.ai },
+      { logo: 'xiaoyao', tag: 'AI large model', title: 'XiaoYao AI', text: '“ZhongWen XiaoYao”, the world’s first large model for 10,000-word fiction, supports writing in 14 languages for 50,000+ creators.', href: 'https://xiaoyao.ai', external: true, color: bizColor.ai },
       { logo: '17k', tag: 'Webnovel', title: '17K', text: 'Our core original-content platform, recognized as a “key webnovel platform” by the Publicity Department of the CPC Central Committee.', href: 'https://www.17k.com', external: true, color: bizColor.literature },
-      { logo: '4yt', tag: 'Webnovel', title: 'Siyuetian', text: 'Original period fiction for women readers, with 150,000+ resident authors.', href: 'https://www.4yt.net', external: true, color: bizColor.literature },
+      { logo: '4yt', tag: 'Webnovel', title: 'SiYueTian', text: 'Original period fiction for women readers, with 150,000+ resident authors.', href: 'https://www.4yt.net', external: true, color: bizColor.literature },
     ] },
   ],
 });
@@ -423,14 +423,14 @@ const ipPage: Page = {
               { k: 'AI', v: 'An AI-remastered version has completed rating review' },
             ],
             video: 'yipinbuyi', vertical: true, images: ['yipinbuyi1'], source: 'COL Group corporate presentation (Sept 2026), p. 20; 2026 Interim Report' },
-          { slug: 'yiyou', title: 'I Woke Up as the Villainess in an Otome Game System and Flirted My Way Through the Interstellar', genre: 'Microdrama', forms: ['AI 3D animation'], tags: ['No. 1 on the Huolong AI animation chart'], poster: 'yiyou',
+          { slug: 'yiyou', title: 'I Woke Up as the Villainess in an Otome Game System and Flirted My Way Through the Interstellar', genre: 'Microdrama', forms: ['AI 3D animation'], tags: ['No. 1 on the HuoLong AI animation chart'], poster: 'yiyou',
             intro: 'A COL-produced AI 3D animated series for women viewers, extending our AI animation from action-driven stories to romance.',
             stats: [
-              { value: 'TOP1', label: 'Huolong trending and search charts' },
+              { value: 'TOP1', label: 'HuoLong trending and search charts' },
               { value: '5', label: 'Language markets where it hit No. 1' },
             ],
             highlights: [
-              { k: 'China', v: 'In March 2026 it topped both the Huolong AI animation trending and search charts, holding No. 1 for days' },
+              { k: 'China', v: 'In March 2026 it topped both the HuoLong AI animation trending and search charts, holding No. 1 for days' },
               { k: 'Global', v: 'Quickly reached No. 1 on the daily charts in English, Spanish, French, Italian and Japanese, a record for Chinese AI animation overseas' },
             ],
             source: 'COL Group corporate presentation (Sept 2026), p. 17; 2026 Interim Report' },
@@ -823,7 +823,7 @@ export const aiAssistant = {
       a: 'The IP & Works page has our IP wall, trailers and adaptation cases; click any poster to learn about that work. To discuss licensing, say “I want to partner” and fill in a short card. I’ll pass it to the licensing team.',
       link: { label: 'See IP & Works', href: '/ip#wall' } },
     { q: 'What products do you have?', keywords: ['product', 'app', '17k', 'xiaoyao', 'download', 'read', 'watch'],
-      a: 'Our main products are FlareFlow (global microdrama), Ciyuan Shenbi (AI animation), Xiaoyao AI (AI creation), 17K and 4yt (webnovels).',
+      a: 'Our main products are FlareFlow (global microdrama), CiYuan ShenBi (AI animation), XiaoYao AI (AI creation), 17K and SiYueTian (webnovels).',
       link: { label: 'See all products', href: '/business#products' } },
     { q: 'What is FlareFlow?', keywords: ['flareflow', 'microdrama', 'drama', 'overseas', 'global', 'international'],
       a: 'FlareFlow is COL’s global microdrama platform, available in 200+ countries and regions, with over 52 million registered users as of June 2026.',
@@ -883,7 +883,7 @@ export const ui = {
     drama: 'Hengqin studio · Global microdrama · Screen adaptations',
     global: 'In 200+ countries and regions · Connecting the world through great stories',
     data: '600 TB multimodal data · All leading model makers',
-    ai: 'Xiaoyao AI · Ciyuan Shenbi',
+    ai: 'XiaoYao AI · CiYuan ShenBi',
   } as Record<string, string>,
   // Content blocks
   visitSite: 'Visit website',
