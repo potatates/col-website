@@ -1,6 +1,7 @@
 ---
 // 内容块渲染器：所有栏目页的内容都通过这里渲染，保证全站视觉与交互一致
 import { u as asset } from '../../lib/url';
+import { inlineImg } from '../../lib/inline';
 import { useLang } from '../../lib/i18n';
 import type { Block } from '../../content/zh';
 const { ui, l: u, lang } = useLang(Astro.url);
@@ -80,7 +81,7 @@ const isNum = (v: string) => /^[\d,]+$/.test(v);
                 )}
               </div>
               {f.video ? (
-                <video class="ft-video" controls preload="none" playsinline poster={asset(`/videos/${f.video}.jpg`)} src={asset(`/videos/${f.video}.mp4`)}></video>
+                <video class="ft-video" controls preload="metadata" playsinline poster={asset(`/videos/${f.video}.jpg`)} src={asset(`/videos/${f.video}.mp4`)}></video>
               ) : f.stats?.length ? (
                 <dl class="ft-stats">
                   {f.stats.map((st) => <div><dt>{st.value}{st.unit && <em>{st.unit}</em>}</dt><dd>{st.label}</dd></div>)}
@@ -160,8 +161,8 @@ const isNum = (v: string) => /^[\d,]+$/.test(v);
                 {c.img && <img class="card-img" src={asset(`/news/${c.img}.jpg`)} alt="" loading="lazy" />}
                 {c.logo && (
                   <span class="card-logo">
-                    <img class="logo-light" src={asset(`/products/${c.logo}.png`)} alt={c.title} loading="lazy" />
-                    {DARK_LOGOS.includes(c.logo) && <img class="logo-dark" src={asset(`/products/${c.logo}-dark.png`)} alt="" aria-hidden="true" loading="lazy" />}
+                    <img class="logo-light" src={inlineImg(`/products/${c.logo}.png`)} alt={c.title} />
+                    {DARK_LOGOS.includes(c.logo) && <img class="logo-dark" src={inlineImg(`/products/${c.logo}-dark.png`)} alt="" aria-hidden="true" loading="lazy" />}
                   </span>
                 )}
                 {c.tag && <span class="card-tag">{c.tag}</span>}
@@ -419,7 +420,7 @@ const isNum = (v: string) => /^[\d,]+$/.test(v);
             v.src ? (
               // 有视频文件：直接播放（public/videos/ 下的 mp4 与封面图）
               <figure class:list={['video has-video reveal', { vertical: v.vertical }]} style={`--d:${(i % 4) * 70}ms`}>
-                <video controls preload="none" playsinline poster={asset(`/videos/${v.src}.jpg`)} src={asset(`/videos/${v.src}.mp4`)}></video>
+                <video controls preload="metadata" playsinline poster={asset(`/videos/${v.src}.jpg`)} src={asset(`/videos/${v.src}.mp4`)}></video>
                 <figcaption><strong>{v.title}</strong>{v.sub && <small>{v.sub}</small>}</figcaption>
               </figure>
             ) : (

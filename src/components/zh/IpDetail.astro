@@ -51,7 +51,7 @@ const theme = pages.ip.theme ?? ['#6c4dff', '#ff5c9a'];
           <h2 class="ipd-h">{ip.video ? ui.ipTrailer : ui.ipGallery}</h2>
           <div class:list={['ipd-media', { vertical: ip.vertical }]}>
             {ip.video && (
-              <video controls preload="none" playsinline poster={asset(`/videos/${ip.video}.jpg`)} src={asset(`/videos/${ip.video}.mp4`)}></video>
+              <video controls preload="metadata" playsinline poster={asset(`/videos/${ip.video}.jpg`)} src={asset(`/videos/${ip.video}.mp4`)}></video>
             )}
             {ip.images?.map((img) => <img src={asset(`/posters/${img}.jpg`)} alt={ip.title} loading="lazy" />)}
           </div>

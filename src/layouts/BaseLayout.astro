@@ -9,6 +9,7 @@ import { ClientRouter } from 'astro:transitions';
 import AiChat from '../components/zh/AiChat.astro';
 
 import { langOf } from '../lib/i18n';
+import { stockSnapshot } from '../lib/stock';
 
 interface Props {
   title: string;
@@ -18,6 +19,8 @@ const { title, description = '' } = Astro.props;
 const lang = langOf(Astro.url) === 'en' ? 'en' : 'zh-CN';
 // 英文标题用“页面 | COL Group”的惯例写法
 const docTitle = lang === 'en' ? title.replace('_', ' | ') : title;
+// 构建时的股价快照：实时接口都连不上时显示（见 src/lib/stock.ts）
+const snap = await stockSnapshot();
 ---
 <!doctype html>
 <html lang={lang}>
@@ -48,6 +51,7 @@ const docTitle = lang === 'en' ? title.replace('_', ' | ') : title;
     {/* 手机长页面：滚过两屏后出现“回到顶部”（桌面不显示） */}
     <button class="to-top" id="to-top" type="button" aria-label={lang === 'en' ? 'Back to top' : '回到顶部'} title={lang === 'en' ? 'Back to top' : '回到顶部'}>↑</button>
     <div class="cursor" id="cursor" aria-hidden="true"></div>
+    {snap && <script type="application/json" id="stock-snap" set:html={JSON.stringify(snap)} />}
 
     <script>
       // ------------------------------------------------------------------
@@ -465,29 +469,34 @@ const docTitle = lang === 'en' ? title.replace('_', ' | ') : title;
           });
         }
 
-        // 实时股价：先用东方财富公开行情接口（push2.eastmoney.com，支持跨域 fetch）；
-        // 失败时退回腾讯财经（qt.gtimg.cn，以 <script> 加载；部分网络会重置该连接，2026-11 起常见）。
+        // 实时股价：同时请求三个公开行情接口，谁先返回就用谁——东方财富（push2.eastmoney.com，跨域 fetch）、
+        // 腾讯财经两个地址（qt.gtimg.cn / web.sqt.gtimg.cn，以 <script> 加载）。不同网络（国内、海外、VPN）能连上的接口不同。
+        // 8 秒内都没有返回时，显示构建时写入页面的快照（#stock-snap，见 src/lib/stock.ts），标注为“延时行情”。
         // 填入页头小标签和投资者关系页，每分钟刷新一次。
         if (document.querySelector('[data-stock]')) {
           const en = isEn();
           let got = false;
           type Q = { price: number; prev: number; open: number; high: number; low: number; chg: number; pct: number; capYi: number; hh: string; mm: string; mo: string; dd: string };
-          const paint = (q: Q) => {
-            got = true;
+          const fx = (n: number, d = 2) => (Number.isFinite(n) ? n.toFixed(d) : '--');
+          const paint = (q: Q, snap = false) => {
+            if (!snap) got = true;
             const sign = q.chg > 0 ? '+' : '';
             const vals: Record<string, string> = {
-              price: q.price.toFixed(2),
-              chg: `${sign}${q.chg.toFixed(2)}`,
-              pct: `${sign}${q.pct.toFixed(2)}%`,
-              open: q.open.toFixed(2),
-              high: q.high.toFixed(2),
-              low: q.low.toFixed(2),
-              cap: en ? `CNY ${(q.capYi / 10).toFixed(2)} bn` : `${q.capYi.toFixed(2)} 亿元`,
+              price: fx(q.price),
+              chg: `${sign}${fx(q.chg)}`,
+              pct: `${sign}${fx(q.pct)}%`,
+              open: fx(q.open),
+              high: fx(q.high),
+              low: fx(q.low),
+              cap: !Number.isFinite(q.capYi) ? '--' : en ? `CNY ${(q.capYi / 10).toFixed(2)} bn` : `${q.capYi.toFixed(2)} 亿元`,
               time: q.hh ? `${en ? 'As of' : '更新于'} ${q.mo}-${q.dd} ${q.hh}:${q.mm} ·` : '',
             };
             document.querySelectorAll<HTMLElement>('[data-stock]').forEach((el) => {
               const k = el.dataset.stock!;
-              if (k === 'status') { el.textContent = q.hh ? `${el.dataset.stockLive} · ${q.hh}:${q.mm}` : el.dataset.stockLive!; return; }
+              if (k === 'status') {
+                el.textContent = snap ? `${en ? 'Delayed' : '延时行情'} · ${q.mo}-${q.dd} ${q.hh}:${q.mm}` : q.hh ? `${el.dataset.stockLive} · ${q.hh}:${q.mm}` : el.dataset.stockLive!;
+                return;
+              }
               if (!(k in vals)) return;
               el.textContent = vals[k];
               if (k === 'price' || k === 'chg' || k === 'pct') {
@@ -496,9 +505,9 @@ const docTitle = lang === 'en' ? title.replace('_', ' | ') : title;
               }
             });
           };
-          const fromTencent = () => {
+          const fromTencent = (host: string) => {
             const tag = document.createElement('script');
-            tag.src = `https://qt.gtimg.cn/q=sz300364&_=${Date.now()}`;
+            tag.src = `${host}/q=sz300364&_=${Date.now()}`;
             tag.charset = 'gbk';
             tag.onload = tag.onerror = () => {
               tag.remove();
@@ -510,25 +519,33 @@ const docTitle = lang === 'en' ? title.replace('_', ' | ') : title;
             };
             document.head.appendChild(tag);
           };
-          const loadStock = () => {
+          const fromEastmoney = () => {
             fetch(`https://push2.eastmoney.com/api/qt/stock/get?secid=0.300364&fltt=2&fields=f43,f44,f45,f46,f60,f86,f116,f169,f170&_=${Date.now()}`)
               .then((r) => r.json())
               .then((j) => {
                 const d = j?.data;
-                if (!d || !Number(d.f43)) throw new Error('no data');
+                if (!d || !Number(d.f43)) return;
                 // 时间按北京时间显示
                 const parts = Object.fromEntries(new Intl.DateTimeFormat('en-GB', { timeZone: 'Asia/Shanghai', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false })
                   .formatToParts(new Date(d.f86 * 1000)).map((p) => [p.type, p.value]));
                 paint({ price: d.f43, prev: d.f60, open: d.f46, high: d.f44, low: d.f45, chg: d.f169, pct: d.f170, capYi: d.f116 / 1e8,
                   mo: parts.month, dd: parts.day, hh: parts.hour, mm: parts.minute });
               })
-              .catch(fromTencent);
+              .catch(() => {});
+          };
+          const loadStock = () => {
+            fromEastmoney();
+            fromTencent('https://qt.gtimg.cn');
+            fromTencent('https://web.sqt.gtimg.cn');
           };
           loadStock();
           const timer = setInterval(loadStock, 60_000);
-          // 8 秒后仍没有数据（两个接口都被网络拦截等）：行情卡片标签改为“行情暂不可用”，保留“完整行情”链接
+          // 8 秒后仍没有实时数据：显示构建时快照（标注“延时行情”）；连快照都没有时，标签改为“行情暂不可用”
           const failTimer = setTimeout(() => {
             if (got) return;
+            let snap: Q | null = null;
+            try { snap = JSON.parse(document.getElementById('stock-snap')?.textContent || 'null'); } catch {}
+            if (snap && snap.price) { paint(snap, true); return; }
             document.querySelectorAll<HTMLElement>('[data-stock-fail]').forEach((el) => { el.textContent = el.dataset.stockFail!; });
           }, 8000);
           cleanups.push(() => { clearInterval(timer); clearTimeout(failTimer); });

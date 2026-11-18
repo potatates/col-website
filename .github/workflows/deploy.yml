@@ -5,6 +5,11 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
+  # 每个交易日午间休市和收盘后各重新构建一次，刷新页面里的股价快照（海外访客连不上行情接口时显示）
+  # 03:35 UTC = 北京时间 11:35；07:35 UTC = 15:35
+  schedule:
+    - cron: '35 3 * * 1-5'
+    - cron: '35 7 * * 1-5'
 
 permissions:
   contents: read
