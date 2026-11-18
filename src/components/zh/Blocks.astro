@@ -78,7 +78,7 @@ const isNum = (v: string) => /^[\d,]+$/.test(v);
                 )}
               </div>
               {f.video ? (
-                <video class="ft-video" controls preload="none" playsinline poster={asset(`/videos/${f.video}.jpg`)} src={asset(`/videos/${f.video}.mp4`)}></video>
+                <video class="ft-video" controls preload="metadata" playsinline poster={asset(`/videos/${f.video}.jpg`)} src={asset(`/videos/${f.video}.mp4`)}></video>
               ) : f.stats?.length ? (
                 <dl class="ft-stats">
                   {f.stats.map((st) => <div><dt>{st.value}{st.unit && <em>{st.unit}</em>}</dt><dd>{st.label}</dd></div>)}
@@ -414,7 +414,7 @@ const isNum = (v: string) => /^[\d,]+$/.test(v);
             v.src ? (
               // 有视频文件：直接播放（public/videos/ 下的 mp4 与封面图）
               <figure class:list={['video has-video reveal', { vertical: v.vertical }]} style={`--d:${(i % 4) * 70}ms`}>
-                <video controls preload="none" playsinline poster={asset(`/videos/${v.src}.jpg`)} src={asset(`/videos/${v.src}.mp4`)}></video>
+                <video controls preload="metadata" playsinline poster={asset(`/videos/${v.src}.jpg`)} src={asset(`/videos/${v.src}.mp4`)}></video>
                 <figcaption><strong>{v.title}</strong>{v.sub && <small>{v.sub}</small>}</figcaption>
               </figure>
             ) : (
