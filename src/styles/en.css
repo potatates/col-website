@@ -320,3 +320,9 @@ html[lang='en'] .na-card strong { font-size: 17px !important; line-height: 1.25 
   html[lang='en'] .drawer > a.cta, html[lang='en'] .drawer-lang { border-radius: 10px !important; }
   html[lang='en'] .drawer .drawer-lang a { border-radius: 7px !important; }
 }
+
+/* Full-screen video: the rounded corners set above must not carry into full screen
+   (global.css shows the whole picture there; these rules only lift the corner radius).
+   Standard and WebKit forms are separate rules, because one unknown selector would drop the other. */
+html[lang='en'] .video.has-video video:fullscreen, html[lang='en'] .ft-video:fullscreen, html[lang='en'] .ipd-media video:fullscreen { border-radius: 0 !important; }
+html[lang='en'] .video.has-video video:-webkit-full-screen, html[lang='en'] .ft-video:-webkit-full-screen, html[lang='en'] .ipd-media video:-webkit-full-screen { border-radius: 0 !important; }
