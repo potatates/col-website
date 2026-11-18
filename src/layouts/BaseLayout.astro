@@ -39,6 +39,21 @@ const snap = await stockSnapshot();
         document.addEventListener('astro:after-swap', apply);
       })();
     </script>
+    <!-- 手机全屏播放竖屏视频（如《一品布衣》）时保持竖屏，不自动转成横屏；退出全屏后解除锁定 -->
+    <script is:inline>
+      (function () {
+        if (window.__fsOrient) return; window.__fsOrient = true;
+        var onChange = function () {
+          var el = document.fullscreenElement || document.webkitFullscreenElement;
+          var o = screen.orientation;
+          if (!o || !o.lock) return;
+          if (el && el.tagName === 'VIDEO' && el.videoHeight > el.videoWidth) o.lock('portrait').catch(function () {});
+          else if (!el && o.unlock) { try { o.unlock(); } catch (e) {} }
+        };
+        document.addEventListener('fullscreenchange', onChange);
+        document.addEventListener('webkitfullscreenchange', onChange);
+      })();
+    </script>
   </head>
   <body>
     <div class="aura" aria-hidden="true"><div class="aura-grid"></div></div>

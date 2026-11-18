@@ -357,3 +357,15 @@ html[lang='en'] .step strong { font-weight: 500 !important; font-size: 17px !imp
 /* 只有一个板块的栏目页：无左侧导航，内容整宽 */
 .page-solo { padding-top: 24px; }
 .page-solo .block-section { padding-top: 0; }
+
+/* 全屏播放：页面里视频用 object-fit: cover 裁成固定比例，全屏时会沿用并把竖屏视频裁成横屏。
+   全屏时一律完整显示画面（竖屏视频左右留黑边），并去掉圆角与固定比例。 */
+video:fullscreen,
+video:-webkit-full-screen {
+  object-fit: contain !important;
+  aspect-ratio: auto !important;
+  width: 100% !important;
+  height: 100% !important;
+  max-width: none !important;
+  border-radius: 0 !important;
+}
