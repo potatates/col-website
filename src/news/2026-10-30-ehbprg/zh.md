@@ -6,7 +6,6 @@ image: 2026-10-30-ehbprg/cover
 summary: "10月30日12时，中文在线旗下IP《罗小黑战记》系列全新番剧《罗小黑战记·学前篇》在哔哩哔哩独家开播"
 source: "中文在线微信公众号"
 wechat: https://mp.weixin.qq.com/s/u9S0Zvy8aYM12ZXjEHbPRg
-draft: true
 ---
 ![](2026-10-30-ehbprg/1.jpg)
 
