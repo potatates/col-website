@@ -1,10 +1,9 @@
 ---
 // 本站发布的新闻详情页
 import NewsArticle from '../../components/zh/NewsArticle.astro';
-import { pages } from '../../content/zh';
+import { newsPages } from '../../lib/news';
 export function getStaticPaths() {
-  return pages.news.sections.flatMap((s) => s.blocks).flatMap((b) => (b.type === 'news' ? b.items : []))
-    .filter((n) => n.slug && n.body).map((n) => ({ params: { slug: n.slug! } }));
+  return newsPages('zh').map((n) => ({ params: { slug: n.slug! } }));
 }
 ---
 <NewsArticle slug={Astro.params.slug!} />

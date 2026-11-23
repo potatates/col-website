@@ -1,0 +1,62 @@
+# 导入新闻：在 GitHub 网页上点 Actions →「导入新闻（公众号链接）」→ Run workflow，粘贴公众号文章链接。
+# 会生成一篇草稿新闻（不进新闻列表），几分钟后可以在网站上用预览链接查看。确认后运行「发布新闻」。
+name: 导入新闻（公众号链接）
+
+on:
+  workflow_dispatch:
+    inputs:
+      url:
+        description: 公众号文章链接（https://mp.weixin.qq.com/s/...）
+        required: true
+      section:
+        description: 放在哪个栏目
+        type: choice
+        options: [official, media]
+        default: official
+      tag:
+        description: 标签（可不填），如 海外、短剧、AI、荣誉、影视
+        required: false
+
+permissions:
+  contents: write
+  actions: write
+
+concurrency:
+  group: news-edit
+  cancel-in-progress: false
+
+jobs:
+  import:
+    runs-on: ubuntu-latest
+    env:
+      ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      # 只有在仓库里设置了 ANTHROPIC_API_KEY（Settings → Secrets → Actions）时才会生成英文版
+      - if: env.ANTHROPIC_API_KEY != ''
+        run: npm install --no-save @anthropic-ai/sdk
+      - id: imp
+        run: node scripts/news-import.mjs "$URL" --section "$SECTION" --tag "$TAG"
+        env:
+          URL: ${{ inputs.url }}
+          SECTION: ${{ inputs.section }}
+          TAG: ${{ inputs.tag }}
+      - name: Save draft
+        env:
+          TITLE: ${{ steps.imp.outputs.title }}
+          URL: ${{ inputs.url }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/news public/news
+          git commit -m "新闻草稿：$TITLE" -m "从公众号导入：$URL"
+          git push
+      # 自动提交不会触发网站部署，这里手动触发一次
+      - run: gh workflow run deploy.yml --ref main
+        env:
+          GH_TOKEN: ${{ github.token }}

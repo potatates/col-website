@@ -1,0 +1,55 @@
+# 发布新闻：草稿检查无误后，在 Actions →「发布新闻」→ Run workflow，填入草稿编号（导入时显示的编号）。
+# 也可以选「删除草稿」把不要的草稿删掉。
+name: 发布新闻
+
+on:
+  workflow_dispatch:
+    inputs:
+      id:
+        description: 新闻编号（如 2026-11-20-ab12cd）
+        required: true
+      action:
+        description: 发布，还是删除这篇草稿
+        type: choice
+        options: [publish, delete]
+        default: publish
+
+permissions:
+  contents: write
+  actions: write
+
+concurrency:
+  group: news-edit
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Publish or delete
+        env:
+          ID: ${{ inputs.id }}
+          ACTION: ${{ inputs.action }}
+        run: |
+          ID="$(echo "$ID" | tr -cd 'a-zA-Z0-9-' | tr 'A-Z' 'a-z')"
+          DIR="src/news/$ID"
+          if [ -z "$ID" ] || [ ! -d "$DIR" ]; then echo "找不到新闻 $ID（src/news/$ID）"; exit 1; fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if [ "$ACTION" = "delete" ]; then
+            if ! grep -q '^draft: true' "$DIR/zh.md"; then echo "这篇已经发布，不是草稿；为安全起见不在这里删除。"; exit 1; fi
+            git rm -rq "$DIR"
+            [ -d "public/news/$ID" ] && git rm -rq "public/news/$ID"
+            MSG="删除新闻草稿：$ID"
+          else
+            for f in "$DIR"/*.md; do sed -i '/^draft: true$/d' "$f"; done
+            git add "$DIR"
+            MSG="发布新闻：$(grep -m1 '^title:' "$DIR/zh.md" | sed 's/^title: *//; s/^"//; s/"$//')"
+          fi
+          git commit -m "$MSG"
+          git push
+          echo "$MSG" >> "$GITHUB_STEP_SUMMARY"
+      - run: gh workflow run deploy.yml --ref main
+        env:
+          GH_TOKEN: ${{ github.token }}

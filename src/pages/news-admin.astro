@@ -1,0 +1,228 @@
+---
+// 新闻发布页（内部用，不在网站导航里，也不被搜索引擎收录）：/news-admin/
+// 粘贴公众号文章链接 → 生成草稿 → 预览 → 发布。不需要 GitHub 账号：
+// 页面用一把“钥匙”（只能运行本仓库新闻任务的 GitHub 访问令牌）替用户点 GitHub 上的「导入新闻」「发布新闻」。
+// 钥匙用密码加密后存在 src/data/news-key.json（由 scripts/news-key.mjs 生成），输入正确密码才能解锁使用。
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const REPO = 'potatates/col-website'; // 仓库迁移到公司账号后改这一行
+const keyFiles = import.meta.glob('../data/news-key.json', { eager: true, import: 'default' }) as Record<string, unknown>;
+const LOCKED = Object.values(keyFiles)[0] ?? null;
+---
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex" />
+  <title>新闻发布_中文在线官网</title>
+  <link rel="icon" href={`${base}/favicon.png`} type="image/png" />
+  <style is:global>
+    :root { --brand: #0071ce; --ink: #0b1430; --text: #3a4560; --muted: #7a849c; --line: #e4e8f0; --bg: #f4f6fb; --ok: #16a34a; --warn: #b45309; --err: #dc2626; }
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: 'PingFang SC', 'Microsoft YaHei', system-ui, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
+    .wrap { max-width: 760px; margin: 0 auto; padding: 32px 16px 80px; }
+    h1 { font-size: 26px; color: var(--ink); margin: 0 0 4px; }
+    .sub { color: var(--muted); margin: 0 0 28px; font-size: 14px; }
+    .card { background: #fff; border-radius: 18px; padding: 22px; margin-bottom: 18px; box-shadow: 0 10px 30px -24px rgba(10,22,48,.4); }
+    .card h2 { font-size: 17px; color: var(--ink); margin: 0 0 14px; }
+    label { display: block; font-size: 14px; font-weight: 600; color: var(--ink); margin: 12px 0 6px; }
+    input, select { width: 100%; font: inherit; padding: 11px 13px; border: 1px solid var(--line); border-radius: 12px; background: #fff; color: var(--ink); }
+    input:focus, select:focus { outline: 2px solid color-mix(in srgb, var(--brand) 35%, transparent); border-color: var(--brand); }
+    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    button { font: inherit; font-weight: 700; border: 0; border-radius: 999px; padding: 11px 20px; cursor: pointer; background: var(--brand); color: #fff; }
+    button.ghost { background: #eef2f9; color: var(--ink); }
+    button.danger { background: #fdecec; color: var(--err); }
+    button:disabled { opacity: .5; cursor: default; }
+    .actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px; align-items: center; }
+    .msg { font-size: 14px; margin-top: 12px; min-height: 1.6em; }
+    .msg.ok { color: var(--ok); } .msg.err { color: var(--err); } .msg.warn { color: var(--warn); }
+    .hint { font-size: 13px; color: var(--muted); }
+    ul.list { list-style: none; margin: 0; padding: 0; }
+    ul.list li { border-top: 1px solid var(--line); padding: 14px 0; }
+    ul.list li:first-child { border-top: 0; }
+    .t { font-weight: 700; color: var(--ink); }
+    .meta { font-size: 13px; color: var(--muted); }
+    .li-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
+    .li-actions a, .li-actions button { font-size: 13px; padding: 7px 14px; }
+    a.pill { display: inline-block; border-radius: 999px; background: #eef2f9; color: var(--ink); text-decoration: none; font-weight: 700; }
+    .status { display: inline-block; font-size: 12px; font-weight: 700; padding: 2px 9px; border-radius: 999px; background: #eef2f9; }
+    .status.ok { background: #e7f7ec; color: var(--ok); } .status.run { background: #fff4e0; color: var(--warn); } .status.err { background: #fdecec; color: var(--err); }
+    .keybox { display: flex; gap: 10px; }
+    .keybox input { flex: 1; }
+    [hidden] { display: none !important; }
+    @media (max-width: 560px) { .row { grid-template-columns: 1fr; } .keybox { flex-direction: column; } }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <h1>官网新闻发布</h1>
+    <p class="sub">粘贴公众号文章链接 → 生成草稿 → 预览检查 → 发布。</p>
+
+    <section class="card" id="key-card">
+      <h2>请输入密码</h2>
+      <p class="hint">密码由网站负责人通过企业微信发给你。</p>
+      <form class="keybox" id="unlock">
+        <input id="key" type="password" autocomplete="current-password" placeholder="密码" />
+        <button id="key-save" type="submit">进入</button>
+      </form>
+      <label class="hint" style="font-weight:400;display:flex;gap:8px;align-items:center;margin-top:12px"><input type="checkbox" id="remember" checked style="width:auto" /> 在这台电脑上记住（公用电脑请取消勾选）</label>
+      <div class="msg" id="key-msg"></div>
+    </section>
+    <div id="app" hidden>
+    <p class="hint" id="key-ok">已解锁 · <a href="#" id="key-change">退出</a></p>
+
+    <section class="card">
+      <h2>导入一篇新闻</h2>
+      <form id="import">
+        <label for="url">公众号文章链接</label>
+        <input id="url" required placeholder="https://mp.weixin.qq.com/s/..." inputmode="url" />
+        <div class="row">
+          <div>
+            <label for="section">栏目</label>
+            <select id="section"><option value="official">官方新闻</option><option value="media">媒体报道</option></select>
+          </div>
+          <div>
+            <label for="tag">标签（可不填）</label>
+            <input id="tag" list="tags" placeholder="如：海外" />
+            <datalist id="tags"><option value="海外"></option><option value="短剧"></option><option value="AI"></option><option value="荣誉"></option><option value="影视"></option><option value="网文"></option></datalist>
+          </div>
+        </div>
+        <div class="actions"><button type="submit" id="go">生成草稿</button><span class="hint">约 3–5 分钟后，草稿出现在下面的列表里。</span></div>
+        <div class="msg" id="import-msg"></div>
+      </form>
+    </section>
+
+    <section class="card">
+      <h2>待发布的草稿</h2>
+      <p class="hint">点「预览」检查内容；没问题点「发布」，几分钟后出现在官网新闻列表。要改文字请联系网站负责人。</p>
+      <ul class="list" id="drafts"><li class="hint">加载中…</li></ul>
+      <div class="actions"><button type="button" class="ghost" id="refresh">刷新</button></div>
+    </section>
+
+    <section class="card">
+      <h2>最近的操作</h2>
+      <ul class="list" id="runs"><li class="hint">加载中…</li></ul>
+    </section>
+    </div>
+  </main>
+
+  <script is:inline define:vars={{ base, REPO, LOCKED }}>
+    const API = `https://api.github.com/repos/${REPO}`;
+    const $ = (id) => document.getElementById(id);
+    // 解锁后的钥匙：勾选“记住”时存在本机浏览器，否则只在本次打开期间有效
+    let mem = '';
+    const store = {
+      get: () => { if (mem) return mem; try { return localStorage.getItem('col-news-key') || sessionStorage.getItem('col-news-key') || ''; } catch { return ''; } },
+      set: (v, remember) => { mem = v; try { localStorage.removeItem('col-news-key'); sessionStorage.removeItem('col-news-key'); if (v) (remember ? localStorage : sessionStorage).setItem('col-news-key', v); } catch {} },
+    };
+    const b64 = (s) => Uint8Array.from(atob(s), (c) => c.charCodeAt(0));
+    async function unlock(pw) {
+      if (!LOCKED) throw new Error('发布页还没有设置密码，请联系网站负责人。');
+      const material = await crypto.subtle.importKey('raw', new TextEncoder().encode(pw), 'PBKDF2', false, ['deriveKey']);
+      const key = await crypto.subtle.deriveKey({ name: 'PBKDF2', salt: b64(LOCKED.salt), iterations: LOCKED.iter, hash: 'SHA-256' }, material, { name: 'AES-GCM', length: 256 }, false, ['decrypt']);
+      try { return new TextDecoder().decode(await crypto.subtle.decrypt({ name: 'AES-GCM', iv: b64(LOCKED.iv) }, key, b64(LOCKED.data))); }
+      catch { throw new Error('密码不对，请再试一次。'); }
+    }
+    const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+    const say = (el, text, kind = '') => { el.textContent = text; el.className = `msg ${kind}`; };
+
+    async function gh(path, opts = {}) {
+      const key = store.get();
+      if (!key) throw new Error('请先在上方填入钥匙。');
+      const r = await fetch(`${API}${path}`, { ...opts, headers: { Accept: 'application/vnd.github+json', Authorization: `Bearer ${key}`, 'X-GitHub-Api-Version': '2022-11-28', ...(opts.headers || {}) } });
+      if (r.status === 401) { store.set(''); throw new Error('发布页的钥匙已过期或失效，请联系网站负责人重新设置。'); }
+      if (r.status === 403 || r.status === 404) throw new Error('钥匙没有权限，请联系网站负责人检查设置。');
+      if (!r.ok) throw new Error(`GitHub 返回错误（${r.status}），请稍后再试。`);
+      return r.status === 204 ? null : r.json();
+    }
+    const runWorkflow = (file, inputs) => gh(`/actions/workflows/${file}/dispatches`, { method: 'POST', body: JSON.stringify({ ref: 'main', inputs }) });
+
+    // 密码
+    function showKey() { const has = !!store.get(); $('key-card').hidden = has; $('app').hidden = !has; if (has) { loadDrafts(); loadRuns(); } }
+    $('unlock').onsubmit = async (e) => {
+      e.preventDefault();
+      const pw = $('key').value;
+      if (!pw) return;
+      $('key-save').disabled = true; say($('key-msg'), '正在解锁…');
+      try {
+        const token = await unlock(pw);
+        store.set(token, $('remember').checked);
+        await gh('/actions/runs?per_page=1');
+        say($('key-msg'), ''); $('key').value = ''; showKey();
+      } catch (err) { store.set(''); say($('key-msg'), err.message, 'err'); }
+      finally { $('key-save').disabled = false; }
+    };
+    $('key-change').onclick = (e) => { e.preventDefault(); store.set(''); showKey(); };
+
+    // 导入
+    $('import').onsubmit = async (e) => {
+      e.preventDefault();
+      const url = $('url').value.trim();
+      if (!/^https:\/\/mp\.weixin\.qq\.com\/s/.test(url)) return say($('import-msg'), '请粘贴公众号文章链接（以 https://mp.weixin.qq.com/s 开头）。', 'err');
+      $('go').disabled = true;
+      try {
+        await runWorkflow('news-import.yml', { url, section: $('section').value, tag: $('tag').value.trim() });
+        say($('import-msg'), '已提交！约 3–5 分钟后草稿会出现在下面的列表里（点「刷新」）。', 'ok');
+        $('url').value = ''; $('tag').value = '';
+        setTimeout(loadRuns, 4000);
+      } catch (err) { say($('import-msg'), err.message, 'err'); }
+      finally { $('go').disabled = false; }
+    };
+
+    // 草稿列表（网站每次更新时生成的 news/drafts.json）
+    async function loadDrafts() {
+      const ul = $('drafts');
+      try {
+        const r = await fetch(`${base}/news/drafts.json?t=${Date.now()}`, { cache: 'no-store' });
+        const { drafts } = await r.json();
+        if (!drafts.length) { ul.innerHTML = '<li class="hint">目前没有草稿。</li>'; return; }
+        ul.innerHTML = drafts.map((d) => `
+          <li>
+            <div class="t">${esc(d.title)}</div>
+            <div class="meta">${esc(d.date)}${d.tag ? ' · ' + esc(d.tag) : ''} · 编号 ${esc(d.id)} · ${d.hasEn ? '有英文版' : '只有中文版'}</div>
+            <div class="li-actions">
+              <a class="pill" href="${base}/news/${esc(d.id)}/" target="_blank" rel="noopener">预览</a>
+              ${d.hasEn ? `<a class="pill" href="${base}/en/news/${esc(d.id)}/" target="_blank" rel="noopener">英文预览</a>` : ''}
+              <button type="button" data-act="publish" data-id="${esc(d.id)}">发布</button>
+              <button type="button" class="danger" data-act="delete" data-id="${esc(d.id)}">删除草稿</button>
+            </div>
+          </li>`).join('');
+      } catch { ul.innerHTML = '<li class="hint">草稿列表暂时读不到，请稍后点「刷新」。</li>'; }
+    }
+    $('drafts').onclick = async (e) => {
+      const b = e.target.closest('button[data-act]');
+      if (!b) return;
+      const act = b.dataset.act, id = b.dataset.id;
+      if (act === 'delete' && !confirm(`确定删除草稿 ${id}？`)) return;
+      if (act === 'publish' && !confirm(`确定发布这篇新闻？发布后几分钟内出现在官网。`)) return;
+      b.disabled = true;
+      try {
+        await runWorkflow('news-publish.yml', { id, action: act });
+        b.textContent = act === 'publish' ? '已提交发布' : '已提交删除';
+        setTimeout(loadRuns, 4000);
+      } catch (err) { alert(err.message); b.disabled = false; }
+    };
+
+    // 最近的操作（GitHub 上的运行记录）
+    const NAMES = { 'news-import.yml': '导入新闻', 'news-publish.yml': '发布/删除新闻', 'deploy.yml': '网站更新' };
+    async function loadRuns() {
+      const ul = $('runs');
+      if (!store.get()) return;
+      try {
+        const { workflow_runs } = await gh('/actions/runs?per_page=12');
+        const rows = workflow_runs.filter((w) => NAMES[w.path.split('/').pop()]).slice(0, 6);
+        if (!rows.length) { ul.innerHTML = '<li class="hint">还没有记录。</li>'; return; }
+        ul.innerHTML = rows.map((w) => {
+          const s = w.status !== 'completed' ? ['run', '进行中'] : w.conclusion === 'success' ? ['ok', '完成'] : w.conclusion === 'cancelled' ? ['', '已被新的更新取代'] : ['err', '失败'];
+          const t = new Date(w.created_at).toLocaleString('zh-CN', { month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+          return `<li><span class="status ${s[0]}">${s[1]}</span> <span class="t">${NAMES[w.path.split('/').pop()]}</span> <span class="meta">· ${t}${w.conclusion === 'failure' ? ' · 请把这条截图发给网站负责人' : ''}</span></li>`;
+        }).join('');
+        if (rows.some((w) => w.status !== 'completed')) setTimeout(() => { loadRuns(); loadDrafts(); }, 20000);
+      } catch (err) { ul.innerHTML = `<li class="hint">${esc(err.message)}</li>`; }
+    }
+    $('refresh').onclick = () => { loadDrafts(); loadRuns(); };
+
+    showKey();
+  </script>
+</body>
+</html>

@@ -12,7 +12,9 @@
 export type Stat = { value: string; unit?: string; label: string };
 // 新闻：有 slug + body 的为本站发布的完整文章（/news/<slug>）；只有 href 的链接到原文
 export type NewsItem = { date: string; title: string; tag?: string; img?: string; text?: string; href?: string; slug?: string; source?: string;
-  body?: ({ h: string } | { p: string } | { quote: string; by?: string })[] };
+  body?: ({ h: string } | { p: string } | { quote: string; by?: string } | { img: string; cap?: string })[] };
+// 新闻内容不在这个文件里：每篇新闻一个文件夹 src/news/<编号>/（zh.md / en.md），由 src/lib/news.ts 读取
+import { newsList } from '../lib/news';
 export type Card = { id?: string; logo?: string; img?: string; title: string; text?: string; meta?: string; tag?: string; href?: string; external?: boolean; color?: [string, string] };
 export type Cover = { title: string; sub?: string; poster?: string };
 export type Person = { name: string; role: string; text?: string; email?: string; phone?: string };
@@ -635,54 +637,8 @@ const news: Page = {
   en: 'NEWSROOM',
   intro: '中文在线的最新动态、媒体报道与媒体资料。',
   sections: [
-    { id: 'official', label: '官方新闻', en: 'PRESS', title: '官方新闻', blocks: [{ type: 'news', items: [
-      { date: '2026-10-16', title: '中文在线亮相戛纳电视节，FlareFlow携手Digicel拓展中南美洲市场', tag: '海外', img: 'cannes', slug: '2026-10-16-mipcom', text: 'FlareFlow亮相戛纳MIPCOM电视节，并与中南美和加勒比地区电信运营商Digicel达成覆盖25个市场的分发合作。',
-        body: [
-          { p: '10月12日至15日，第42届戛纳国际电视节（MIPCOM）在法国戛纳影节宫举行。中文在线携旗下国际微短剧平台FlareFlow参展，与全球影视同行交流短剧发展新机遇。' },
-          { h: '亮相国际盛会，共话微短剧发展' },
-          { p: '作为全球影视内容交易与合作的重要平台，MIPCOM每年汇聚来自100多个国家、超过一万名业内人士，是观察国际内容产业趋势的窗口。2026年，MIPCOM进一步升级为综合性全球内容市场，并将品牌娱乐、AIGC、创作者经济以及微短剧列为重点议题。' },
-          { quote: '一年前还只是新兴趋势的微短剧、创作者经济与AI内容制作，如今已形成可规模化的商业模式，并成为全球内容经济中越来越重要的一部分。', by: 'MIPCOM总监 Lucy Smith' },
-          { p: '本届MIPCOM专门扩展了微短剧专题板块，设置邀请制“全球微短剧领袖峰会”，并首次为微短剧单独设立商务配对通道，推动行业交流与合作。从行业对话到合作落地，微短剧在本届展会上的分量明显提升。' },
-          { p: '中文在线亮相P-1.D62展位，与国际影视从业者交流微短剧内容及合作机会。中文在线集团东南亚区域总经理兼FlareFlow首席营销官Timothy Oh受邀参与微短剧主题论坛，与国际研究机构Omdia媒体与娱乐业务负责人Maria Rua Aguete同场，围绕市场对微短剧的认知、全球增长动力及行业未来展开交流。' },
-          { h: '携手电信运营商，拓展新兴市场分发渠道' },
-          { p: '展会期间，FlareFlow宣布与中南美和加勒比地区领先的电信运营商Digicel达成多市场分发渠道合作，覆盖25个市场。FlareFlow将接入Digicel的话费账户体系，用户可直接使用话费余额订阅，或计入当月话费账单。' },
-          { p: 'FlareFlow正在持续推动多元渠道分发。通过接入本地电信运营商的话费账户与分发网络，FlareFlow进一步降低新兴市场用户的订阅门槛，将微短剧内容触达更多移动用户。Digicel在中南美和加勒比地区拥有广泛的用户基础，FlareFlow的移动端内容形态与其网络及付费体系天然契合。' },
-          { p: '从行业交流到渠道合作，中文在线持续深化与国际伙伴的协作，推动微短剧连接更多市场，让全球观众更便捷地享受优质内容。' },
-        ] },
-      { date: '2026-10-12', title: '中文在线携手泰国正大集团加速短剧本土化布局', tag: '海外', img: 'thai', slug: '2026-10-12-cp-group', text: 'FlareFlow Mini登陆正大集团旗下True的TATANG by TrueID平台并开设专区，双方将在AIGC本土化内容、联合泰国高校培养创作者与发行上深入合作。',
-        body: [
-          { p: '近日，中文在线与泰国正大集团（CP Group）的战略合作迎来新进展：FlareFlow Mini正式上线泰国本土微短剧平台TATANG by TrueID，并作为独立内容专区持续向泰国用户提供优质本土化竖屏短剧内容。' },
-          { p: '这是双方自今年8月宣布战略合作以来，推动合作走向实际落地的关键一步。' },
-          { p: '正大集团是泰国规模最大的综合性企业集团之一，业务覆盖电信、数字科技、零售、数字支付与内容媒体等领域，业务网络遍及全球23个国家，并在东南亚市场拥有深厚的本地资源与渠道网络。集团旗下的True Corporation是泰国领先的电信与数字科技公司；TATANG by TrueID则是True Corporation推出的本土微短剧平台，专注于为泰国观众筛选并呈现国际短剧内容。依托正大集团覆盖电信、数字支付、零售与品牌营销的消费生态，TATANG在内容分发与用户触达方面具备天然优势。' },
-          { p: '本次战略合作围绕内容本土化、人才孵化、渠道分发三个方向同步推进，构建从制作、创作到分发的产业链协同。' },
-          { h: '内容：本土化改编，而非简单翻译' },
-          { p: '中文在线与正大集团将共同推动旗下FlareFlow及代表性热门作品在泰国进行本土化改编。相关作品并非简单翻译，而是将围绕泰国本土的人物设定、场景语言与文化语境进行重新创作，并在制作过程中引入AIGC能力，把中文在线的内容IP与短剧制作经验，与正大集团的本地创作者网络和市场资源相结合。' },
-          { h: '人才：联合泰国高校孵化创作者' },
-          { p: '双方计划与泰国领先学术机构联合开展短剧人才孵化项目，围绕故事创作、拍摄制作与创意能力培养泰国本地年轻创作者，搭建从教育到产业的人才通道。' },
-          { h: '渠道：TATANG开设FlareFlow专区' },
-          { p: 'FlareFlow Mini已在TATANG正式上线，并设立独立的FlareFlow内容专区。后续双方还将依托正大与True集团的消费生态，进一步提升FlareFlow内容在泰国市场的触达效率，并将陆续把更多本土化短剧内容带到泰国用户面前。' },
-          { p: '目前，FlareFlow全球注册用户已超过5200万。此次合作是中文在线与正大集团在泰国短剧市场迈出的重要一步。接下来，以泰国为起点，双方将继续推动本土化内容与渠道能力在东南亚市场的拓展。' },
-        ] },
-      { date: '2026-10-08', title: '连续两年入选！中文在线再登创业邦“2026中国企业全球化新势力100强”', tag: '荣誉', img: 'global100', slug: '2026-10-08-global100', text: '入选“引领型”40强。2025年海外收入同比增长123.94%，占比超40%，FlareFlow登顶美区应用商店娱乐榜。',
-        body: [
-          { p: '近日，第五届全球数字贸易博览会在杭州举行。会上，创业邦正式发布“2026数字贸易·中国企业全球化新势力100强”榜单。中文在线凭借在短剧出海领域的持续突破，再度入选该榜单，并稳居“引领型”企业之列。' },
-          { p: '本次评选采用“问卷征集+调研访谈+专家评审+第三方数据核验”相结合的模式，围绕全球化布局深度、产品竞争力、经营规模、合规稳健度、品牌认知度五大维度综合评估。榜单分为“引领型”和“成长型”两个组别，其中“引领型”企业共40家，要求2025年海外营收不低于1500万美元，已在海外市场建立起规模化优势。' },
-          { h: '短剧出海持续突破' },
-          { p: '本次入榜，是中文在线短剧出海持续突破的一个缩影。旗下海外短剧平台FlareFlow于2025年4月上线，当年即登顶美区Google Play与App Store娱乐应用免费榜双榜第一，累计注册用户超3300万，覆盖全球200多个国家和地区。2025年，中文在线海外收入同比增长123.94%，占总营收的比重已超过四成。' },
-          { quote: '国际化不是“坐在国内看海外数据”，而是必须进入当地市场、理解当地用户、建立当地团队。', by: '中文在线集团创始人、董事长兼总裁 童之磊' },
-          { p: '公司将继续以IP为锚、以AI为帆，持续构建全球化短剧生态，为海外用户带来优质短剧内容。' },
-        ] },
-      { date: '2026-09-24', title: '港式警匪片《黑白潜行3》开机，横琴国际影视城持续“上新”', tag: '影视', img: 'hengqin', href: 'https://www.col.com/article/2110228778050355200', text: '安志杰、曾志伟主演的《黑白潜行3》在横琴国际影视城开机。基地拥有90余个实景、1.7万平方米棚区，并向琴澳合拍、文旅与AI虚拟制片延伸。' },
-      { date: '2026-09-17', title: 'FlareFlow精品短剧99 Charms, 99 Heartbreaks荣获洛杉矶Vertical Shorts Festival「最佳短剧奖」', tag: '短剧', img: 'flareflow-award', href: 'https://www.col.com/article/2110227594900111360', text: '从200余部参赛作品中脱颖而出。该剧经历“中文原版—英文版—本土化改编”三步，是FlareFlow本土化方法的代表作。' },
-      { date: '2026-09-11', title: 'FlareFlow登陆Whale TV，海外爆款短剧首登南美电视大屏', tag: '海外', img: 'whaletv', href: 'https://www.col.com/article/2110226608613720064', text: 'FlareFlow上线Whale TV智能电视操作系统，率先覆盖南美；Whale TV合作400多个电视品牌、月活设备超4,750万台。' },
-      { date: '2026-08-31', title: '第十六届数博会｜中文在线童之磊：AI开启数字出版新未来', tag: 'AI', img: 'expo', href: 'https://www.col.com/article/2110225951496306688', text: '童之磊在数博会主论坛分享AI如何重塑选题、编辑到发行的出版全流程，以及中文在线的实践。' },
-      { date: '2026-08-19', title: '中文在线数字文化出海创作基地正式签约', tag: '海外', img: 'lingang', href: 'https://www.col.com/article/2090001382265290752', text: '与上海临港新片区管委会签署框架协议，共建数字文化出海创作基地。' },
-      { date: '2026-07-30', title: '中文在线亮相2026 ChinaJoy短剧创新论坛，AI驱动短剧生态进化', tag: '短剧', img: 'chinajoy', href: 'https://www.col.com/article/2082717718552739840', text: 'AI正从提效工具成长为短剧生态的引擎；AI漫剧制作成本较传统动画下降70%以上。' },
-    ] }] },
-    { id: 'media', label: '媒体报道', en: 'MEDIA', title: '媒体报道', blocks: [{ type: 'news', items: [
-      { date: '2025-08-01', title: '破10亿！“北京大视听”重点网络精品项目《一品布衣》热播', tag: '影视', img: 'yipinbuyi', href: 'https://www.col.com/article/1951205105390813184', text: '改编自17K小说的105集微短剧，红果平台播放量破10亿，单日播放峰值达2.38亿。' },
-      { date: '2025-06-25', title: '中文在线童之磊：以AI赋能全球内容产业', tag: 'AI', img: 'ai', href: 'https://www.col.com/article/1937825796479483904', text: '上海证券报专访：AI降低内容生产成本，让头部IP更加稀缺、更有价值。' },
-    ] }] },
+    { id: 'official', label: '官方新闻', en: 'PRESS', title: '官方新闻', blocks: [{ type: 'news', items: newsList('zh', 'official') }] },
+    { id: 'media', label: '媒体报道', en: 'MEDIA', title: '媒体报道', blocks: [{ type: 'news', items: newsList('zh', 'media') }] },
     { id: 'presskit', label: '媒体资料', en: 'PRESS KIT', title: '媒体资料包', blocks: [
       { type: 'downloads', items: [
         { title: '官方 Logo', meta: 'PNG / SVG · 待提供' },

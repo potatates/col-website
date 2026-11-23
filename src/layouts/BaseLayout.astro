@@ -14,8 +14,9 @@ import { stockSnapshot } from '../lib/stock';
 interface Props {
   title: string;
   description?: string;
+  noindex?: boolean; // 不让搜索引擎收录（新闻草稿预览等）
 }
-const { title, description = '' } = Astro.props;
+const { title, description = '', noindex = false } = Astro.props;
 const lang = langOf(Astro.url) === 'en' ? 'en' : 'zh-CN';
 // 英文标题用“页面 | COL Group”的惯例写法
 const docTitle = lang === 'en' ? title.replace('_', ' | ') : title;
@@ -29,6 +30,7 @@ const snap = await stockSnapshot();
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{docTitle}</title>
     <meta name="description" content={description} />
+    {noindex && <meta name="robots" content="noindex" />}
     <!-- 网站图标：Logo 中的太极“O” -->
     <link rel="icon" href={u("/favicon.png")} type="image/png" sizes="64x64" />
     <link rel="icon" href={u("/favicon-32.png")} type="image/png" sizes="32x32" />

@@ -3,6 +3,7 @@
 // Internal hrefs stay unprefixed (e.g. '/business#data'); the /en prefix is added at render time.
 
 import { bizColor, type Page, type Block, type Stat } from './zh';
+import { newsList } from '../lib/news';
 
 export { bizColor };
 export type { Stat, Card, Cover, Person, IP, Block, Section, Page, NewsItem } from './zh';
@@ -569,54 +570,8 @@ const news: Page = {
   en: 'NEWSROOM',
   intro: 'The latest from COL Group, press coverage and media resources.',
   sections: [
-    { id: 'official', label: 'Press Releases', en: 'PRESS', title: 'Press releases', blocks: [{ type: 'news', items: [
-      { date: '2026-10-16', title: 'COL at MIPCOM Cannes: FlareFlow partners with Digicel to expand in Central and South America', tag: 'Global', img: 'cannes', slug: '2026-10-16-mipcom', text: 'FlareFlow exhibited at MIPCOM and signed a distribution deal with Digicel covering 25 markets across Central and South America and the Caribbean.',
-        body: [
-          { p: 'From October 12 to 15, the 42nd MIPCOM took place at the Palais des Festivals in Cannes, France. COL attended with its international microdrama platform FlareFlow, meeting industry peers from around the world to discuss new opportunities in microdrama.' },
-          { h: 'Talking microdrama at a global market' },
-          { p: 'MIPCOM is one of the world’s key markets for trading and co-producing film and TV content, drawing more than 10,000 professionals from over 100 countries each year. In 2026 it grew into a broader global content market, with branded entertainment, AIGC, the creator economy and microdrama as headline topics.' },
-          { quote: 'A year ago, microdrama, the creator economy and AI content production were emerging trends. Today they are scalable business models and an increasingly important part of the global content economy.', by: 'Lucy Smith, Director, MIPCOM' },
-          { p: 'This year MIPCOM expanded its microdrama programme with an invitation-only Global Microdrama Leaders Summit and, for the first time, a dedicated business-matching track for microdrama. From conversations to signed deals, microdrama carried noticeably more weight at the show.' },
-          { p: 'At stand P-1.D62, COL met international buyers and producers to discuss microdrama content and partnerships. Timothy Oh, COL’s General Manager for Southeast Asia and Chief Marketing Officer of FlareFlow, spoke on a microdrama panel alongside Maria Rua Aguete, Head of Media & Entertainment at research firm Omdia, about how the market sees microdrama, what drives its global growth and where the industry is heading.' },
-          { h: 'Reaching new markets through telecom partners' },
-          { p: 'During the show, FlareFlow announced a multi-market distribution partnership with Digicel, a leading telecom operator in Central and South America and the Caribbean, covering 25 markets. FlareFlow will connect to Digicel’s billing system so users can subscribe with their prepaid balance or add it to their monthly phone bill.' },
-          { p: 'FlareFlow keeps expanding its distribution channels. By plugging into local operators’ billing and distribution networks, it makes subscribing easier for users in emerging markets and brings microdrama to more mobile viewers. Digicel’s broad user base across the region is a natural fit for FlareFlow’s mobile-first content and payment model.' },
-          { p: 'From industry conversations to channel partnerships, COL keeps deepening its work with international partners, connecting microdrama to more markets so audiences everywhere can enjoy great stories more easily.' },
-        ] },
-      { date: '2026-10-12', title: 'COL partners with Thailand’s CP Group to accelerate local microdrama production', tag: 'Global', img: 'thai', slug: '2026-10-12-cp-group', text: 'FlareFlow Mini launched a dedicated section on TATANG by TrueID, run by CP Group’s True. The partners will work together on AIGC localization, training Thai creators with local universities, and distribution.',
-        body: [
-          { p: 'COL’s strategic partnership with Thailand’s CP Group has reached a new milestone: FlareFlow Mini is now live on TATANG by TrueID, a local Thai microdrama platform, with its own dedicated section bringing localized vertical microdramas to Thai viewers.' },
-          { p: 'It is a key step in turning the partnership, announced in August, into action.' },
-          { p: 'CP Group is one of Thailand’s largest conglomerates, with businesses in telecoms, digital technology, retail, digital payments and media across 23 countries, and deep local resources and channels in Southeast Asia. Its subsidiary True Corporation is a leading Thai telecom and digital technology company, and TATANG by TrueID is True’s local microdrama platform, curating international microdramas for Thai audiences. Backed by CP Group’s consumer ecosystem in telecoms, payments, retail and brand marketing, TATANG is well placed to reach viewers.' },
-          { p: 'The partnership moves forward on three fronts at once, content localization, talent development and distribution, connecting production, creation and distribution.' },
-          { h: 'Content: real localization, not just translation' },
-          { p: 'COL and CP Group will adapt FlareFlow and other hit titles for Thailand. Rather than simply translating, the teams will rewrite characters, settings, dialogue and cultural context for Thai audiences, using AIGC in production and combining COL’s IP and microdrama expertise with CP Group’s local creator network and market resources.' },
-          { h: 'Talent: training creators with Thai universities' },
-          { p: 'The two companies plan to work with leading Thai academic institutions on a microdrama talent program, training young local creators in storytelling, production and creative skills, and building a path from education into the industry.' },
-          { h: 'Distribution: a FlareFlow section on TATANG' },
-          { p: 'FlareFlow Mini is now live on TATANG with its own FlareFlow section. Building on the CP and True consumer ecosystem, the partners will make FlareFlow content easier to find in Thailand and bring more localized microdramas to Thai viewers.' },
-          { p: 'FlareFlow now has more than 52 million registered users worldwide. Starting from Thailand, the two companies will continue to expand localized content and distribution across Southeast Asia.' },
-        ] },
-      { date: '2026-10-08', title: 'COL named to Cyzone’s “2026 China Globalization New Force Top 100” for the second year running', tag: 'Awards', img: 'global100', slug: '2026-10-08-global100', text: 'Listed among the 40 “leading” companies. Overseas revenue grew 123.94% in 2025 to over 40% of the total, and FlareFlow topped the US entertainment charts.',
-        body: [
-          { p: 'At the 5th Global Digital Trade Expo in Hangzhou, Cyzone released its “2026 Digital Trade · China Globalization New Force Top 100” list. Thanks to continued progress in taking microdrama overseas, COL made the list again and was ranked among the “leading” companies.' },
-          { p: 'The list combines questionnaires, interviews, expert review and third-party data checks, scoring companies on the depth of their global footprint, product competitiveness, scale, compliance and brand awareness. Companies are split into “leading” and “growing” groups; the 40 “leading” companies each earned at least USD 15 million overseas in 2025 and have built scale in overseas markets.' },
-          { h: 'Microdrama going global' },
-          { p: 'The listing reflects COL’s steady progress in global microdrama. Its overseas platform FlareFlow launched in April 2025 and in the same year reached No. 1 on both the US Google Play and App Store free entertainment charts. It has over 33 million registered users across 200+ countries and regions. In 2025, COL’s overseas revenue grew 123.94% year on year to more than 40% of total revenue.' },
-          { quote: 'Going global doesn’t mean watching overseas data from home. You have to enter the local market, understand local users and build local teams.', by: 'Tong Zhilei, Founder, Chairman and President of COL Group' },
-          { p: 'With IP as its anchor and AI as its sail, COL will keep building a global microdrama ecosystem and bringing great stories to audiences worldwide.' },
-        ] },
-      { date: '2026-09-24', title: 'Hong Kong crime thriller “Black and White Undercover 3” starts filming as Hengqin International Film & TV City keeps growing', tag: 'Film & TV', img: 'hengqin', href: 'https://www.col.com/article/2110228778050355200', text: 'Starring Andy On and Eric Tsang. The studio has 90+ standing sets and 17,000 m² of stages, and is expanding into Hengqin–Macau co-productions, tourism and AI virtual production.' },
-      { date: '2026-09-17', title: 'FlareFlow’s 99 Charms, 99 Heartbreaks wins Best Microdrama at the Vertical Shorts Festival in Los Angeles', tag: 'Microdrama', img: 'flareflow-award', href: 'https://www.col.com/article/2110227594900111360', text: 'Chosen from 200+ entries. The show went from a Chinese original to an English version to a fully localized remake, a model for how FlareFlow localizes.' },
-      { date: '2026-09-11', title: 'FlareFlow arrives on Whale TV, bringing hit microdramas to South American TV screens', tag: 'Global', img: 'whaletv', href: 'https://www.col.com/article/2110226608613720064', text: 'FlareFlow is now on the Whale TV smart-TV OS, starting in South America. Whale TV works with 400+ TV brands and 47.5M+ monthly active devices.' },
-      { date: '2026-08-31', title: 'Digital Publishing Expo: Tong Zhilei on how AI opens a new future for publishing', tag: 'AI', img: 'expo', href: 'https://www.col.com/article/2110225951496306688', text: 'At the expo’s main forum, Tong Zhilei explained how AI is reshaping publishing from topic planning to editing and distribution, and shared COL’s own practice.' },
-      { date: '2026-08-19', title: 'COL signs to build a digital-culture creation base for global audiences in Shanghai Lingang', tag: 'Global', img: 'lingang', href: 'https://www.col.com/article/2090001382265290752', text: 'A framework agreement with the Lingang New Area administration to set up a creation base for exporting digital culture.' },
-      { date: '2026-07-30', title: 'COL at ChinaJoy 2026: AI is driving the evolution of microdrama', tag: 'Microdrama', img: 'chinajoy', href: 'https://www.col.com/article/2082717718552739840', text: 'AI is moving from an efficiency tool to the engine of the microdrama ecosystem; AI animation production costs over 70% less than traditional animation.' },
-    ] }] },
-    { id: 'media', label: 'In the Media', en: 'MEDIA', title: 'In the media', blocks: [{ type: 'news', items: [
-      { date: '2025-08-01', title: 'Over 1 billion views: “Beijing Audiovisual” key project Yi Pin Bu Yi (The Commoner) is a hit', tag: 'Film & TV', img: 'yipinbuyi', href: 'https://www.col.com/article/1951205105390813184', text: 'The 105-episode microdrama adapted from a 17K novel passed 1 billion plays on Hongguo, peaking at 238 million plays in a single day.' },
-      { date: '2025-06-25', title: 'COL’s Tong Zhilei: empowering the global content industry with AI', tag: 'AI', img: 'ai', href: 'https://www.col.com/article/1937825796479483904', text: 'Shanghai Securities News interview: AI lowers the cost of making content, which makes top IP scarcer and more valuable.' },
-    ] }] },
+    { id: 'official', label: 'Press Releases', en: 'PRESS', title: 'Press releases', blocks: [{ type: 'news', items: newsList('en', 'official') }] },
+    { id: 'media', label: 'In the Media', en: 'MEDIA', title: 'In the media', blocks: [{ type: 'news', items: newsList('en', 'media') }] },
     { id: 'presskit', label: 'Press Kit', en: 'PRESS KIT', title: 'Press kit', blocks: [
       { type: 'downloads', items: [
         { title: 'Official logo', meta: 'PNG / SVG · To be provided' },

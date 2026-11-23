@@ -1,25 +1,26 @@
 ---
 // 本站发布的新闻详情页（/news/<slug>）：示范新闻的版式层级——标题 > 小标题 > 正文 > 引语，配图位于标题下方。
-// 内容来自 zh.ts / en.ts 官方新闻中带 slug + body 的条目。
+// 内容来自 src/news/<编号>/zh.md、en.md（见 src/lib/news.ts）。草稿（draft: true）也生成页面，用于发布前预览。
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Header from './Header.astro';
 import Footer from './Footer.astro';
 import CtaBand from './CtaBand.astro';
 import { u as asset } from '../../lib/url';
 import { useLang } from '../../lib/i18n';
-import type { NewsItem } from '../../content/zh';
+import { newsPages, newsList } from '../../lib/news';
 
 interface Props { slug: string }
-const { c, ui, l: u } = useLang(Astro.url);
+const { c, ui, l: u, lang } = useLang(Astro.url);
 const { site, pages } = c;
-const all = pages.news.sections.flatMap((s) => s.blocks).flatMap((b) => (b.type === 'news' ? b.items : [])) as NewsItem[];
-const n = all.find((x) => x.slug === Astro.props.slug)!;
-const more = all.filter((x) => x !== n).slice(0, 3);
+const n = newsPages(lang).find((x) => x.slug === Astro.props.slug)!;
+const more = newsList(lang, 'official').filter((x) => x.slug !== n.slug).slice(0, 3);
+const en = lang === 'en';
 const theme = pages.news.theme ?? ['#0071ce', '#00c1de'];
 ---
-<BaseLayout title={`${n.title}_${site.name}`} description={n.text}>
+<BaseLayout title={`${n.title}_${site.name}`} description={n.text} noindex={n.draft}>
   <Header current="news" />
   <main style={`--c1:${theme[0]};--c2:${theme[1]}`}>
+    {n.draft && <div class="na-draft" role="note">{en ? 'Draft preview: not published yet. Only people with this link can see it.' : '草稿预览：尚未发布，只有拿到链接的人能看到。确认无误后运行“发布新闻”。'}</div>}
     <header class="na-top">
       <div class="container na-head">
         <nav class="na-crumbs" aria-label={ui.crumbs}>
@@ -36,6 +37,7 @@ const theme = pages.news.theme ?? ['#0071ce', '#00c1de'];
         {n.body!.map((x) => (
           'h' in x ? <h2>{x.h}</h2>
           : 'quote' in x ? <blockquote><p>“{x.quote}”</p>{x.by && <cite>— {x.by}</cite>}</blockquote>
+          : 'img' in x ? <figure><img src={asset(`/news/${x.img}.jpg`)} alt={x.cap ?? ''} loading="lazy" />{x.cap && <figcaption>{x.cap}</figcaption>}</figure>
           : <p>{x.p}</p>
         ))}
       </div>
@@ -84,6 +86,10 @@ const theme = pages.news.theme ?? ['#0071ce', '#00c1de'];
   .na-body blockquote { margin: 36px 0; padding: 28px 32px; border-radius: 22px; background: linear-gradient(120deg, color-mix(in srgb, var(--c1) 9%, var(--surface)), color-mix(in srgb, var(--violet) 8%, var(--surface))); }
   .na-body blockquote p { font-size: 20px; line-height: 1.8; font-weight: 700; color: var(--ink); margin: 0; }
   .na-body cite { display: block; margin-top: 12px; font-style: normal; font-size: 14px; color: var(--muted); }
+  .na-body figure { margin: 32px 0; }
+  .na-body figure img { width: 100%; border-radius: 18px; display: block; }
+  .na-body figcaption { margin-top: 10px; font-size: 14px; line-height: 1.6; color: var(--muted); text-align: center; }
+  .na-draft { position: fixed; left: 50%; bottom: 20px; transform: translateX(-50%); z-index: 90; width: max-content; max-width: calc(100vw - 32px); padding: 10px 18px; border-radius: 999px; text-align: center; font-size: 14px; font-weight: 700; color: #5b3b00; background: #ffd666; box-shadow: 0 10px 30px -10px rgba(0,0,0,.35); }
   .na-foot { margin-top: 48px; padding-top: 28px; border-top: 1px solid var(--line); }
   .na-more { padding-top: 90px; }
   .na-more-h { font-size: 24px; font-weight: 900; color: var(--ink); margin-bottom: 22px; }
