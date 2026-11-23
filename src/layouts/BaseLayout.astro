@@ -25,6 +25,8 @@ const snap = await stockSnapshot();
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{docTitle}</title>
     <meta name="description" content={description} />
+    <!-- 存档版（旧英文版，2026-11-23 起由新版英文站取代）：不让搜索引擎收录 -->
+    <meta name="robots" content="noindex" />
     <!-- 网站图标：Logo 中的太极“O” -->
     <link rel="icon" href={u("/favicon.png")} type="image/png" sizes="64x64" />
     <link rel="icon" href={u("/favicon-32.png")} type="image/png" sizes="32x32" />
