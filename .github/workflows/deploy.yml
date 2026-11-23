@@ -34,19 +34,28 @@ jobs:
         env:
           BASE_PATH: /${{ github.event.repository.name }}
           SITE_URL: https://${{ github.repository_owner }}.github.io
-      # Preview of the new English design: the en-redesign branch is built separately and
-      # published under /new/ (…/col-website/new/en/). The main site above is not affected.
-      # After pushing to en-redesign, re-run this workflow on main to refresh the preview.
+      # 存档：2026-11-23 之前的旧版英文站（archive/en-v1 分支），发布在 <站点>/archive/en-v1/ 下，不影响主站。
       - uses: actions/checkout@v4
         with:
-          ref: en-redesign
-          path: _new
+          ref: archive/en-v1
+          path: _archive
       - run: npm ci && npm run build
-        working-directory: _new
+        working-directory: _archive
         env:
-          BASE_PATH: /${{ github.event.repository.name }}/new
+          BASE_PATH: /${{ github.event.repository.name }}/archive/en-v1
           SITE_URL: https://${{ github.repository_owner }}.github.io
-      - run: rm -rf dist/new && cp -r _new/dist dist/new
+      - run: mkdir -p dist/archive && rm -rf dist/archive/en-v1 && cp -r _archive/dist dist/archive/en-v1
+      # 新版英文站已于 2026-11-23 转正到 /en/。旧的预览地址 /new/... 自动跳转到对应的正式页面。
+      - name: Redirect old /new/ preview links
+        env:
+          ROOT: /${{ github.event.repository.name }}
+        run: |
+          cd dist
+          find . -name index.html -not -path './archive/*' -not -path './new/*' | while read f; do
+            p="${f#./}"; p="${p%index.html}"
+            mkdir -p "new/$p"
+            printf '<!doctype html><meta charset="utf-8"><meta name="robots" content="noindex"><link rel="canonical" href="%s/%s"><meta http-equiv="refresh" content="0; url=%s/%s"><script>location.replace("%s/%s"+location.hash)</script>' "$ROOT" "$p" "$ROOT" "$p" "$ROOT" "$p" > "new/${p}index.html"
+          done
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist
