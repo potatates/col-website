@@ -33,6 +33,10 @@ const LOCKED = Object.values(keyFiles)[0] ?? null;
     button.ghost { background: #eef2f9; color: var(--ink); }
     button.danger { background: #fdecec; color: var(--err); }
     button:disabled { opacity: .5; cursor: default; }
+    button { transition: transform .12s, opacity .2s; }
+    button:not(:disabled):active { transform: scale(.95); }
+    #drafts, #runs { transition: opacity .2s; }
+    .busy { opacity: .4; }
     .actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px; align-items: center; }
     .msg { font-size: 14px; margin-top: 12px; min-height: 1.6em; }
     .msg.ok { color: var(--ok); } .msg.err { color: var(--err); } .msg.warn { color: var(--warn); }
@@ -96,7 +100,7 @@ const LOCKED = Object.values(keyFiles)[0] ?? null;
       <h2>待发布的草稿</h2>
       <p class="hint">点「预览」检查内容；没问题点「发布」，几分钟后出现在官网新闻列表。要改文字请联系网站负责人。</p>
       <ul class="list" id="drafts"><li class="hint">加载中…</li></ul>
-      <div class="actions"><button type="button" class="ghost" id="refresh">刷新</button></div>
+      <div class="actions"><button type="button" class="ghost" id="refresh">刷新</button><span class="hint" id="refresh-msg" aria-live="polite"></span></div>
     </section>
 
     <section class="card">
@@ -220,7 +224,17 @@ const LOCKED = Object.values(keyFiles)[0] ?? null;
         if (rows.some((w) => w.status !== 'completed')) setTimeout(() => { loadRuns(); loadDrafts(); }, 20000);
       } catch (err) { ul.innerHTML = `<li class="hint">${esc(err.message)}</li>`; }
     }
-    $('refresh').onclick = () => { loadDrafts(); loadRuns(); };
+    $('refresh').onclick = async () => {
+      const b = $('refresh'), msg = $('refresh-msg');
+      b.disabled = true; b.textContent = '刷新中…'; msg.textContent = '';
+      $('drafts').classList.add('busy'); $('runs').classList.add('busy');
+      const t0 = Date.now();
+      await Promise.allSettled([loadDrafts(), loadRuns()]);
+      await new Promise((r) => setTimeout(r, Math.max(0, 500 - (Date.now() - t0)))); // 太快时也让人看得出刷过了
+      $('drafts').classList.remove('busy'); $('runs').classList.remove('busy');
+      b.disabled = false; b.textContent = '刷新';
+      msg.textContent = '已刷新 ' + new Date().toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+    };
 
     showKey();
   </script>
