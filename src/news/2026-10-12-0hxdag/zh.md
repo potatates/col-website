@@ -6,7 +6,6 @@ image: 2026-10-12-0hxdag/cover
 summary: "FlareFlow Mini正式登陆泰国正大集团旗下微短剧平台，战略合作持续落地"
 source: "中文在线微信公众号"
 wechat: https://mp.weixin.qq.com/s/3xGLHuCa0ZNPK0CQ0hxDAg
-draft: true
 ---
 近日，中文在线与泰国正大集团（CP Group）的战略合作迎来新进展：FlareFlow Mini正式上线泰国本土微短剧平台TATANG by TrueID，并作为独立内容专区持续向泰国用户提供优质本土化竖屏短剧内容。
 
