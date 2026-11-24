@@ -1,10 +1,10 @@
 ---
 date: 2026-11-04
 section: official
-title: "hahha中文在线携手荷福集团 推动AI内容生态与具身智能融合发展"
+title: "中文在线携手荷福集团 推动AI内容生态与具身智能融合发展"
 tag: "海外"
 image: 2026-11-04-8l49pq/cover
-summary: "teehee10月30日，中文在线集团股份有限公司与上海荷福人工智能科技（集团）有限公司（以下简称“荷福集团”）在北京签署"
+summary: "10月30日，中文在线集团股份有限公司与上海荷福人工智能科技（集团）有限公司（以下简称“荷福集团”）在北京签署"
 source: "中文在线微信公众号"
 wechat: https://mp.weixin.qq.com/s/TbJmbdx_0wAltO168L49PQ
 ---
