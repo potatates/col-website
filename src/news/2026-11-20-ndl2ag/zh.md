@@ -6,7 +6,6 @@ image: 2026-11-20-ndl2ag/cover
 summary: "中文在线集团东南亚区域总经理兼FlareFlow首席营销官Timothy Oh荣获“年度杰出高管（媒体与娱乐类别）”奖项。"
 source: "中文在线微信公众号"
 wechat: https://mp.weixin.qq.com/s/Qhm9Wa1fe71uu1YunDl2ag
-draft: true
 ---
 近日，《新加坡商业评论》（Singapore Business Review）公布2026年管理卓越奖（Management Excellence Awards）获奖名单。中文在线集团东南亚区域总经理兼FlareFlow首席营销官Timothy Oh荣获“年度杰出高管（媒体与娱乐类别）”奖项。该奖项旨在表彰在推动业务增长、应对行业挑战及创新发展等方面表现突出的企业管理者。此次获奖体现了中文在线在全球市场拓展、AI内容制作及品牌娱乐等领域取得的积极成果。
 
