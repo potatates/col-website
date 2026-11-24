@@ -45,6 +45,14 @@ const snap = await stockSnapshot();
         document.addEventListener('astro:after-swap', apply);
       })();
     </script>
+    <!-- 页面过渡后视频没有片源（新页面先在后台解析，视频不会自动加载）：换页后让每个视频重新加载一次，否则点播放没反应 -->
+    <script is:inline>
+      document.addEventListener('astro:after-swap', function () {
+        document.querySelectorAll('video, audio').forEach(function (m) {
+          if ((m.networkState === 0 || m.networkState === 3) && (m.getAttribute('src') || m.querySelector('source'))) m.load();
+        });
+      });
+    </script>
     <!-- 手机全屏播放竖屏视频（如《一品布衣》）时保持竖屏，不自动转成横屏；退出全屏后解除锁定 -->
     <script is:inline>
       (function () {
