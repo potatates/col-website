@@ -6,7 +6,6 @@ image: 2026-10-28-iwpcxq/cover
 summary: "《一品布衣4：割据篇》入选国家广播电视总局2026年第二季度优秀网络视听节目"
 source: "中文在线微信公众号"
 wechat: https://mp.weixin.qq.com/s/6KJDEu5S4jhIJsL7iWPcXQ
-draft: true
 ---
 10月22日，国家广播电视总局公布2026年第二季度优秀网络视听节目推选评审结果，39部作品入选，其中微短剧14部，中文在线出品的《一品布衣4：割据篇》入选。
 
