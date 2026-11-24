@@ -1,6 +1,7 @@
 ---
 // 作品详情页（/ip/<slug>）：点击 IP 墙海报进入。介绍作品本身（非授权页）：简介、数据、亮点、预告片、海报。
 // 内容来自 zh.ts / en.ts 中 IP 墙条目的 intro / stats / highlights / video / images 字段。
+import { isVertical } from '../../lib/video';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Header from './Header.astro';
 import Footer from './Footer.astro';
@@ -49,7 +50,7 @@ const theme = pages.ip.theme ?? ['#6c4dff', '#ff5c9a'];
       {(ip.video || ip.images?.length) ? (
         <section class="ipd-sec">
           <h2 class="ipd-h">{ip.video ? ui.ipTrailer : ui.ipGallery}</h2>
-          <div class:list={['ipd-media', { vertical: ip.vertical }]}>
+          <div class:list={['ipd-media', { vertical: isVertical(ip.video, ip.vertical) }]}>
             {ip.video && (
               <video controls preload="metadata" playsinline poster={asset(`/videos/${ip.video}.jpg`)} src={asset(`/videos/${ip.video}.mp4`)}></video>
             )}

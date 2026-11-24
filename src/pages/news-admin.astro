@@ -14,7 +14,7 @@ const LOCKED = Object.values(keyFiles)[0] ?? null;
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="robots" content="noindex" />
-  <title>新闻发布_中文在线官网</title>
+  <title>官网内容管理_中文在线</title>
   <link rel="icon" href={`${base}/favicon.png`} type="image/png" />
   <style is:global>
     :root { --brand: #0071ce; --ink: #0b1430; --text: #3a4560; --muted: #7a849c; --line: #e4e8f0; --bg: #f4f6fb; --ok: #16a34a; --warn: #b45309; --err: #dc2626; }
@@ -56,13 +56,35 @@ const LOCKED = Object.values(keyFiles)[0] ?? null;
     .keybox { display: flex; gap: 10px; }
     .keybox input { flex: 1; }
     [hidden] { display: none !important; }
+    .tabs { display: flex; gap: 6px; margin: 0 0 18px; background: #e9edf5; padding: 5px; border-radius: 999px; width: max-content; max-width: 100%; overflow-x: auto; }
+    .tabs button { background: none; color: var(--muted); padding: 8px 18px; font-size: 14px; white-space: nowrap; }
+    .tabs button.on { background: #fff; color: var(--ink); box-shadow: 0 4px 12px -6px rgba(10,22,48,.3); }
+    .ed-fields .row { margin-top: 0; }
+    #ed-body { min-height: 360px; font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 13px; }
+    .ed-help { font-size: 12.5px; color: var(--muted); background: #f6f8fc; border-radius: 12px; padding: 10px 14px; margin-top: 8px; line-height: 1.8; }
+    .ed-help code { background: #e9edf5; border-radius: 6px; padding: 1px 6px; color: var(--ink); }
+    .cover-row { display: flex; gap: 14px; align-items: center; margin-top: 6px; flex-wrap: wrap; }
+    .cover-row img { width: 160px; aspect-ratio: 16/9; object-fit: cover; border-radius: 10px; background: #eef2f9; }
+    .check { display: flex; gap: 8px; align-items: center; font-weight: 400; }
+    .check input { width: auto; }
+    .p-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 16px; margin-top: 14px; }
+    .p-item { display: flex; flex-direction: column; gap: 6px; }
+    .p-item img { width: 100%; object-fit: cover; border-radius: 10px; background: #eef2f9; }
+    .p-item .t { font-size: 13px; line-height: 1.4; }
+    .p-item button { font-size: 12.5px; padding: 6px 12px; align-self: flex-start; }
+    .p-item.done img { outline: 3px solid var(--ok); }
+    .p-dialog { position: fixed; inset: 0; background: rgba(11,20,48,.55); display: grid; place-items: center; padding: 16px; z-index: 10; }
+    .p-dialog .card { width: min(640px, 100%); max-height: calc(100vh - 32px); overflow: auto; margin: 0; }
+    .p-compare { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 10px; }
+    .p-compare figure { margin: 0; text-align: center; font-size: 13px; color: var(--muted); }
+    .p-compare img { width: 100%; border-radius: 10px; background: #eef2f9; display: block; margin-bottom: 6px; }
     @media (max-width: 560px) { .row { grid-template-columns: 1fr; } .keybox { flex-direction: column; } }
   </style>
 </head>
 <body>
   <main class="wrap">
-    <h1>官网新闻发布</h1>
-    <p class="sub">粘贴公众号文章链接 → 生成草稿 → 预览检查 → 发布。</p>
+    <h1>官网内容管理</h1>
+    <p class="sub">导入公众号文章、修改新闻、更换作品海报。</p>
 
     <section class="card" id="key-card">
       <h2>请输入密码</h2>
@@ -76,7 +98,13 @@ const LOCKED = Object.values(keyFiles)[0] ?? null;
     </section>
     <div id="app" hidden>
     <p class="hint" id="key-ok">已解锁 · <a href="#" id="key-change">退出</a></p>
+    <nav class="tabs" id="tabs">
+      <button type="button" class="on" data-tab="t-news">导入与发布</button>
+      <button type="button" data-tab="t-edit">修改新闻</button>
+      <button type="button" data-tab="t-posters">更换海报</button>
+    </nav>
 
+    <div id="t-news">
     <section class="card">
       <h2>导入新闻</h2>
       <form id="import">
@@ -101,15 +129,70 @@ const LOCKED = Object.values(keyFiles)[0] ?? null;
 
     <section class="card">
       <h2>待发布的草稿</h2>
-      <p class="hint">点「预览」检查内容；没问题点「发布」，几分钟后出现在官网新闻列表。要改文字请联系网站负责人。</p>
+      <p class="hint">点「预览」检查内容；没问题点「发布」，几分钟后出现在官网新闻列表。要改文字，到上方「修改新闻」。</p>
       <ul class="list" id="drafts"><li class="hint">加载中…</li></ul>
       <div class="actions"><button type="button" class="ghost" id="refresh">刷新</button><span class="hint" id="refresh-msg" aria-live="polite"></span></div>
     </section>
+
+    </div>
+
+    <div id="t-edit" hidden>
+      <section class="card">
+        <h2>修改新闻</h2>
+        <p class="hint">选一篇新闻（已发布的和草稿都可以），改好后点「保存」，约 3–5 分钟后网站更新。</p>
+        <div class="row">
+          <div><label for="ed-pick">新闻</label><select id="ed-pick"><option value="">加载中…</option></select></div>
+          <div><label for="ed-lang">语言</label><select id="ed-lang"><option value="zh">中文版</option><option value="en">英文版</option></select></div>
+        </div>
+        <div class="msg" id="ed-msg"></div>
+        <form id="ed-form" class="ed-fields" hidden>
+          <label for="ed-title">标题</label><input id="ed-title" required />
+          <div class="row">
+            <div><label for="ed-date">日期</label><input id="ed-date" type="date" required /></div>
+            <div><label for="ed-tag">标签（可不填）</label><input id="ed-tag" list="tags" /></div>
+          </div>
+          <div class="row">
+            <div><label for="ed-section">栏目</label><select id="ed-section"><option value="official">官方新闻</option><option value="media">媒体报道</option></select></div>
+            <div><label>&nbsp;</label><label class="check"><input type="checkbox" id="ed-draft" /> 草稿（不在新闻列表显示）</label></div>
+          </div>
+          <label for="ed-summary">导语（标题下面的一两句话）</label><textarea id="ed-summary" rows="2"></textarea>
+          <label>封面图</label>
+          <div class="cover-row"><img id="ed-cover" alt="" /><button type="button" class="ghost" id="ed-cover-btn">换封面</button><input type="file" id="ed-cover-file" accept="image/*" hidden /><span class="hint" id="ed-cover-note"></span></div>
+          <label for="ed-body">正文</label>
+          <textarea id="ed-body" spellcheck="false"></textarea>
+          <div class="ed-help">
+            段落之间空一行。<code>## 小标题</code> 是小标题；<code>&gt; 引语</code> 是引语，下一行 <code>&gt; — 说话人</code> 写出处；
+            <code>![图注](编号/1.jpg)</code> 是正文里的图片（图片位置可以整行剪切移动，图注写在方括号里）。
+          </div>
+          <div class="actions"><button type="submit" id="ed-save">保存</button><a class="pill" id="ed-view" target="_blank" rel="noopener" style="padding:11px 20px">在网站上查看</a></div>
+        </form>
+      </section>
+    </div>
+
+    <div id="t-posters" hidden>
+      <section class="card">
+        <h2>更换海报</h2>
+        <p class="hint">找到要换的海报，点「更换」选一张新图。新图会自动裁成和原来一样的比例（从中间裁），确认后约 3–5 分钟网站更新。</p>
+        <input id="p-search" placeholder="搜索作品名，如：罗小黑" style="margin-top:10px" />
+        <div class="p-grid" id="p-grid"><p class="hint">加载中…</p></div>
+        <details style="margin-top:18px"><summary class="hint">其他图片（网站上暂未用到）</summary><div class="p-grid" id="p-grid-unused"></div></details>
+        <input type="file" id="p-file" accept="image/*" hidden />
+      </section>
+    </div>
 
     <section class="card">
       <h2>最近的操作</h2>
       <ul class="list" id="runs"><li class="hint">加载中…</li></ul>
     </section>
+    </div>
+    <div class="p-dialog" id="p-dialog" hidden>
+      <div class="card">
+        <h2 id="p-d-title">更换海报</h2>
+        <div class="p-compare"><figure><img id="p-d-old" alt="" />原来</figure><figure><img id="p-d-new" alt="" />换成（已裁好）</figure></div>
+        <p class="hint" id="p-d-note"></p>
+        <div class="actions"><button type="button" id="p-d-ok">确认更换</button><button type="button" class="ghost" id="p-d-cancel">取消</button></div>
+        <div class="msg" id="p-d-msg"></div>
+      </div>
     </div>
   </main>
 
@@ -138,8 +221,9 @@ const LOCKED = Object.values(keyFiles)[0] ?? null;
       if (!key) throw new Error('请先在上方填入钥匙。');
       const r = await fetch(`${API}${path}`, { ...opts, headers: { Accept: 'application/vnd.github+json', Authorization: `Bearer ${key}`, 'X-GitHub-Api-Version': '2022-11-28', ...(opts.headers || {}) } });
       if (r.status === 401) { store.set(''); throw new Error('发布页的钥匙已过期或失效，请联系网站负责人重新设置。'); }
-      if (r.status === 403 || r.status === 404) throw new Error('钥匙没有权限，请联系网站负责人检查设置。');
-      if (!r.ok) throw new Error(`GitHub 返回错误（${r.status}），请稍后再试。`);
+      const fail = (msg) => Object.assign(new Error(msg), { status: r.status });
+      if (r.status === 403 || r.status === 404) throw fail('钥匙没有权限，请联系网站负责人检查设置。');
+      if (!r.ok) throw fail(`GitHub 返回错误（${r.status}），请稍后再试。`);
       return r.status === 204 ? null : r.json();
     }
     const runWorkflow = (file, inputs) => gh(`/actions/workflows/${file}/dispatches`, { method: 'POST', body: JSON.stringify({ ref: 'main', inputs }) });
@@ -257,6 +341,199 @@ const LOCKED = Object.values(keyFiles)[0] ?? null;
       $('drafts').classList.remove('busy'); $('runs').classList.remove('busy');
       b.disabled = false; b.textContent = '刷新';
       msg.textContent = '已刷新 ' + new Date().toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+    };
+
+    // ---------- 分页 ----------
+    const loaded = {};
+    $('tabs').onclick = (e) => {
+      const b = e.target.closest('button[data-tab]');
+      if (!b) return;
+      for (const x of $('tabs').querySelectorAll('button')) { x.classList.toggle('on', x === b); $(x.dataset.tab).hidden = x !== b; }
+      if (b.dataset.tab === 't-edit' && !loaded.edit) { loaded.edit = true; loadNewsList(); }
+      if (b.dataset.tab === 't-posters' && !loaded.posters) { loaded.posters = true; loadPosters(); }
+    };
+
+    // ---------- 直接修改仓库里的文件（GitHub Contents 接口；需要钥匙有 Contents 读写权限） ----------
+    const NO_WRITE = '钥匙还没有修改文件的权限。请网站负责人在 GitHub → Settings → Developer settings → Fine-grained tokens 里编辑这把钥匙，加上「Contents: Read and write」（钥匙和密码都不用换）。';
+    const repoPath = (p) => p.split('/').map(encodeURIComponent).join('/');
+    const fromB64 = (c) => new TextDecoder().decode(Uint8Array.from(atob(c.replace(/\s/g, '')), (ch) => ch.charCodeAt(0)));
+    function toB64(bytes) { let s = ''; for (let i = 0; i < bytes.length; i += 0x8000) s += String.fromCharCode(...bytes.subarray(i, i + 0x8000)); return btoa(s); }
+    const textB64 = (t) => toB64(new TextEncoder().encode(t));
+    async function getFile(p) {
+      try { return await gh(`/contents/${repoPath(p)}?ref=main&t=${Date.now()}`); }
+      catch (e) { if (e.status === 404) return null; throw e; }
+    }
+    async function putFile(p, content, message) {
+      for (let attempt = 0; attempt < 2; attempt++) {
+        const cur = await getFile(p);
+        try {
+          return await gh(`/contents/${repoPath(p)}`, { method: 'PUT', body: JSON.stringify({ message, content, branch: 'main', ...(cur ? { sha: cur.sha } : {}) }) });
+        } catch (e) {
+          if (e.status === 403 || e.status === 404) throw new Error(NO_WRITE);
+          if ((e.status === 409 || e.status === 422) && attempt === 0) continue; // 同时有别的更新：取最新版本再试一次
+          throw e;
+        }
+      }
+    }
+    // 图片：裁成指定比例（从中间裁）、限制宽度，转成 JPEG（base64）
+    async function prepImage(file, ratio, maxW) {
+      const img = await new Promise((res, rej) => { const i = new Image(); i.onload = () => res(i); i.onerror = () => rej(new Error('这个文件打不开，请换一张 JPG 或 PNG 图片。')); i.src = URL.createObjectURL(file); });
+      let sw = img.naturalWidth, sh = img.naturalHeight, sx = 0, sy = 0;
+      if (ratio) { if (sw / sh > ratio) { const w = sh * ratio; sx = (sw - w) / 2; sw = w; } else { const h = sw / ratio; sy = (sh - h) / 2; sh = h; } }
+      const w = Math.round(Math.min(sw, maxW)), h = Math.round(w * sh / sw);
+      const c = document.createElement('canvas'); c.width = w; c.height = h;
+      const g = c.getContext('2d'); g.fillStyle = '#fff'; g.fillRect(0, 0, w, h); g.drawImage(img, sx, sy, sw, sh, 0, 0, w, h);
+      let q = 0.86, url = c.toDataURL('image/jpeg', q);
+      while (url.length > 1.2e6 && q > 0.5) { q -= 0.08; url = c.toDataURL('image/jpeg', q); }
+      return { url, b64: url.split(',')[1], w, h };
+    }
+    const afterSave = '已保存！约 3–5 分钟后网站更新（浏览器可能还会显示旧版几分钟，刷新即可）。';
+
+    // ---------- 修改新闻 ----------
+    let ed = null; // 正在编辑的文件 { id, lang, path, order, fm, cover }
+    async function loadNewsList() {
+      try {
+        const r = await fetch(`${base}/news/all.json?t=${Date.now()}`, { cache: 'no-store' });
+        const list = (await r.json()).news;
+        $('ed-pick').innerHTML = '<option value="">— 选择一篇新闻 —</option>' + list.map((n) => `<option value="${esc(n.id)}">${esc(n.date)}　${n.draft ? '【草稿】' : ''}${esc(n.title)}</option>`).join('');
+      } catch { say($('ed-msg'), '新闻列表暂时读不到，请稍后再试。', 'err'); }
+    }
+    function parseMd(text) {
+      const m = text.replace(/^﻿/, '').match(/^---\s*\n([\s\S]*?)\n---[ \t]*\n?([\s\S]*)$/);
+      if (!m) return { order: [], fm: {}, body: text };
+      const order = [], fm = {};
+      for (const line of m[1].split('\n')) {
+        const i = line.indexOf(':');
+        if (i <= 0) continue;
+        const k = line.slice(0, i).trim(); let v = line.slice(i + 1).trim();
+        if (v.startsWith('"')) { try { v = JSON.parse(v); } catch { v = v.slice(1, -1); } }
+        order.push(k); fm[k] = v;
+      }
+      return { order, fm, body: m[2].replace(/^\n+/, ''), lead: /^\n/.test(m[2]) ? '\n' : '' };
+    }
+    function buildMd(order, fm, body, lead = '\n') {
+      const keys = ['date', 'section', 'title', 'tag', 'image', 'summary', 'link', 'source', 'wechat', 'draft'];
+      const all = [...new Set([...keys.filter((k) => order.includes(k) || fm[k]), ...order])];
+      const lines = all.filter((k) => fm[k] !== undefined && fm[k] !== '' && fm[k] !== false && fm[k] !== 'false').map((k) => {
+        const v = fm[k];
+        if (v === true || v === 'true') return `${k}: true`;
+        return `${k}: ${/^(date|section|image|link|wechat)$/.test(k) ? v : JSON.stringify(String(v))}`;
+      });
+      return `---\n${lines.join('\n')}\n---\n${body.trim() ? lead + body.trim() + '\n' : ''}`;
+    }
+    async function openEditor() {
+      const id = $('ed-pick').value, lang = $('ed-lang').value;
+      $('ed-form').hidden = true; say($('ed-msg'), '');
+      if (!id) return;
+      say($('ed-msg'), '读取中…');
+      try {
+        const path = `src/news/${id}/${lang}.md`;
+        const f = await getFile(path);
+        let parsed, isNew = false;
+        if (f) parsed = parseMd(fromB64(f.content));
+        else if (lang === 'en') {
+          // 还没有英文版：沿用中文版的日期、栏目、封面、外链和草稿状态，标题和正文留空待填
+          const zf = await getFile(`src/news/${id}/zh.md`);
+          const z = zf ? parseMd(fromB64(zf.content)) : { order: [], fm: {} };
+          const keep = {}; for (const k of ['date', 'section', 'image', 'link', 'draft']) if (z.fm[k]) keep[k] = z.fm[k];
+          if (z.fm.source) keep.source = 'COL Group';
+          parsed = { order: Object.keys(keep), fm: keep, body: '' }; isNew = true;
+        } else throw new Error('找不到这篇新闻的文件，可能已被删除。');
+        ed = { id, lang, path, order: parsed.order, fm: parsed.fm, lead: parsed.lead ?? '\n', cover: null };
+        const fm = parsed.fm;
+        $('ed-title').value = fm.title || ''; $('ed-date').value = fm.date || ''; $('ed-tag').value = fm.tag || '';
+        $('ed-section').value = fm.section || 'official'; $('ed-draft').checked = fm.draft === true || fm.draft === 'true';
+        $('ed-summary').value = fm.summary || ''; $('ed-body').value = parsed.body;
+        $('ed-cover').src = fm.image ? `${base}/news/${fm.image}.jpg?t=${Date.now()}` : ''; $('ed-cover-note').textContent = fm.image ? '' : '（没有封面）';
+        const ext = !!fm.link;
+        $('ed-view').hidden = ext || isNew; $('ed-view').href = `${base}${lang === 'en' ? '/en' : ''}/news/${id}/`;
+        $('ed-form').hidden = false;
+        say($('ed-msg'), isNew ? '这篇还没有英文版：填好标题、导语和正文后保存，就会生成英文版。' : ext ? '这条新闻链接到外部原文，网站上只显示标题、日期和封面。' : '', isNew ? 'warn' : '');
+      } catch (e) { say($('ed-msg'), e.message, 'err'); }
+    }
+    $('ed-pick').onchange = openEditor; $('ed-lang').onchange = openEditor;
+    $('ed-cover-btn').onclick = () => $('ed-cover-file').click();
+    $('ed-cover-file').onchange = async () => {
+      const file = $('ed-cover-file').files[0]; $('ed-cover-file').value = '';
+      if (!file || !ed) return;
+      try { ed.cover = await prepImage(file, 0, 1200); $('ed-cover').src = ed.cover.url; $('ed-cover-note').textContent = '新封面，保存后生效'; }
+      catch (e) { say($('ed-msg'), e.message, 'err'); }
+    };
+    $('ed-form').onsubmit = async (e) => {
+      e.preventDefault();
+      if (!ed) return;
+      const fm = ed.fm;
+      fm.title = $('ed-title').value.trim(); fm.date = $('ed-date').value; fm.tag = $('ed-tag').value.trim();
+      fm.section = $('ed-section').value; fm.draft = $('ed-draft').checked; fm.summary = $('ed-summary').value.trim().replace(/\s*\n\s*/g, ' ');
+      const body = $('ed-body').value;
+      if (!fm.title || !fm.date) return say($('ed-msg'), '标题和日期不能空。', 'err');
+      if (!fm.link && !body.trim()) return say($('ed-msg'), '正文不能空。', 'err');
+      $('ed-save').disabled = true; say($('ed-msg'), '保存中…');
+      try {
+        if (ed.cover) {
+          const img = `${ed.id}/cover`;
+          await putFile(`public/news/${img}.jpg`, ed.cover.b64, `更换新闻封面：${fm.title}`);
+          fm.image = img; ed.cover = null;
+        }
+        await putFile(ed.path, textB64(buildMd(ed.order, fm, body, ed.lead)), `修改新闻：${fm.title}`);
+        say($('ed-msg'), afterSave, 'ok');
+        $('ed-view').hidden = !!fm.link;
+        setTimeout(loadRuns, 4000);
+      } catch (err) { say($('ed-msg'), err.message, 'err'); }
+      finally { $('ed-save').disabled = false; }
+    };
+
+    // ---------- 更换海报 ----------
+    let posters = [], pTarget = null, pNew = null, pVer = 0;
+    async function loadPosters() {
+      try {
+        const r = await fetch(`${base}/posters.json?t=${Date.now()}`, { cache: 'no-store' });
+        const d = await r.json(); posters = d.posters; pVer = Date.parse(d.updated);
+        renderPosters();
+      } catch { $('p-grid').innerHTML = '<p class="hint">海报列表暂时读不到，请稍后再试。</p>'; }
+    }
+    const pSrc = (p) => p.done || `${base}/${p.file}?v=${pVer}`;
+    function renderPosters() {
+      const q = $('p-search').value.trim().toLowerCase();
+      const item = (p) => `<div class="p-item${p.done ? ' done' : ''}">
+          <img src="${pSrc(p)}" alt="" loading="lazy" style="aspect-ratio:${p.w}/${p.h}" />
+          <div class="t">${esc(p.used.filter((t) => !t.endsWith('）')).join('、') || p.used.join('、') || p.name)}</div>
+          <div class="meta">${p.w}×${p.h}${p.done ? ' · 已更换' : ''}</div>
+          <button type="button" class="ghost" data-file="${esc(p.file)}">更换</button></div>`;
+      const match = (p) => !q || p.name.toLowerCase().includes(q) || p.used.some((t) => t.toLowerCase().includes(q));
+      const used = posters.filter((p) => p.used.length && match(p)), unused = posters.filter((p) => !p.used.length && match(p));
+      $('p-grid').innerHTML = used.map(item).join('') || '<p class="hint">没有找到。</p>';
+      $('p-grid-unused').innerHTML = unused.map(item).join('') || '<p class="hint">没有。</p>';
+    }
+    $('p-search').oninput = renderPosters;
+    document.addEventListener('click', (e) => {
+      const b = e.target.closest('.p-item button[data-file]');
+      if (!b) return;
+      pTarget = posters.find((p) => p.file === b.dataset.file);
+      $('p-file').click();
+    });
+    $('p-file').onchange = async () => {
+      const file = $('p-file').files[0]; $('p-file').value = '';
+      if (!file || !pTarget) return;
+      try {
+        pNew = await prepImage(file, pTarget.w / pTarget.h, 900);
+        $('p-d-title').textContent = `更换海报：${pTarget.used[0] || pTarget.name}`;
+        $('p-d-old').src = pSrc(pTarget); $('p-d-new').src = pNew.url;
+        $('p-d-note').textContent = `新图 ${pNew.w}×${pNew.h}` + (pNew.w < pTarget.w * 0.75 ? '。注意：新图比原来模糊，建议找清晰一点的图。' : '。');
+        say($('p-d-msg'), ''); $('p-d-ok').disabled = false; $('p-dialog').hidden = false;
+      } catch (e) { alert(e.message); }
+    };
+    $('p-d-cancel').onclick = () => { $('p-dialog').hidden = true; pNew = null; };
+    $('p-d-ok').onclick = async () => {
+      if (!pTarget || !pNew) return;
+      $('p-d-ok').disabled = true; say($('p-d-msg'), '上传中…');
+      try {
+        await putFile(`public/${pTarget.file}`, pNew.b64, `更换海报：${pTarget.used[0] || pTarget.name}`);
+        pTarget.done = pNew.url; pTarget.w = pNew.w; pTarget.h = pNew.h;
+        $('p-dialog').hidden = true; renderPosters();
+        setTimeout(loadRuns, 4000);
+        alert(afterSave);
+      } catch (err) { say($('p-d-msg'), err.message, 'err'); $('p-d-ok').disabled = false; }
     };
 
     showKey();

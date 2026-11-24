@@ -39,7 +39,7 @@ function parseBody(src: string): NonNullable<NewsItem['body']> {
   return out;
 }
 
-export type NewsEntry = NewsItem & { section: Section; draft?: boolean };
+export type NewsEntry = NewsItem & { id: string; section: Section; draft?: boolean };
 
 function parse(path: string, text: string): NewsEntry {
   const m = text.replace(/^﻿/, '').match(/^---\s*\n([\s\S]*?)\n---\s*\n?([\s\S]*)$/);
@@ -54,7 +54,7 @@ function parse(path: string, text: string): NewsEntry {
   const str = (k: string) => (typeof fm[k] === 'string' && fm[k] ? (fm[k] as string) : undefined);
   if (!str('date') || !str('title')) throw new Error(`新闻缺少 date 或 title：${path}`);
   return {
-    date: str('date')!, title: str('title')!, tag: str('tag'), img: str('image'), text: str('summary'),
+    id, date: str('date')!, title: str('title')!, tag: str('tag'), img: str('image'), text: str('summary'),
     href: str('link'), source: str('source'),
     slug: str('link') ? undefined : id,
     body: body.length ? body : undefined,
@@ -72,5 +72,7 @@ for (const l of ['zh', 'en'] as Lang[]) byLang[l].sort((a, b) => (a.date < b.dat
 
 /** 列表用：已发布的新闻（不含草稿），最新在前 */
 export const newsList = (lang: Lang, section: Section): NewsItem[] => byLang[lang].filter((n) => n.section === section && !n.draft);
+/** 发布页（/news-admin/）用：全部新闻，含草稿和外链新闻 */
+export const allNews = (lang: Lang): NewsEntry[] => byLang[lang];
 /** 详情页用：所有本站发布的新闻（含草稿） */
 export const newsPages = (lang: Lang): NewsEntry[] => byLang[lang].filter((n) => n.slug && n.body);
