@@ -45,6 +45,8 @@ html[lang='en'] .hero .mesh::after, html[lang='en'] .scroll-hint { display: none
 
 /* audience entry: a bar that closes the hero */
 html[lang='en'] .audience { max-width: none !important; width: 100% !important; height: 86px !important; margin: -86px 0 0 !important; padding: 0 max(24px, calc((100vw - 1192px) / 2)) !important; border-radius: 0 !important; background: rgba(8,14,40,.55) !important; backdrop-filter: blur(14px) !important; box-shadow: none !important; display: grid !important; grid-template-columns: repeat(6, 1fr) !important; gap: 0 !important; color: #fff !important; }
+/* full-width bar: fade in only. The springy scale-in overshoots and makes the page 1px too wide for a moment */
+html[lang='en'] .audience.reveal { transform: none !important; }
 html[lang='en'] .aud-label, html[lang='en'] .aud-ic { display: none !important; }
 html[lang='en'] .aud { display: flex !important; flex-direction: column !important; justify-content: center !important; align-items: stretch !important; text-align: left !important; padding: 0 20px !important; border-radius: 0 !important; border-left: 1px solid rgba(255,255,255,.16) !important; }
 html[lang='en'] .aud-label + .aud { border-left: 0 !important; padding-left: 0 !important; }
