@@ -6,7 +6,6 @@ image: 2026-11-19-kmoksg/cover
 summary: "11月17日，中文在线旗下17K小说网同名IP改编的精品微短剧《一品布衣5：入蜀篇》在横店正式杀青。"
 source: "中文在线微信公众号"
 wechat: https://mp.weixin.qq.com/s/OWzOa7sC45-5tTjdKmoksg
-draft: true
 ---
 ![](2026-11-19-kmoksg/1.jpg)
 
