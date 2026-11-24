@@ -6,7 +6,6 @@ image: 2026-10-23-t34sda/cover
 summary: "罗小黑亮相CLE授权展，新番剧10月30日回归。"
 source: "中文在线微信公众号"
 wechat: https://mp.weixin.qq.com/s/mdTDFS3ARdSw-rSJt34sdA
-draft: true
 ---
 10月21日至23日，第19届CLE中国授权展在上海新国际博览中心举办。中文在线连续第三年携旗下人气动漫IP《罗小黑战记》亮相展会，展位位于W1H15。借助这一行业交流平台，《罗小黑战记》集中展示IP授权与跨界合作成果，持续探索优质国漫IP在多元消费场景中的商业价值。
 
