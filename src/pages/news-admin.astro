@@ -61,8 +61,24 @@ const LOCKED = Object.values(keyFiles)[0] ?? null;
     .tabs button.on { background: #fff; color: var(--ink); box-shadow: 0 4px 12px -6px rgba(10,22,48,.3); }
     .ed-fields .row { margin-top: 0; }
     #ed-body { min-height: 360px; font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 13px; }
-    .ed-help { font-size: 12.5px; color: var(--muted); background: #f6f8fc; border-radius: 12px; padding: 10px 14px; margin-top: 8px; line-height: 1.8; }
-    .ed-help code { background: #e9edf5; border-radius: 6px; padding: 1px 6px; color: var(--ink); }
+    .ed-tools { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 8px; }
+    .ed-tools button { font-size: 13px; padding: 7px 14px; }
+    .ed-help { font-size: 13px; color: var(--muted); margin-top: 8px; }
+    .ed-help summary { cursor: pointer; }
+    .ed-help ul { margin: 8px 0 0; padding-left: 20px; line-height: 1.9; }
+    .ed-help b { color: var(--ink); font-family: ui-monospace, Menlo, Consolas, monospace; font-weight: 600; background: #eef2f9; border-radius: 6px; padding: 0 5px; }
+    .ed-preview { border: 1px solid var(--line); border-radius: 14px; padding: 18px 20px; max-height: 520px; overflow: auto; background: #fff; }
+    .ed-preview h3 { font-size: 17px; color: var(--ink); margin: 22px 0 8px; padding-left: 10px; border-left: 3px solid var(--brand); }
+    .ed-preview p { margin: 0 0 12px; font-size: 15px; line-height: 1.9; }
+    .ed-preview blockquote { margin: 16px 0; padding: 14px 18px; border-radius: 12px; background: #f0f5fc; font-weight: 700; color: var(--ink); }
+    .ed-preview blockquote cite { display: block; margin-top: 6px; font-weight: 400; font-style: normal; font-size: 13px; color: var(--muted); }
+    .ed-preview figure { margin: 16px 0; text-align: center; }
+    .ed-preview figure img { max-width: 100%; border-radius: 10px; display: block; margin: 0 auto; }
+    .ed-preview figcaption { font-size: 13px; color: var(--muted); margin-top: 6px; }
+    .run-head { font-size: 14px; font-weight: 700; margin-bottom: 6px; }
+    .run-head.ok { color: var(--ok); } .run-head.run { color: var(--warn); } .run-head.err { color: var(--err); }
+    #runs li { display: flex; gap: 8px; align-items: baseline; }
+    #runs li .t { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 600; }
     .cover-row { display: flex; gap: 14px; align-items: center; margin-top: 6px; flex-wrap: wrap; }
     .cover-row img { width: 160px; aspect-ratio: 16/9; object-fit: cover; border-radius: 10px; background: #eef2f9; }
     .check { display: flex; gap: 8px; align-items: center; font-weight: 400; }
@@ -159,11 +175,22 @@ const LOCKED = Object.values(keyFiles)[0] ?? null;
           <label>封面图</label>
           <div class="cover-row"><img id="ed-cover" alt="" /><button type="button" class="ghost" id="ed-cover-btn">换封面</button><input type="file" id="ed-cover-file" accept="image/*" hidden /><span class="hint" id="ed-cover-note"></span></div>
           <label for="ed-body">正文</label>
-          <textarea id="ed-body" spellcheck="false"></textarea>
-          <div class="ed-help">
-            段落之间空一行。<code>## 小标题</code> 是小标题；<code>&gt; 引语</code> 是引语，下一行 <code>&gt; — 说话人</code> 写出处；
-            <code>![图注](编号/1.jpg)</code> 是正文里的图片（图片位置可以整行剪切移动，图注写在方括号里）。
+          <div class="ed-tools">
+            <button type="button" class="ghost" data-ins="h">＋ 小标题</button>
+            <button type="button" class="ghost" data-ins="q">＋ 引语</button>
+            <span class="hint">直接改文字就行，段落之间空一行。下面的预览就是网站上的样子。</span>
           </div>
+          <textarea id="ed-body" spellcheck="false"></textarea>
+          <details class="ed-help">
+            <summary>看到奇怪的符号？点这里看说明</summary>
+            <ul>
+              <li>开头是 <b>##</b> 的一行是<strong>小标题</strong>。</li>
+              <li>开头是 <b>&gt;</b> 的行是<strong>引语</strong>；最后一行写 <b>&gt; — 说话人</b>，会显示为出处。</li>
+              <li>像 <b>![图注](……jpg)</b> 这样的一行是<strong>一张图片</strong>：方括号里的字是图注；想挪位置就整行剪切、粘贴到别处；不要这张图就删掉整行。</li>
+            </ul>
+          </details>
+          <label>预览</label>
+          <div class="ed-preview" id="ed-preview"></div>
           <div class="actions"><button type="submit" id="ed-save">保存</button><a class="pill" id="ed-view" target="_blank" rel="noopener" style="padding:11px 20px">在网站上查看</a></div>
         </form>
       </section>
@@ -182,6 +209,7 @@ const LOCKED = Object.values(keyFiles)[0] ?? null;
 
     <section class="card">
       <h2>最近的操作</h2>
+      <div class="run-head" id="run-head"></div>
       <ul class="list" id="runs"><li class="hint">加载中…</li></ul>
     </section>
     </div>
@@ -314,21 +342,46 @@ const LOCKED = Object.values(keyFiles)[0] ?? null;
       } catch (err) { alert(err.message); b.disabled = false; }
     };
 
-    // 最近的操作（GitHub 上的运行记录）
+    // 最近的操作：列出网站内容的每一次改动（GitHub 上的提交记录），并标出是否已经上线。
+    // 一次改动会触发一次「网站更新」；连续几次改动时，前面没跑完的更新会被后面的取代，这是正常的，所以不单独列出更新任务。
     const NAMES = { 'news-import.yml': '导入新闻', 'news-publish.yml': '发布/删除新闻', 'deploy.yml': '网站更新' };
+    const ours = /^(修改新闻|更换|发布新闻|删除新闻|新闻草稿)/;
     async function loadRuns() {
-      const ul = $('runs');
+      const ul = $('runs'), head = $('run-head');
       if (!store.get()) return;
       try {
-        const { workflow_runs } = await gh('/actions/runs?per_page=12');
-        const rows = workflow_runs.filter((w) => NAMES[w.path.split('/').pop()]).slice(0, 6);
-        if (!rows.length) { ul.innerHTML = '<li class="hint">还没有记录。</li>'; return; }
-        ul.innerHTML = rows.map((w) => {
-          const s = w.status !== 'completed' ? ['run', '进行中'] : w.conclusion === 'success' ? ['ok', '完成'] : w.conclusion === 'cancelled' ? ['', '已被新的更新取代'] : ['err', '失败'];
-          const t = new Date(w.created_at).toLocaleString('zh-CN', { month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' });
-          return `<li><span class="status ${s[0]}">${s[1]}</span> <span class="t">${NAMES[w.path.split('/').pop()]}</span> <span class="meta">· ${t}${w.conclusion === 'failure' ? ' · 请把这条截图发给网站负责人' : ''}</span></li>`;
-        }).join('');
-        if (rows.some((w) => w.status !== 'completed')) setTimeout(() => { loadRuns(); loadDrafts(); }, 20000);
+        const [{ workflow_runs: runs }, commits] = await Promise.all([gh('/actions/runs?per_page=30'), gh('/commits?sha=main&per_page=10')]);
+        const file = (w) => w.path.split('/').pop();
+        const deploys = runs.filter((w) => file(w) === 'deploy.yml');
+        const live = deploys.find((w) => w.conclusion === 'success');
+        const liveTime = live ? Date.parse(live.head_commit?.timestamp || live.created_at) : 0;
+        const lastDone = deploys.find((w) => w.status === 'completed' && w.conclusion !== 'cancelled');
+        const busy = runs.some((w) => NAMES[file(w)] && w.status !== 'completed');
+        const fmt = (t) => new Date(t).toLocaleString('zh-CN', { month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+
+        const items = [];
+        for (const c of commits) {
+          const msg = c.commit.message.split('\n')[0], t = Date.parse(c.commit.committer.date);
+          const label = ours.test(msg) ? msg : '网站程序更新（技术人员）';
+          if (items.length && items.at(-1).label === label && !ours.test(msg)) continue; // 连续的程序更新只列一条
+          items.push({ t, label, st: t <= liveTime ? ['ok', '已上线'] : busy ? ['run', '上线中'] : ['err', '未上线'] });
+        }
+        // 还没产生改动的任务：正在处理的导入/发布，以及最近 3 天失败的
+        for (const w of runs) {
+          const f = file(w);
+          if (f === 'deploy.yml' || !NAMES[f]) continue;
+          const t = Date.parse(w.created_at);
+          if (w.status !== 'completed') items.push({ t, label: `${NAMES[f]}（处理中）`, st: ['run', '处理中'] });
+          else if (w.conclusion === 'failure' && Date.now() - t < 3 * 864e5) items.push({ t, label: `${NAMES[f]}没有成功`, st: ['err', '失败'], fail: true });
+        }
+        items.sort((a, b) => b.t - a.t);
+
+        if (busy) { head.className = 'run-head run'; head.textContent = '网站正在更新，约 3–5 分钟后生效。'; }
+        else if (lastDone && lastDone.conclusion === 'failure') { head.className = 'run-head err'; head.textContent = '最近一次网站更新失败，请截图发给网站负责人。'; }
+        else { head.className = 'run-head ok'; head.textContent = `网站已是最新${live ? `（${fmt(live.updated_at)} 更新）` : ''}。`; }
+
+        ul.innerHTML = items.slice(0, 8).map((x) => `<li><span class="status ${x.st[0]}">${x.st[1]}</span><span class="t" title="${esc(x.label)}">${esc(x.label)}</span><span class="meta">${fmt(x.t)}${x.fail ? ' · 请截图发给网站负责人' : ''}</span></li>`).join('') || '<li class="hint">还没有记录。</li>';
+        if (busy) setTimeout(() => { loadRuns(); loadDrafts(); }, 20000);
       } catch (err) { ul.innerHTML = `<li class="hint">${esc(err.message)}</li>`; }
     }
     $('refresh').onclick = async () => {
@@ -443,7 +496,7 @@ const LOCKED = Object.values(keyFiles)[0] ?? null;
         const fm = parsed.fm;
         $('ed-title').value = fm.title || ''; $('ed-date').value = fm.date || ''; $('ed-tag').value = fm.tag || '';
         $('ed-section').value = fm.section || 'official'; $('ed-draft').checked = fm.draft === true || fm.draft === 'true';
-        $('ed-summary').value = fm.summary || ''; $('ed-body').value = parsed.body;
+        $('ed-summary').value = fm.summary || ''; $('ed-body').value = parsed.body; renderPreview();
         $('ed-cover').src = fm.image ? `${base}/news/${fm.image}.jpg?t=${Date.now()}` : ''; $('ed-cover-note').textContent = fm.image ? '' : '（没有封面）';
         const ext = !!fm.link;
         $('ed-view').hidden = ext || isNew; $('ed-view').href = `${base}${lang === 'en' ? '/en' : ''}/news/${id}/`;
@@ -534,6 +587,41 @@ const LOCKED = Object.values(keyFiles)[0] ?? null;
         setTimeout(loadRuns, 4000);
         alert(afterSave);
       } catch (err) { say($('p-d-msg'), err.message, 'err'); $('p-d-ok').disabled = false; }
+    };
+
+    // 正文预览（与网站详情页同样的规则：空行分段，## 小标题，> 引语，![图注](路径) 图片）
+    function renderPreview() {
+      const out = [];
+      for (const raw of $('ed-body').value.split(/\n\s*\n/)) {
+        const c = raw.trim();
+        if (!c) continue;
+        const img = c.match(/^!\[([^\]]*)\]\(([^)\s]+)\)$/);
+        if (img) { out.push(`<figure><img src="${base}/news/${esc(img[2])}" alt="" />${img[1] ? `<figcaption>${esc(img[1])}</figcaption>` : ''}</figure>`); continue; }
+        if (/^#{2,3}\s/.test(c)) { out.push(`<h3>${esc(c.replace(/^#+\s*/, ''))}</h3>`); continue; }
+        if (c.startsWith('>')) {
+          const lines = c.split('\n').map((l) => l.replace(/^>\s?/, '').trim()).filter(Boolean);
+          const last = lines.at(-1), by = lines.length > 1 && /^[—–-]{1,2}\s*/.test(last) ? last.replace(/^[—–-]{1,2}\s*/, '') : '';
+          out.push(`<blockquote>“${esc((by ? lines.slice(0, -1) : lines).join(' '))}”${by ? `<cite>— ${esc(by)}</cite>` : ''}</blockquote>`);
+          continue;
+        }
+        out.push(`<p>${esc(c.replace(/\s*\n\s*/g, ' '))}</p>`);
+      }
+      $('ed-preview').innerHTML = out.join('') || '<p class="hint">（正文是空的）</p>';
+    }
+    $('ed-body').addEventListener('input', renderPreview);
+    // 插入小标题 / 引语：放在光标所在的位置，前后自动空行，并选中占位文字方便直接改
+    document.querySelector('.ed-tools').onclick = (e) => {
+      const b = e.target.closest('button[data-ins]');
+      if (!b) return;
+      const ta = $('ed-body'), v = ta.value;
+      const [snippet, ph] = b.dataset.ins === 'h' ? ['## 小标题', '小标题'] : ['> 引语内容\n> — 说话人', '引语内容'];
+      let at = ta.selectionEnd ?? v.length;
+      const nl = v.indexOf('\n\n', at); at = nl === -1 ? v.length : nl; // 插到当前段落后面
+      const before = v.slice(0, at).replace(/\s*$/, ''), after = v.slice(at).replace(/^\s*/, '');
+      ta.value = `${before}${before ? '\n\n' : ''}${snippet}\n\n${after}`;
+      const start = before.length + (before ? 2 : 0) + snippet.indexOf(ph);
+      ta.focus(); ta.setSelectionRange(start, start + ph.length);
+      renderPreview();
     };
 
     showKey();
