@@ -6,7 +6,6 @@ image: 2026-11-05-nd86da/cover
 summary: "中文在线旗下国际微短剧平台FlareFlow已于本周正式登陆泰国领先电信运营商AIS（Advanced Info Service）旗下数字娱乐平台AIS PLAY，面向泰国用户推出独立FlareFlow内容专区，提供涵盖多语言、多题材的优质竖屏娱乐内容。"
 source: "中文在线微信公众号"
 wechat: https://mp.weixin.qq.com/s/mxjBhQxzakqREsRYNd86dA
-draft: true
 ---
 中文在线旗下国际微短剧平台FlareFlow已于本周正式登陆泰国领先电信运营商AIS（Advanced Info Service）旗下数字娱乐平台AIS PLAY，面向泰国用户推出独立FlareFlow内容专区，提供涵盖多语言、多题材的优质竖屏娱乐内容。此次合作是继与泰国正大集团、中南美地区电信运营商Digicel达成合作之后，FlareFlow扩大多端分发矩阵、落地东南亚市场的重要进展，也是中文在线依托海外电信运营商渠道推进短剧专区分发与本地化运营的又一实践。
 
