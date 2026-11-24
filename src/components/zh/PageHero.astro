@@ -23,11 +23,6 @@ const { title, en, intro, theme = ['#0071ce', '#00c1de'], crumbs = [] } = Astro.
   </div>
   <div class="container inner">
     <div class="text">
-      <nav class="crumbs" aria-label={ui.crumbs}>
-        <a href={u("/")} class="link-u">{ui.home}</a>
-        {crumbs.map((c) => <><span>/</span><a href={u(c.href)} class="link-u">{c.label}</a></>)}
-        <span>/</span><span class="here">{title}</span>
-      </nav>
       <h1>{title}</h1>
       <p>{intro}</p>
     </div>

@@ -14,6 +14,7 @@ export type Stat = { value: string; unit?: string; label: string };
 export type NewsItem = { date: string; title: string; tag?: string; img?: string; text?: string; href?: string; slug?: string; source?: string;
   body?: ({ h: string } | { p: string } | { quote: string; by?: string } | { img: string; cap?: string })[] };
 // 新闻内容不在这个文件里：每篇新闻一个文件夹 src/news/<编号>/（zh.md / en.md），由 src/lib/news.ts 读取
+import { ipList } from '../lib/ips';
 import { newsList } from '../lib/news';
 export type Card = { id?: string; logo?: string; img?: string; title: string; text?: string; meta?: string; tag?: string; href?: string; external?: boolean; color?: [string, string] };
 export type Cover = { title: string; sub?: string; poster?: string };
@@ -444,83 +445,7 @@ const ipPage: Page = {
     {
       id: 'wall', label: 'IP墙', en: 'IP WALL', title: '明星IP',
       blocks: [
-        { type: 'ipwall', note: '海报与数据取自《中文在线集团介绍》（2026-09）及公司定期报告。点击海报查看作品介绍。', items: [
-          { slug: 'luoxiaohei', title: '罗小黑战记', genre: '电影·番剧', forms: ['动画番剧', '电影', '衍生品'], tags: ['《罗小黑战记2》票房超5.33亿', '10余个国家和地区发行'], poster: 'luoxiaohei',
-            intro: '2023年，中文在线收购《罗小黑战记》出品方寒木春华控股权。通过精细化运营，罗小黑已构建从动画番剧、番外漫画、动画电影到衍生周边的IP闭环生态，逐步成长为完整的IP宇宙。',
-            stats: [
-              { value: '5.33', unit: '亿元', label: '《罗小黑战记2》中国大陆票房' },
-              { value: '8.7', label: '豆瓣评分' },
-              { value: '10', unit: '余个', label: '海外发行国家和地区' },
-              { value: '40', unit: '+家', label: '电影联名品牌' },
-            ],
-            highlights: [
-              { k: '2011', v: '动画番剧首播，全网播放量超10亿次' },
-              { k: '2012', v: '导演MTJJ组建团队，创办寒木春华' },
-              { k: '2019', v: '第一部电影《罗小黑战记》上映，票房破3.15亿元；入围第44届昂西国际动画电影节（唯一华语入围影片）' },
-              { k: '2020', v: '日语配音版由Aniplex发行、全线进入日本商业院线，票房突破5.8亿日元' },
-              { k: '2025', v: '《罗小黑战记2》7月18日在中国大陆上映，票房破5.33亿元，并在美国、加拿大、马来西亚、澳大利亚、新西兰、泰国、日本、印度尼西亚、法国等10余个国家和地区发行' },
-              { k: '2025', v: '获奥斯卡最佳动画长片参评资格，为名单中唯一一部国产动画片；日语配音版上映3天票房破1亿日元，登上Filmarks首映满意度排行榜第1位' },
-              { k: '2026', v: '获第二十二届中国国际动漫节“金猴奖”综合奖动画电影金奖；受邀赴英国参加“2026英国·中国电影周”展映' },
-              { k: '联名', v: '联名王者荣耀、必胜客、泡泡玛特、名创优品、Akko、和平精英等超40家品牌，覆盖餐饮、潮玩、服饰、数码、非遗等领域' },
-            ],
-            video: 'luoxiaohei2-trailer', images: ['luoxiaohei2'], source: '《中文在线集团介绍》（2026-09）第18–19页' },
-          { slug: 'xiuluowushen', title: '修罗武神', genre: '漫剧', forms: ['网文', '有声', '3D动画'], tags: ['第二季登顶腾讯视频动漫玄幻榜', '有声播放超50亿'], poster: 'xiuluowushen',
-            intro: '平台头部网文IP，从网文、有声到3D动画全模态开发，是中文在线“网文连载+IP衍生同步开发”的代表作品。',
-            stats: [
-              { value: '50', unit: '亿', label: '有声历史播放量' },
-              { value: 'TOP2', label: '动画首季腾讯视频动漫热播榜' },
-            ],
-            highlights: [
-              { k: '有声', v: '有声版历史播放量达50亿，位列公司头部有声作品第一' },
-              { k: '2023', v: '3D动画于腾讯视频开播，首日拿下站内热搜TOP7、动漫热播榜TOP2' },
-              { k: '2026', v: '第二季于2月24日上线，开播即登顶腾讯视频动漫玄幻榜，并冲入国漫榜、热播榜及3D榜单TOP3' },
-            ],
-            source: '《中文在线集团介绍》（2026-09）第16–17页' },
-          { slug: 'yipinbuyi', title: '一品布衣', genre: '短剧', forms: ['网文', '微短剧'], tags: ['前四部全网播放超60亿', '《综艺报》2025年度微短剧'], poster: 'yipinbuyi',
-            intro: '17K小说改编的现象级男频爆款微短剧系列，是中文在线“优质文学IP + 精品短剧”双向价值传导的代表作。',
-            stats: [
-              { value: '60', unit: '亿+', label: '系列前四部全网播放' },
-              { value: '30', unit: '亿+', label: '《一品布衣1》全网播放' },
-              { value: '900', unit: '%+', label: '《一品布衣1》项目ROI' },
-              { value: '1,000', unit: '万+', label: '收藏人数' },
-            ],
-            highlights: [
-              { k: '荣誉', v: '入选“北京大视听”重点网络精品项目；获《综艺报》2025年度影响力名单「年度微短剧」' },
-              { k: '荣誉', v: '2025海峡两岸WE短剧大赛优秀热播短剧；入选北京广电“春节必看的45部视听精品”片单' },
-              { k: '2026', v: '《一品布衣2：烽火篇》上线次日有效播放量突破1.16亿，登顶红果短剧热播榜总榜' },
-              { k: 'AI', v: '《一品布衣》AI重制版已完成评级' },
-            ],
-            video: 'yipinbuyi', vertical: true, images: ['yipinbuyi1'], source: '《中文在线集团介绍》（2026-09）第20页、2026年半年度报告' },
-          { slug: 'yiyou', title: '乙游系统觉醒，我在星际撩疯了', genre: '短剧', forms: ['AI 3D漫剧'], tags: ['火龙漫剧热播榜第1名'], poster: 'yiyou',
-            intro: '中文在线自制AI 3D女频漫剧，标志着公司AI漫剧从男频热血向女频情绪价值的全面拓展。',
-            stats: [
-              { value: 'TOP1', label: '火龙漫剧热播榜、热搜榜' },
-              { value: '5', unit: '大语种', label: '海外日榜TOP1' },
-            ],
-            highlights: [
-              { k: '国内', v: '2026年3月登顶火龙漫剧热播榜、热搜榜双榜TOP1，上线后蝉联多日' },
-              { k: '海外', v: '短时间内接连登顶英语、西班牙语、法语、意大利语及日语五大语种区域日榜榜首，刷新中国AI漫剧出海记录' },
-            ],
-            source: '《中文在线集团介绍》（2026-09）第17页、2026年半年度报告' },
-          { slug: 'justice', title: 'She Means Justice', genre: '短剧', forms: ['FlareFlow', '海外短剧'], tags: ['首月全球播放超1.8亿', '国际短剧节“杰出IP系列奖”'], poster: 'justice',
-            intro: 'FlareFlow原创欧美短剧IP，女性复仇与法律惊悚题材。第一部上线首月全球播放超1.8亿次，续作《She Means Justice 2: Breakout》于2026年5月在FlareFlow与美国短剧平台GammaTime同步上线，是最早的欧美原创竖屏短剧系列续作之一。',
-            stats: [
-              { value: '1.8', unit: '亿次+', label: '第一部首月全球播放' },
-              { value: '900', unit: '万+', label: '预告片YouTube 72小时播放' },
-            ],
-            highlights: [
-              { k: '奖项', v: '第一部、第二部获2026年国际短剧节“杰出IP系列奖”（2026年11月15日，美国洛杉矶好莱坞）' },
-              { k: '续作', v: '《She Means Justice 2: Breakout》在FlareFlow与GammaTime同步上线，在加州兰开斯特一座停用的州立监狱实景拍摄' },
-              { k: '媒体', v: '获国际文娱媒体《Variety》报道（2026年5月29日）' },
-            ],
-            images: ['justice', 'justice2'], source: '《Variety》报道（2026-05-29）、2026国际短剧节获奖证书' },
-          { slug: 'charms99', title: '99 Charms, 99 Heartbreaks', genre: '短剧', forms: ['FlareFlow', '海外短剧'], tags: ['洛杉矶Vertical Shorts Festival最佳短剧奖'], poster: 'charms99',
-            intro: 'FlareFlow精品短剧，经历“中文原版—英文版—本土化改编”三步，是FlareFlow本土化方法的代表作。',
-            highlights: [
-              { k: '奖项', v: '从200余部参赛作品中脱颖而出，获洛杉矶Vertical Shorts Festival「最佳短剧奖」' },
-            ],
-            source: '官方新闻（2026-09-17）' },
-        ] },
+        { type: 'ipwall', note: '海报与数据取自《中文在线集团介绍》（2026-09）及公司定期报告。点击海报查看作品介绍。', items: ipList('zh') },
       ],
     },
     {

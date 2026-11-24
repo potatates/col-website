@@ -319,12 +319,13 @@ const isNum = (v: string) => /^[\d,]+$/.test(v);
       );
 
     case 'news': {
-      // 新闻列表（11/24 起不再显示标签筛选按钮）
+      // 新闻列表（11/24 起不再显示标签筛选按钮）。超过 SHOW 条时先显示前 SHOW 条，点「查看更多」每次多显示 SHOW 条。
+      const SHOW = 8;
       return (
         <div class="b-newswrap">
           <ul class="b-news">
             {b.items.map((n, i) => (
-              <li class="reveal" id={`news-${n.date}`} data-tag={n.tag} style={`--d:${i * 60}ms`}>
+              <li class="reveal" id={`news-${n.date}`} data-tag={n.tag} style={`--d:${(i % SHOW) * 60}ms`} hidden={i >= SHOW}>
                 {(() => {
                   // 有原文链接（官网文章，与公众号同文）时整行可点，新窗口打开
                   const own = !!(n.slug && n.body);
@@ -346,6 +347,11 @@ const isNum = (v: string) => /^[\d,]+$/.test(v);
               </li>
             ))}
           </ul>
+          {b.items.length > SHOW && (
+            <div class="news-morewrap">
+              <button type="button" class="btn btn-outline news-more" data-step={SHOW}>{lang === 'en' ? 'Show more' : '查看更多'} <span class="news-more-n">{b.items.length - SHOW}</span></button>
+            </div>
+          )}
         </div>
       );
     }
@@ -871,6 +877,9 @@ const isNum = (v: string) => /^[\d,]+$/.test(v);
   .news-img { width: 220px; aspect-ratio: 16 / 9; object-fit: cover; border-radius: 14px; }
   .news-body { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
   .news-meta { display: flex; align-items: center; gap: 12px; }
+  .news-morewrap { display: flex; justify-content: center; margin-top: 28px; }
+  .b-news li[hidden] { display: none; }
+  .news-more-n { opacity: .6; } .news-more-n::before { content: '('; } .news-more-n::after { content: ')'; }
   .news-text { font-size: 14px; line-height: 1.7; color: var(--muted); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
   .news-go { font-size: 13px; font-weight: 700; color: var(--c1, var(--brand)); white-space: nowrap; }
   .news-go .arrow { display: inline-block; transition: transform .4s var(--spring); }
@@ -1120,3 +1129,20 @@ const isNum = (v: string) => /^[\d,]+$/.test(v);
     .b-contact .btn { margin-left: 0; }
   }
 </style>
+
+<script is:inline>
+  // 新闻列表「查看更多」：每次多显示 data-step 条，全部显示后按钮消失。监听只装一次（页面过渡后脚本会再次执行）。
+  if (!window.__newsMore) {
+    window.__newsMore = true;
+    document.addEventListener('click', (e) => {
+      const b = e.target.closest && e.target.closest('.news-more');
+      if (!b) return;
+      const wrap = b.closest('.b-newswrap'), step = Number(b.dataset.step) || 8;
+      const hidden = [...wrap.querySelectorAll('.b-news > li[hidden]')];
+      hidden.slice(0, step).forEach((li) => { li.hidden = false; li.classList.add('in'); });
+      const left = hidden.length - step;
+      if (left <= 0) b.parentElement.remove();
+      else b.querySelector('.news-more-n').textContent = String(left);
+    });
+  }
+</script>

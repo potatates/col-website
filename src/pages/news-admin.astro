@@ -83,6 +83,17 @@ const LOCKED = Object.values(keyFiles)[0] ?? null;
     .cover-row img { width: 160px; aspect-ratio: 16/9; object-fit: cover; border-radius: 10px; background: #eef2f9; }
     .check { display: flex; gap: 8px; align-items: center; font-weight: 400; }
     .check input { width: auto; }
+    .ip-row { display: flex; gap: 12px; align-items: center; }
+    .ip-row img { width: 54px; aspect-ratio: 3/4; object-fit: cover; border-radius: 8px; background: #eef2f9; flex-shrink: 0; }
+    .ip-row .ip-info { flex: 1; min-width: 0; }
+    .ip-row.off img, .ip-row.off .ip-info { opacity: .45; }
+    .ip-row .ip-btns { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
+    .ip-row .ip-btns button { font-size: 12.5px; padding: 6px 11px; }
+    .ip-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .ip-cols h3 { font-size: 14px; color: var(--ink); margin: 14px 0 0; }
+    .ip-save { position: sticky; bottom: 12px; display: flex; gap: 12px; align-items: center; background: #fff; border-radius: 999px; padding: 8px 8px 8px 18px; margin-top: 18px; box-shadow: 0 10px 30px -12px rgba(10,22,48,.35); }
+    .ip-save .hint { flex: 1; }
+    @media (max-width: 560px) { .ip-cols { grid-template-columns: 1fr; } .ip-row { flex-wrap: wrap; } }
     .p-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 16px; margin-top: 14px; }
     .p-item { display: flex; flex-direction: column; gap: 6px; }
     .p-item img { width: 100%; object-fit: cover; border-radius: 10px; background: #eef2f9; }
@@ -117,6 +128,7 @@ const LOCKED = Object.values(keyFiles)[0] ?? null;
     <nav class="tabs" id="tabs">
       <button type="button" class="on" data-tab="t-news">导入与发布</button>
       <button type="button" data-tab="t-edit">修改新闻</button>
+      <button type="button" data-tab="t-ips">IP 作品</button>
       <button type="button" data-tab="t-posters">更换海报</button>
     </nav>
 
@@ -193,6 +205,42 @@ const LOCKED = Object.values(keyFiles)[0] ?? null;
           <div class="ed-preview" id="ed-preview"></div>
           <div class="actions"><button type="submit" id="ed-save">保存</button><a class="pill" id="ed-view" target="_blank" rel="noopener" style="padding:11px 20px">在网站上查看</a></div>
         </form>
+      </section>
+    </div>
+
+    <div id="t-ips" hidden>
+      <section class="card">
+        <h2>IP 作品</h2>
+        <p class="hint">「IP 与作品」页的明星 IP 墙和首页的 IP 精选。列表顺序就是网站上的顺序；隐藏的作品不在网站上显示（之后可以再打开）。改完点最下面的「保存」。</p>
+        <ul class="list" id="ip-list" style="margin-top:10px"><li class="hint">加载中…</li></ul>
+        <div class="actions"><button type="button" class="ghost" id="ip-add">＋ 新增作品</button></div>
+        <div class="msg" id="ip-msg"></div>
+
+        <form id="ip-form" hidden>
+          <h2 id="ip-form-title" style="margin-top:22px">编辑作品</h2>
+          <div class="cover-row"><img id="ip-poster" alt="" style="width:120px;aspect-ratio:3/4" /><button type="button" class="ghost" id="ip-poster-btn">选择海报</button><input type="file" id="ip-poster-file" accept="image/*" hidden /><span class="hint" id="ip-poster-note">竖版海报，自动裁成 3:4</span></div>
+          <div class="ip-cols">
+            <div><h3>中文</h3>
+              <label for="ip-zh-title">作品名</label><input id="ip-zh-title" />
+              <label for="ip-zh-genre">类型</label><input id="ip-zh-genre" list="ip-genres-zh" placeholder="如：短剧" />
+              <label for="ip-zh-forms">形态（用顿号隔开）</label><input id="ip-zh-forms" placeholder="如：网文、微短剧" />
+              <label for="ip-zh-tags">亮点标签（每行一个，建议 1–2 个）</label><textarea id="ip-zh-tags" rows="2"></textarea>
+              <label for="ip-zh-intro">简介</label><textarea id="ip-zh-intro" rows="4"></textarea>
+            </div>
+            <div><h3>English</h3>
+              <label for="ip-en-title">Title</label><input id="ip-en-title" />
+              <label for="ip-en-genre">Genre</label><input id="ip-en-genre" list="ip-genres-en" placeholder="e.g. Microdrama" />
+              <label for="ip-en-forms">Formats (comma separated)</label><input id="ip-en-forms" placeholder="e.g. Webnovel, Microdrama" />
+              <label for="ip-en-tags">Highlight tags (one per line)</label><textarea id="ip-en-tags" rows="2"></textarea>
+              <label for="ip-en-intro">Intro</label><textarea id="ip-en-intro" rows="4"></textarea>
+            </div>
+          </div>
+          <datalist id="ip-genres-zh"></datalist><datalist id="ip-genres-en"></datalist>
+          <p class="hint" style="margin-top:10px">作品详情页上的数据卡片和大事记暂时不能在这里改（已有的会保留）；新作品的详情页显示简介和标签。</p>
+          <div class="actions"><button type="submit">确定</button><button type="button" class="ghost" id="ip-cancel">取消</button></div>
+        </form>
+
+        <div class="ip-save" id="ip-savebar" hidden><span class="hint" id="ip-dirty">有改动还没保存</span><button type="button" id="ip-save">保存</button></div>
       </section>
     </div>
 
@@ -345,7 +393,7 @@ const LOCKED = Object.values(keyFiles)[0] ?? null;
     // 最近的操作：列出网站内容的每一次改动（GitHub 上的提交记录），并标出是否已经上线。
     // 一次改动会触发一次「网站更新」；连续几次改动时，前面没跑完的更新会被后面的取代，这是正常的，所以不单独列出更新任务。
     const NAMES = { 'news-import.yml': '导入新闻', 'news-publish.yml': '发布/删除新闻', 'deploy.yml': '网站更新' };
-    const ours = /^(修改新闻|更换|发布新闻|删除新闻|新闻草稿)/;
+    const ours = /^(修改新闻|更换|更新 IP|发布新闻|删除新闻|新闻草稿)/;
     async function loadRuns() {
       const ul = $('runs'), head = $('run-head');
       if (!store.get()) return;
@@ -404,6 +452,7 @@ const LOCKED = Object.values(keyFiles)[0] ?? null;
       for (const x of $('tabs').querySelectorAll('button')) { x.classList.toggle('on', x === b); $(x.dataset.tab).hidden = x !== b; }
       if (b.dataset.tab === 't-edit' && !loaded.edit) { loaded.edit = true; loadNewsList(); }
       if (b.dataset.tab === 't-posters' && !loaded.posters) { loaded.posters = true; loadPosters(); }
+      if (b.dataset.tab === 't-ips' && !loaded.ips) { loaded.ips = true; loadIps(); }
     };
 
     // ---------- 直接修改仓库里的文件（GitHub Contents 接口；需要钥匙有 Contents 读写权限） ----------
@@ -622,6 +671,100 @@ const LOCKED = Object.values(keyFiles)[0] ?? null;
       const start = before.length + (before ? 2 : 0) + snippet.indexOf(ph);
       ta.focus(); ta.setSelectionRange(start, start + ph.length);
       renderPreview();
+    };
+
+    // ---------- IP 作品（src/data/ips.json，一个文件存全部作品，中英文在同一条里） ----------
+    let ipData = null, ipEdit = null, ipPosters = {}, ipChanges = [];
+    const IP_FILE = 'src/data/ips.json';
+    async function loadIps() {
+      try {
+        const f = await getFile(IP_FILE);
+        if (!f) throw new Error('找不到作品数据文件。');
+        ipData = JSON.parse(fromB64(f.content)); ipPosters = {}; ipChanges = [];
+        renderIps();
+      } catch (e) { $('ip-list').innerHTML = `<li class="hint">${esc(e.message)}</li>`; }
+    }
+    const ipPosterSrc = (w) => ipPosters[w.poster]?.url || (w.poster ? `${base}/posters/${w.poster}.jpg` : '');
+    function renderIps() {
+      const works = ipData.works;
+      $('ip-list').innerHTML = works.map((w, i) => `<li class="ip-row${w.hidden ? ' off' : ''}">
+          <img src="${ipPosterSrc(w)}" alt="" loading="lazy" />
+          <div class="ip-info"><div class="t">${esc(w.zh?.title || w.slug)}</div><div class="meta">${esc(w.en?.title || '（缺英文名）')} · ${esc(w.zh?.genre || '')}${w.hidden ? ' · 已隐藏' : ''}</div></div>
+          <div class="ip-btns">
+            <button type="button" class="ghost" data-ip="up" data-i="${i}" ${i === 0 ? 'disabled' : ''} aria-label="上移">↑</button>
+            <button type="button" class="ghost" data-ip="down" data-i="${i}" ${i === works.length - 1 ? 'disabled' : ''} aria-label="下移">↓</button>
+            <button type="button" class="ghost" data-ip="toggle" data-i="${i}">${w.hidden ? '显示' : '隐藏'}</button>
+            <button type="button" class="ghost" data-ip="edit" data-i="${i}">编辑</button>
+          </div></li>`).join('');
+      const g = (l) => [...new Set(works.map((w) => w[l]?.genre).filter(Boolean))].map((x) => `<option value="${esc(x)}"></option>`).join('');
+      $('ip-genres-zh').innerHTML = g('zh'); $('ip-genres-en').innerHTML = g('en');
+      $('ip-savebar').hidden = !ipChanges.length;
+      $('ip-dirty').textContent = ipChanges.length ? `有 ${ipChanges.length} 处改动还没保存` : '';
+    }
+    const changed = (what) => { ipChanges.push(what); renderIps(); say($('ip-msg'), ''); };
+    $('ip-list').onclick = (e) => {
+      const b = e.target.closest('button[data-ip]');
+      if (!b) return;
+      const i = Number(b.dataset.i), works = ipData.works, w = works[i];
+      if (b.dataset.ip === 'up' && i > 0) { works.splice(i - 1, 0, works.splice(i, 1)[0]); changed(`调整顺序`); }
+      if (b.dataset.ip === 'down' && i < works.length - 1) { works.splice(i + 1, 0, works.splice(i, 1)[0]); changed(`调整顺序`); }
+      if (b.dataset.ip === 'toggle') { w.hidden = !w.hidden; changed(`${w.hidden ? '隐藏' : '显示'}《${w.zh?.title}》`); }
+      if (b.dataset.ip === 'edit') openIp(w);
+    };
+    const lines = (v) => v.split('\n').map((x) => x.trim()).filter(Boolean);
+    const parts = (v) => v.split(/[、,，;；]/).map((x) => x.trim()).filter(Boolean);
+    function openIp(w) {
+      ipEdit = w ? { w, isNew: false } : { w: { slug: '', poster: '', hidden: false, zh: {}, en: {} }, isNew: true };
+      const z = ipEdit.w.zh || {}, n = ipEdit.w.en || {};
+      $('ip-form-title').textContent = ipEdit.isNew ? '新增作品' : `编辑：${z.title || ipEdit.w.slug}`;
+      $('ip-zh-title').value = z.title || ''; $('ip-zh-genre').value = z.genre || ''; $('ip-zh-forms').value = (z.forms || []).join('、');
+      $('ip-zh-tags').value = (z.tags || []).join('\n'); $('ip-zh-intro').value = z.intro || '';
+      $('ip-en-title').value = n.title || ''; $('ip-en-genre').value = n.genre || ''; $('ip-en-forms').value = (n.forms || []).join(', ');
+      $('ip-en-tags').value = (n.tags || []).join('\n'); $('ip-en-intro').value = n.intro || '';
+      $('ip-poster').src = ipPosterSrc(ipEdit.w); ipEdit.poster = null;
+      $('ip-poster-note').textContent = ipEdit.isNew ? '必须选一张竖版海报（自动裁成 3:4）' : '要换海报就点「选择海报」';
+      $('ip-form').hidden = false; $('ip-form').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+    $('ip-add').onclick = () => openIp(null);
+    $('ip-cancel').onclick = () => { $('ip-form').hidden = true; ipEdit = null; };
+    $('ip-poster-btn').onclick = () => $('ip-poster-file').click();
+    $('ip-poster-file').onchange = async () => {
+      const file = $('ip-poster-file').files[0]; $('ip-poster-file').value = '';
+      if (!file || !ipEdit) return;
+      try { ipEdit.poster = await prepImage(file, 3 / 4, 900); $('ip-poster').src = ipEdit.poster.url; $('ip-poster-note').textContent = `新海报 ${ipEdit.poster.w}×${ipEdit.poster.h}，点「确定」后生效`; }
+      catch (e) { say($('ip-msg'), e.message, 'err'); }
+    };
+    $('ip-form').onsubmit = (e) => {
+      e.preventDefault();
+      const { w, isNew } = ipEdit;
+      const zt = $('ip-zh-title').value.trim(), et = $('ip-en-title').value.trim();
+      if (!zt) return alert('请填写中文作品名。');
+      if (isNew && !ipEdit.poster) return alert('新作品需要一张海报。');
+      w.zh = { ...w.zh, title: zt, genre: $('ip-zh-genre').value.trim(), forms: parts($('ip-zh-forms').value), tags: lines($('ip-zh-tags').value), intro: $('ip-zh-intro').value.trim() || undefined };
+      w.en = { ...w.en, title: et || undefined, genre: $('ip-en-genre').value.trim() || undefined, forms: parts($('ip-en-forms').value), tags: lines($('ip-en-tags').value), intro: $('ip-en-intro').value.trim() || undefined };
+      if (isNew) {
+        // 网址里的作品编号：用英文名生成（只含字母数字和连字符），重名时加数字
+        let slug = (et || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 40) || `ip-${Date.now().toString(36)}`;
+        const taken = new Set(ipData.works.map((x) => x.slug)); let s0 = slug, k = 2; while (taken.has(slug)) slug = `${s0}-${k++}`;
+        w.slug = slug; w.poster = slug; ipData.works.push(w);
+      }
+      if (ipEdit.poster) { if (!w.poster) w.poster = w.slug; ipPosters[w.poster] = ipEdit.poster; }
+      $('ip-form').hidden = true; ipEdit = null;
+      changed(isNew ? `新增《${zt}》` : `修改《${zt}》`);
+      if (!et) say($('ip-msg'), '提醒：还没有英文名，英文网站会先显示中文名。', 'warn');
+    };
+    $('ip-save').onclick = async () => {
+      if (!ipChanges.length) return;
+      const b = $('ip-save'); b.disabled = true; say($('ip-msg'), '保存中…');
+      try {
+        for (const [name, img] of Object.entries(ipPosters)) await putFile(`public/posters/${name}.jpg`, img.b64, `更换海报：${name}`);
+        const summary = [...new Set(ipChanges)].join('，').slice(0, 80);
+        await putFile(IP_FILE, textB64(JSON.stringify(ipData, null, 2) + '\n'), `更新 IP 作品：${summary}`);
+        ipChanges = []; ipPosters = {}; renderIps();
+        say($('ip-msg'), afterSave, 'ok');
+        setTimeout(loadRuns, 4000);
+      } catch (err) { say($('ip-msg'), err.message, 'err'); }
+      finally { b.disabled = false; }
     };
 
     showKey();

@@ -2,6 +2,7 @@
 // Placeholders marked [Sample] / To be provided / to be verified must be confirmed before launch.
 // Internal hrefs stay unprefixed (e.g. '/business#data'); the /en prefix is added at render time.
 
+import { ipList } from '../lib/ips';
 import { bizColor, type Page, type Block, type Stat } from './zh';
 import { newsList } from '../lib/news';
 
@@ -377,83 +378,7 @@ const ipPage: Page = {
     {
       id: 'wall', label: 'IP Wall', en: 'IP WALL', title: 'Featured IP',
       blocks: [
-        { type: 'ipwall', note: 'Posters and figures from the COL Group corporate presentation (Sept 2026) and COL’s periodic reports. Click a poster to learn about the work.', items: [
-          { slug: 'luoxiaohei', title: 'The Legend of Hei', genre: 'Film & Series', forms: ['Animated series', 'Film', 'Merchandise'], tags: ['The Legend of Hei 2: RMB 533M+ box office', 'Released in 10+ countries and regions'], poster: 'luoxiaohei',
-            intro: 'In 2023 COL acquired a controlling stake in Hanmu Chunhua, the studio behind The Legend of Hei. The franchise now spans an animated series, spin-off comics, feature films and merchandise, growing into a complete IP universe.',
-            stats: [
-              { value: '533', unit: 'M RMB', label: 'The Legend of Hei 2 mainland box office' },
-              { value: '8.7', label: 'Douban rating' },
-              { value: '10', unit: '+', label: 'Overseas release markets' },
-              { value: '40', unit: '+', label: 'Brand collaborations for the film' },
-            ],
-            highlights: [
-              { k: '2011', v: 'The animated series premieres and goes on to pass 1 billion views' },
-              { k: '2012', v: 'Director MTJJ founds the studio Hanmu Chunhua' },
-              { k: '2019', v: 'The first film grosses over RMB 315 million and is selected for the 44th Annecy International Animation Film Festival (the only Chinese-language film selected)' },
-              { k: '2020', v: 'The Japanese dub, released by Aniplex in Japanese cinemas nationwide, earns over JPY 580 million' },
-              { k: '2025', v: 'The Legend of Hei 2 opens in mainland China on July 18, grosses over RMB 533 million, and is released in 10+ markets including the US, Canada, Malaysia, Australia, New Zealand, Thailand, Japan, Indonesia and France' },
-              { k: '2025', v: 'Qualifies for the Academy Award for Best Animated Feature, the only Chinese animation on the list. The Japanese dub passes JPY 100 million in three days and ranks No. 1 on Filmarks’ first-day satisfaction chart' },
-              { k: '2026', v: 'Wins the Gold Award for animated film at the 22nd China International Cartoon & Animation Festival (Golden Monkey Award), and screens at the 2026 UK–China Film Week' },
-              { k: 'Brands', v: 'Collaborations with 40+ brands including Honor of Kings, Pizza Hut, Pop Mart, MINISO, Akko and Game for Peace, across food, toys, fashion, tech and intangible heritage' },
-            ],
-            video: 'luoxiaohei2-trailer', images: ['luoxiaohei2'], source: 'COL Group corporate presentation (Sept 2026), pp. 18–19' },
-          { slug: 'xiuluowushen', title: 'Martial God Asura', genre: 'Animation', forms: ['Webnovel', 'Audio', '3D animation'], tags: ['Season 2 topped Tencent Video’s fantasy animation chart', '5B audio plays'], poster: 'xiuluowushen',
-            intro: 'A flagship webnovel IP developed across every format, from webnovel and audio to 3D animation. It shows how COL develops IP while stories are still being serialized.',
-            stats: [
-              { value: '5', unit: 'B', label: 'Lifetime audiobook plays' },
-              { value: 'TOP2', label: 'Tencent Video animation chart (season 1)' },
-            ],
-            highlights: [
-              { k: 'Audio', v: 'The audiobook has 5 billion lifetime plays, the most of any COL audio title' },
-              { k: '2023', v: 'The 3D animation premieres on Tencent Video, reaching No. 7 on the site’s trending searches and No. 2 on its animation chart on day one' },
-              { k: '2026', v: 'Season 2 launches on February 24 and immediately tops Tencent Video’s fantasy animation chart, reaching the top 3 of its Chinese animation, trending and 3D charts' },
-            ],
-            source: 'COL Group corporate presentation (Sept 2026), pp. 16–17' },
-          { slug: 'yipinbuyi', title: 'Yi Pin Bu Yi (The Commoner)', genre: 'Microdrama', forms: ['Webnovel', 'Microdrama'], tags: ['6B+ views across the first four seasons', 'Zongyi Bao Microdrama of the Year 2025'], poster: 'yipinbuyi',
-            intro: 'A breakout microdrama series adapted from a 17K novel, and a model for how quality literary IP and premium microdrama lift each other.',
-            stats: [
-              { value: '6', unit: 'B+', label: 'Views across the first four seasons' },
-              { value: '3', unit: 'B+', label: 'Views of season 1' },
-              { value: '900', unit: '%+', label: 'Season 1 project ROI' },
-              { value: '10', unit: 'M+', label: 'Saves' },
-            ],
-            highlights: [
-              { k: 'Awards', v: 'Selected as a “Beijing Audiovisual” key online project; named Microdrama of the Year in Zongyi Bao’s 2025 influence list' },
-              { k: 'Awards', v: 'Outstanding Popular Microdrama at the 2025 Cross-Strait WE Microdrama Competition; on Beijing Radio & TV’s list of 45 must-watch titles for Spring Festival' },
-              { k: '2026', v: 'Season 2 passed 116 million effective views the day after launch and topped Hongguo’s overall microdrama chart' },
-              { k: 'AI', v: 'An AI-remastered version has completed rating review' },
-            ],
-            video: 'yipinbuyi', vertical: true, images: ['yipinbuyi1'], source: 'COL Group corporate presentation (Sept 2026), p. 20; 2026 Interim Report' },
-          { slug: 'yiyou', title: 'I Woke Up as the Villainess in an Otome Game System and Flirted My Way Through the Interstellar', genre: 'Microdrama', forms: ['AI 3D animation'], tags: ['No. 1 on the HuoLong AI animation chart'], poster: 'yiyou',
-            intro: 'A COL-produced AI 3D animated series for women viewers, extending our AI animation from action-driven stories to romance.',
-            stats: [
-              { value: 'TOP1', label: 'HuoLong trending and search charts' },
-              { value: '5', label: 'Language markets where it hit No. 1' },
-            ],
-            highlights: [
-              { k: 'China', v: 'In March 2026 it topped both the HuoLong AI animation trending and search charts, holding No. 1 for days' },
-              { k: 'Global', v: 'Quickly reached No. 1 on the daily charts in English, Spanish, French, Italian and Japanese, a record for Chinese AI animation overseas' },
-            ],
-            source: 'COL Group corporate presentation (Sept 2026), p. 17; 2026 Interim Report' },
-          { slug: 'justice', title: 'She Means Justice', genre: 'Microdrama', forms: ['FlareFlow'], tags: ['180M+ global views in its first month', 'Outstanding Genre IP Series, International Short Drama Festival'], poster: 'justice',
-            intro: 'A FlareFlow original Western microdrama in the female revenge and legal thriller genre. Its debut drew more than 180 million global views in the first month. The sequel, She Means Justice 2: Breakout, launched in May 2026 on FlareFlow and GammaTime, one of the earliest franchise follow-ups to an original Western vertical drama.',
-            stats: [
-              { value: '180', unit: 'M+', label: 'Global views in the first month' },
-              { value: '9', unit: 'M+', label: 'YouTube trailer views in 72 hours' },
-            ],
-            highlights: [
-              { k: 'Award', v: 'She Means Justice 1 & 2 won Outstanding Genre IP Series at the 2026 International Short Drama Festival (Nov 15, 2026, Hollywood, Los Angeles)' },
-              { k: 'Sequel', v: 'She Means Justice 2: Breakout launched on FlareFlow and GammaTime at the same time, shot on location in a shuttered California state prison in Lancaster' },
-              { k: 'Press', v: 'Covered by Variety (May 29, 2026)' },
-            ],
-            images: ['justice', 'justice2'], source: 'Variety (May 29, 2026); 2026 International Short Drama Festival award certificate' },
-          { slug: 'charms99', title: '99 Charms, 99 Heartbreaks', genre: 'Microdrama', forms: ['FlareFlow'], tags: ['Best Drama, Vertical Shorts Festival (Los Angeles)'], poster: 'charms99',
-            intro: 'A FlareFlow premium microdrama that went from a Chinese original to an English version to a fully localized remake, a model for how FlareFlow localizes.',
-            highlights: [
-              { k: 'Award', v: 'Chosen from 200+ entries as Best Drama at the Vertical Shorts Festival in Los Angeles' },
-            ],
-            source: 'COL press release (Sept 17, 2026)' },
-        ] },
+        { type: 'ipwall', note: 'Posters and figures from the COL Group corporate presentation (Sept 2026) and COL’s periodic reports. Click a poster to learn about the work.', items: ipList('en') },
       ],
     },
     {

@@ -23,9 +23,6 @@ const theme = pages.news.theme ?? ['#0071ce', '#00c1de'];
     {n.draft && <div class="na-draft" role="note">{en ? 'Draft preview: not published yet. Only people with this link can see it.' : '草稿预览：尚未发布，只有拿到链接的人能看到。确认无误后运行“发布新闻”。'}</div>}
     <header class="na-top">
       <div class="container na-head">
-        <nav class="na-crumbs" aria-label={ui.crumbs}>
-          <a href={u('/')} class="link-u">{ui.home}</a><span>/</span><a href={u('/news')} class="link-u">{pages.news.title}</a>
-        </nav>
         <div class="na-meta"><time>{n.date}</time>{n.tag && <span class="na-tag">{n.tag}</span>}<span class="na-own">{ui.newsOwn}</span></div>
         <h1>{n.title}</h1>
         {n.text && <p class="na-dek">{n.text}</p>}

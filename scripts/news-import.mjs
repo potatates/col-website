@@ -56,7 +56,7 @@ const imgDir = path.join(ROOT, 'public/news', id);
 if (fs.existsSync(newsDir)) skip(`这篇导入过了（编号 ${id}）：${title}。要重新导入请先删掉 src/news/${id}，或用 --id 换一个编号。`);
 // 官网上已有同标题的新闻（包括以前手工加的）就不再导入，避免列表里出现两条一样的
 const norm = (s) => s.replace(/[\s"'“”‘’《》「」，,。.!！?？:：·]/g, '');
-for (const d of fs.readdirSync(path.join(ROOT, 'src/news'))) {
+for (const d of args.includes('--force') ? [] : fs.readdirSync(path.join(ROOT, 'src/news'))) { // --force：测试用，跳过同名检查
   const f = path.join(ROOT, 'src/news', d, 'zh.md');
   const t = fs.existsSync(f) && fs.readFileSync(f, 'utf8').match(/^title:\s*"?(.*?)"?\s*$/m)?.[1];
   if (t && norm(t) === norm(title)) skip(`官网已经有这篇新闻了（编号 ${d}）：${title}。不用再导入。`);
@@ -78,10 +78,20 @@ function isHeading(el, text) {
   const boldText = bold.filter((e) => !bold.some((o) => o !== e && o.querySelectorAll('*').includes(e))).map((e) => clean(e.text)).join('');
   return boldText.length >= text.length * 0.9;
 }
+// 公众号排版里的装饰和提示，不是正文：❖ 分隔符、「点击上方蓝字关注」、「左右滑动查看更多」、「阅读原文跳转…」、
+// 壹 · 贰 · 这类分节标记、字与字之间加空格的装饰标题（如「原 著 数 据」）、只有符号的行
+const JUNK = [
+  /^[\s❖◆◇●○■□▲△▼▽★☆✦✧•·—\-_=~|/\\]+$/,
+  /点击.{0,4}(上方|蓝字)|关注.{0,3}中文在线|左右滑动|滑动查看|阅读原文|向下滑动|戳.{0,3}(这里|下方)/,
+  /^[壹贰叁肆伍陆柒捌玖拾]\s*[·.、]/,
+  /([\u4e00-\u9fff] ){3,}/,
+  /^([\u4e00-\u9fff] )+[\u4e00-\u9fff]$/,
+];
 function emitText(el) {
   const text = clean(el.text);
   if (!text) return;
   if (STOP.test(text)) { stopped = true; return; }
+  if (JUNK.some((r) => r.test(text))) return;
   const tagName = (el.rawTagName || '').toLowerCase();
   if (tagName === 'blockquote') blocks.push({ kind: 'quote', text });
   else if (isHeading(el, text)) blocks.push({ kind: 'h', text });
@@ -113,6 +123,15 @@ for (const b of blocks) {
   if (prev && prev.kind === b.kind && prev.text && prev.text === b.text) continue;
   if (b.kind === 'p' && prev?.kind === 'img' && !prev.cap && b.text.length <= 40 && !/[。！？]$/.test(b.text)) { prev.cap = b.text; continue; }
   body.push(b);
+}
+// 没加粗的小标题：很短（≤32 字）、不以标点结尾、不紧跟在图片后面（那是图注）、后面是一段完整的正文（以句号等结尾）；
+// 排除数据行（数字多）和视频/图片说明（以“预告片”“视频”等结尾）
+for (let i = 0; i < body.length; i++) {
+  const b = body[i], prev = body[i - 1], next = body[i + 1];
+  if (b.kind !== 'p' || !prev || prev.kind === 'img' || next?.kind !== 'p') continue;
+  const t = b.text;
+  if (t.length > 32 || /[。！？；，,.!?;:：」”）)]$/.test(t) || (t.match(/\d/g) || []).length >= 3 || /(预告片|视频|海报|剧照|画面)$/.test(t)) continue;
+  if (next.text.length >= 20 && /[。！？…”」]$/.test(next.text)) b.kind = 'h';
 }
 // 导语重复在正文开头时去掉；文章没写摘要时，用正文第一段的开头一两句当导语（审核时可以改）
 if (body[0]?.kind === 'p' && summary && body[0].text.startsWith(summary.slice(0, 20))) body.shift();
