@@ -26,8 +26,10 @@ const LOCKED = Object.values(keyFiles)[0] ?? null;
     .card { background: #fff; border-radius: 18px; padding: 22px; margin-bottom: 18px; box-shadow: 0 10px 30px -24px rgba(10,22,48,.4); }
     .card h2 { font-size: 17px; color: var(--ink); margin: 0 0 14px; }
     label { display: block; font-size: 14px; font-weight: 600; color: var(--ink); margin: 12px 0 6px; }
-    input, select { width: 100%; font: inherit; padding: 11px 13px; border: 1px solid var(--line); border-radius: 12px; background: #fff; color: var(--ink); }
-    input:focus, select:focus { outline: 2px solid color-mix(in srgb, var(--brand) 35%, transparent); border-color: var(--brand); }
+    input, select, textarea { width: 100%; font: inherit; padding: 11px 13px; border: 1px solid var(--line); border-radius: 12px; background: #fff; color: var(--ink); }
+    textarea { resize: vertical; line-height: 1.6; font-size: 14px; }
+    #url-count { margin-top: 6px; color: var(--brand); font-weight: 700; }
+    input:focus, select:focus, textarea:focus { outline: 2px solid color-mix(in srgb, var(--brand) 35%, transparent); border-color: var(--brand); }
     .row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
     button { font: inherit; font-weight: 700; border: 0; border-radius: 999px; padding: 11px 20px; cursor: pointer; background: var(--brand); color: #fff; }
     button.ghost { background: #eef2f9; color: var(--ink); }
@@ -76,10 +78,11 @@ const LOCKED = Object.values(keyFiles)[0] ?? null;
     <p class="hint" id="key-ok">已解锁 · <a href="#" id="key-change">退出</a></p>
 
     <section class="card">
-      <h2>导入一篇新闻</h2>
+      <h2>导入新闻</h2>
       <form id="import">
-        <label for="url">公众号文章链接</label>
-        <input id="url" required placeholder="https://mp.weixin.qq.com/s/..." inputmode="url" />
+        <label for="url">公众号文章链接（可以一次粘贴多条，每行一条）</label>
+        <textarea id="url" required rows="4" placeholder="https://mp.weixin.qq.com/s/...&#10;https://mp.weixin.qq.com/s/..." spellcheck="false"></textarea>
+        <div class="hint" id="url-count"></div>
         <div class="row">
           <div>
             <label for="section">栏目</label>
@@ -158,15 +161,19 @@ const LOCKED = Object.values(keyFiles)[0] ?? null;
     };
     $('key-change').onclick = (e) => { e.preventDefault(); store.set(''); showKey(); };
 
-    // 导入
+    // 导入：从粘贴的文字里找出所有公众号链接（去重），条数显示在输入框下面
+    const links = () => [...new Set($('url').value.match(/https:\/\/mp\.weixin\.qq\.com\/s[^\s，,；;]*/g) || [])];
+    $('url').oninput = () => { const n = links().length; $('url-count').textContent = n ? `识别到 ${n} 条链接` : ''; };
     $('import').onsubmit = async (e) => {
       e.preventDefault();
-      const url = $('url').value.trim();
-      if (!/^https:\/\/mp\.weixin\.qq\.com\/s/.test(url)) return say($('import-msg'), '请粘贴公众号文章链接（以 https://mp.weixin.qq.com/s 开头）。', 'err');
+      const urls = links();
+      if (!urls.length) return say($('import-msg'), '请粘贴公众号文章链接（以 https://mp.weixin.qq.com/s 开头）。', 'err');
       $('go').disabled = true;
       try {
-        await runWorkflow('news-import.yml', { url, section: $('section').value, tag: $('tag').value.trim() });
-        say($('import-msg'), '已提交！约 3–5 分钟后草稿会出现在下面的列表里（点「刷新」）。', 'ok');
+        // 多条链接一起交给一次导入：只更新一次网站，也不会互相冲突
+        await runWorkflow('news-import.yml', { url: urls.join(' '), section: $('section').value, tag: $('tag').value.trim() });
+        say($('import-msg'), `已提交 ${urls.length} 篇！约 ${urls.length > 3 ? '5–10' : '3–5'} 分钟后草稿会出现在下面的列表里（点「刷新」）。已经导入过的会自动跳过。`, 'ok');
+        $('url-count').textContent = '';
         $('url').value = ''; $('tag').value = '';
         setTimeout(loadRuns, 4000);
       } catch (err) { say($('import-msg'), err.message, 'err'); }

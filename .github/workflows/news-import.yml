@@ -1,12 +1,12 @@
-# 导入新闻：在 GitHub 网页上点 Actions →「导入新闻（公众号链接）」→ Run workflow，粘贴公众号文章链接。
-# 会生成一篇草稿新闻（不进新闻列表），几分钟后可以在网站上用预览链接查看。确认后运行「发布新闻」。
+# 导入新闻：在 GitHub 网页上点 Actions →「导入新闻（公众号链接）」→ Run workflow，粘贴公众号文章链接（可以一次粘贴多条，用空格或换行隔开）。
+# 每条链接生成一篇草稿新闻（不进新闻列表），几分钟后可以在网站上用预览链接查看。确认后运行「发布新闻」。
 name: 导入新闻（公众号链接）
 
 on:
   workflow_dispatch:
     inputs:
       url:
-        description: 公众号文章链接（https://mp.weixin.qq.com/s/...）
+        description: 公众号文章链接（https://mp.weixin.qq.com/s/...），多条用空格隔开
         required: true
       section:
         description: 放在哪个栏目
@@ -40,24 +40,32 @@ jobs:
       # 只有在仓库里设置了 ANTHROPIC_API_KEY（Settings → Secrets → Actions）时才会生成英文版
       - if: env.ANTHROPIC_API_KEY != ''
         run: npm install --no-save @anthropic-ai/sdk
-      - id: imp
-        run: node scripts/news-import.mjs "$URL" --section "$SECTION" --tag "$TAG"
+      - name: Import and save drafts
         env:
-          URL: ${{ inputs.url }}
+          URLS: ${{ inputs.url }}
           SECTION: ${{ inputs.section }}
           TAG: ${{ inputs.tag }}
-      - name: Save draft
-        env:
-          TITLE: ${{ steps.imp.outputs.title }}
-          URL: ${{ inputs.url }}
+          GH_TOKEN: ${{ github.token }}
         run: |
+          # 一次可以导入多条链接：逐条导入，已导入过的跳过，个别失败不影响其他条
+          ok=0; bad=0
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add src/news public/news
-          git commit -m "新闻草稿：$TITLE" -m "从公众号导入：$URL"
-          for i in 1 2 3 4 5; do git pull -q --rebase origin main && git push -q && break; echo "网站同时有别的更新，第 $i 次重试…"; sleep $((i * 5)); done
-          git log origin/main -1 --format=%H | grep -q "$(git rev-parse HEAD)" || { echo "保存失败，请稍后重试"; exit 1; }
-      # 自动提交不会触发网站部署，这里手动触发一次
-      - run: gh workflow run deploy.yml --ref main
-        env:
-          GH_TOKEN: ${{ github.token }}
+          for URL in $(printf '%s\n' "$URLS" | grep -oE 'https://mp\.weixin\.qq\.com/s[^[:space:]，,；;]*' | awk '!seen[$0]++'); do
+            echo "::group::$URL"
+            rc=0; node scripts/news-import.mjs "$URL" --section "$SECTION" --tag "$TAG" || rc=$?
+            echo "::endgroup::"
+            # 成功的马上 git add；失败的把这次写了一半的文件清掉（已 add 的不受影响）
+            if [ $rc -eq 0 ]; then git add src/news public/news; else git clean -fdq src/news public/news; fi
+            if [ $rc -eq 0 ]; then ok=$((ok+1)); elif [ $rc -ne 2 ]; then bad=$((bad+1)); echo "- 失败：$URL（请检查链接是否能打开）" >> "$GITHUB_STEP_SUMMARY"; fi
+          done
+          if [ $ok -gt 0 ]; then
+            TITLES="$(git diff --cached --name-only --diff-filter=A -- 'src/news/*/zh.md' | xargs -r grep -h -m1 '^title:' | sed 's/^title: *//; s/^"//; s/"$//')"
+            if [ $ok -eq 1 ]; then MSG="新闻草稿：$TITLES"; else MSG="新闻草稿 $ok 篇"; fi
+            git commit -q -m "$MSG" -m "$TITLES"
+            for i in 1 2 3 4 5; do git pull -q --rebase origin main && git push -q && break; echo "网站同时有别的更新，第 $i 次重试…"; sleep $((i * 5)); done
+            git log origin/main -1 --format=%H | grep -q "$(git rev-parse HEAD)" || { echo "保存失败，请稍后重试"; exit 1; }
+            gh workflow run deploy.yml --ref main # 自动提交不会触发网站部署，这里手动触发一次
+          fi
+          echo "导入 $ok 篇，失败 $bad 篇" | tee -a "$GITHUB_STEP_SUMMARY"
+          [ $bad -eq 0 ]

@@ -43,17 +43,23 @@ const date = new Intl.DateTimeFormat('sv-SE', { timeZone: 'Asia/Shanghai' }).for
 const content = doc.querySelector('#js_content');
 if (!title || !content) throw new Error('没能从页面里找到标题或正文。可能文章已删除、需要登录，或者微信改了页面结构。');
 
+// 已经有了就跳过：退出码 2（批量导入时算“跳过”，不算失败）
+function skip(msg) {
+  console.log(msg);
+  if (process.env.GITHUB_STEP_SUMMARY) fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY, `- 跳过：${msg}\n`);
+  process.exit(2);
+}
 const key = (url.match(/\/s\/([A-Za-z0-9_-]+)/)?.[1] ?? Math.random().toString(36).slice(2)).slice(-6).toLowerCase();
 const id = (opt('id') || `${date}-${key}`).replace(/[^a-z0-9-]/gi, '-').toLowerCase();
 const newsDir = path.join(ROOT, 'src/news', id);
 const imgDir = path.join(ROOT, 'public/news', id);
-if (fs.existsSync(newsDir)) throw new Error(`编号 ${id} 已经存在（src/news/${id}）。这篇可能导入过了；要重新导入请先删掉那个文件夹，或用 --id 换一个编号。`);
+if (fs.existsSync(newsDir)) skip(`这篇导入过了（编号 ${id}）：${title}。要重新导入请先删掉 src/news/${id}，或用 --id 换一个编号。`);
 // 官网上已有同标题的新闻（包括以前手工加的）就不再导入，避免列表里出现两条一样的
 const norm = (s) => s.replace(/[\s"'“”‘’《》「」，,。.!！?？:：·]/g, '');
 for (const d of fs.readdirSync(path.join(ROOT, 'src/news'))) {
   const f = path.join(ROOT, 'src/news', d, 'zh.md');
   const t = fs.existsSync(f) && fs.readFileSync(f, 'utf8').match(/^title:\s*"?(.*?)"?\s*$/m)?.[1];
-  if (t && norm(t) === norm(title)) throw new Error(`官网已经有这篇新闻了（编号 ${d}）：${title}。不用再导入。`);
+  if (t && norm(t) === norm(title)) skip(`官网已经有这篇新闻了（编号 ${d}）：${title}。不用再导入。`);
 }
 
 // ---------- 正文：按出现顺序抽取 ----------

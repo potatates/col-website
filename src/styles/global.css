@@ -134,6 +134,7 @@ a.card:hover .card-go .arrow { transform: translateX(8px); }
 .num span {
   font-size: clamp(44px, 5.4vw, 76px); font-weight: 900; line-height: 1; font-variant-numeric: tabular-nums; letter-spacing: -.03em;
   background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent;
+  padding-bottom: .16em; margin-bottom: -.16em; /* 渐变只画在文字框内；line-height:1 时逗号下半截会被切掉，往下多留一点 */
 }
 .num em { font-style: normal; color: var(--ink); font-weight: 700; font-size: 18px; }
 .num-label { color: var(--muted); margin-top: 8px; font-size: 14px; }

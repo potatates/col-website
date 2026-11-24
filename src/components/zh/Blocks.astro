@@ -661,7 +661,7 @@ const isNum = (v: string) => /^[\d,]+$/.test(v);
   .ft-go { margin-top: 6px; }
   .ft-stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
   .ft-stats > div { padding: 20px 14px; border-radius: 20px; background: color-mix(in srgb, var(--c1, var(--brand)) 6%, var(--bg)); }
-  .ft-stats dt { font-size: clamp(26px, 2.4vw, 34px); font-weight: 900; line-height: 1.05; letter-spacing: -.02em; white-space: nowrap; background: linear-gradient(120deg, var(--c1, var(--brand)), var(--c2, var(--brand-2))); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .ft-stats dt { font-size: clamp(26px, 2.4vw, 34px); font-weight: 900; line-height: 1.05; letter-spacing: -.02em; white-space: nowrap; background: linear-gradient(120deg, var(--c1, var(--brand)), var(--c2, var(--brand-2))); -webkit-background-clip: text; background-clip: text; color: transparent; padding-bottom: .16em; margin-bottom: -.16em; }
   .ft-stats dt em { font-style: normal; font-size: 14px; font-weight: 700; margin-left: 2px; color: var(--ink); -webkit-text-fill-color: var(--ink); }
   .ft-stats dd { margin-top: 8px; font-size: 13px; color: var(--muted); line-height: 1.5; }
   .ft-video { width: 100%; aspect-ratio: 960 / 412; object-fit: cover; border-radius: 20px; background: #000; display: block; }
