@@ -778,7 +778,7 @@ export const ui = {
   talkLicense: 'Discuss licensing',
   newsOwn: 'Published here',
   readArticle: 'Read the article',
-  askAiAbout: 'Chat with our AI assistant',
+  askAiAbout: 'Ask AI',
   backToList: 'Back to',
   ipHighlights: 'Highlights',
   ipTrailer: 'Trailer',
