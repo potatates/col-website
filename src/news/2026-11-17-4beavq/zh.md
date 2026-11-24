@@ -6,7 +6,6 @@ image: 2026-11-17-4beavq/cover
 summary: "当古玩江湖遇上AI互动剧，曾经纸上的鉴宝冒险，如今邀你亲自入局！"
 source: "中文在线微信公众号"
 wechat: https://mp.weixin.qq.com/s/YaYsRTVda3IKcrjn4bEAvQ
-draft: true
 ---
 ❖点 击 上 方 蓝 字 · 关 注 中 文 在 线
 
