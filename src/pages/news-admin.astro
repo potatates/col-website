@@ -173,12 +173,25 @@ const LOCKED = Object.values(keyFiles)[0] ?? null;
       finally { $('go').disabled = false; }
     };
 
+    // 已点过「发布/删除」的草稿：网站更新完（约 3–5 分钟）之前，草稿还会留在列表里；记下来防止重复点。
+    function pending() {
+      try {
+        const all = JSON.parse(localStorage.getItem('news-pending') || '{}'), now = Date.now();
+        for (const k in all) if (now - all[k].t > 15 * 60 * 1000) delete all[k];
+        return all;
+      } catch { return {}; }
+    }
+    function markPending(id, act) {
+      try { const all = pending(); all[id] = { act, t: Date.now() }; localStorage.setItem('news-pending', JSON.stringify(all)); } catch {}
+    }
+
     // 草稿列表（网站每次更新时生成的 news/drafts.json）
     async function loadDrafts() {
       const ul = $('drafts');
       try {
         const r = await fetch(`${base}/news/drafts.json?t=${Date.now()}`, { cache: 'no-store' });
         const { drafts } = await r.json();
+        const sent = pending();
         if (!drafts.length) { ul.innerHTML = '<li class="hint">目前没有草稿。</li>'; return; }
         ul.innerHTML = drafts.map((d) => `
           <li>
@@ -187,8 +200,9 @@ const LOCKED = Object.values(keyFiles)[0] ?? null;
             <div class="li-actions">
               <a class="pill" href="${base}/news/${esc(d.id)}/" target="_blank" rel="noopener">预览</a>
               ${d.hasEn ? `<a class="pill" href="${base}/en/news/${esc(d.id)}/" target="_blank" rel="noopener">英文预览</a>` : ''}
+              ${sent[d.id] ? `<button type="button" disabled>${sent[d.id].act === 'publish' ? '已提交发布，网站更新中…' : '已提交删除，网站更新中…'}</button>` : `
               <button type="button" data-act="publish" data-id="${esc(d.id)}">发布</button>
-              <button type="button" class="danger" data-act="delete" data-id="${esc(d.id)}">删除草稿</button>
+              <button type="button" class="danger" data-act="delete" data-id="${esc(d.id)}">删除草稿</button>`}
             </div>
           </li>`).join('');
       } catch { ul.innerHTML = '<li class="hint">草稿列表暂时读不到，请稍后点「刷新」。</li>'; }
@@ -202,7 +216,9 @@ const LOCKED = Object.values(keyFiles)[0] ?? null;
       b.disabled = true;
       try {
         await runWorkflow('news-publish.yml', { id, action: act });
-        b.textContent = act === 'publish' ? '已提交发布' : '已提交删除';
+        markPending(id, act);
+        b.parentElement.querySelectorAll('button').forEach((x) => { x.disabled = true; });
+        b.textContent = act === 'publish' ? '已提交发布，网站更新中…' : '已提交删除，网站更新中…';
         setTimeout(loadRuns, 4000);
       } catch (err) { alert(err.message); b.disabled = false; }
     };

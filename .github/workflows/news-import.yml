@@ -21,9 +21,7 @@ permissions:
   contents: write
   actions: write
 
-concurrency:
-  group: news-edit
-  cancel-in-progress: false
+# 不用 concurrency 排队：GitHub 只保留一个排队中的运行，连续点几次会把前面的取消。改为推送前先合并最新内容、冲突时重试。
 
 jobs:
   import:
@@ -32,6 +30,8 @@ jobs:
       ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: main # 取最新内容（不是点按钮那一刻的旧版本）
       - uses: actions/setup-node@v4
         with:
           node-version: 22
@@ -55,7 +55,8 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add src/news public/news
           git commit -m "新闻草稿：$TITLE" -m "从公众号导入：$URL"
-          git push
+          for i in 1 2 3 4 5; do git pull -q --rebase origin main && git push -q && break; echo "网站同时有别的更新，第 $i 次重试…"; sleep $((i * 5)); done
+          git log origin/main -1 --format=%H | grep -q "$(git rev-parse HEAD)" || { echo "保存失败，请稍后重试"; exit 1; }
       # 自动提交不会触发网站部署，这里手动触发一次
       - run: gh workflow run deploy.yml --ref main
         env:

@@ -48,6 +48,13 @@ const id = (opt('id') || `${date}-${key}`).replace(/[^a-z0-9-]/gi, '-').toLowerC
 const newsDir = path.join(ROOT, 'src/news', id);
 const imgDir = path.join(ROOT, 'public/news', id);
 if (fs.existsSync(newsDir)) throw new Error(`编号 ${id} 已经存在（src/news/${id}）。这篇可能导入过了；要重新导入请先删掉那个文件夹，或用 --id 换一个编号。`);
+// 官网上已有同标题的新闻（包括以前手工加的）就不再导入，避免列表里出现两条一样的
+const norm = (s) => s.replace(/[\s"'“”‘’《》「」，,。.!！?？:：·]/g, '');
+for (const d of fs.readdirSync(path.join(ROOT, 'src/news'))) {
+  const f = path.join(ROOT, 'src/news', d, 'zh.md');
+  const t = fs.existsSync(f) && fs.readFileSync(f, 'utf8').match(/^title:\s*"?(.*?)"?\s*$/m)?.[1];
+  if (t && norm(t) === norm(title)) throw new Error(`官网已经有这篇新闻了（编号 ${d}）：${title}。不用再导入。`);
+}
 
 // ---------- 正文：按出现顺序抽取 ----------
 const BLOCK = new Set(['p', 'section', 'div', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'blockquote', 'ul', 'ol', 'li', 'figure', 'table']);
