@@ -6,7 +6,6 @@ image: 2026-11-06-gv4ozw/cover
 summary: "AI重塑剧烈的战场在短剧。"
 source: "中文在线微信公众号"
 wechat: https://mp.weixin.qq.com/s/Bwgzqes6bi5oIbrlgv4OZw
-draft: true
 ---
 来源丨每日经济新闻
 
