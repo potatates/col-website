@@ -318,16 +318,9 @@ const isNum = (v: string) => /^[\d,]+$/.test(v);
       );
 
     case 'news': {
-      // 新闻列表：按标签筛选（不跳页）；详情页上线前条目不可点击
-      const tags = [...new Set(b.items.map((n) => n.tag).filter(Boolean))] as string[];
+      // 新闻列表（11/24 起不再显示标签筛选按钮）
       return (
-        <div class="b-newswrap" data-filterable>
-          {tags.length > 1 && (
-            <div class="filters reveal">
-              <button class="chip on" data-filter-key="all" data-filter-value="all">{ui.all}</button>
-              {tags.map((t) => <button class="chip" data-filter-key="tag" data-filter-value={t}>{t}</button>)}
-            </div>
-          )}
+        <div class="b-newswrap">
           <ul class="b-news">
             {b.items.map((n, i) => (
               <li class="reveal" id={`news-${n.date}`} data-tag={n.tag} style={`--d:${i * 60}ms`}>
