@@ -107,7 +107,7 @@ const news = home.news;
           {news.map((n, i) => (
             <a href={n.slug && n.body ? u(`/news/${n.slug}`) : n.href ?? u(`/news#news-${n.date}`)} target={!(n.slug && n.body) && n.href ? '_blank' : undefined} rel={!(n.slug && n.body) && n.href ? 'noopener' : undefined} class="card news-card reveal" style={`--d:${i * 90}ms;--c1:${['#0071ce', '#6c4dff', '#ff5c9a'][i]};--c2:${['#00c1de', '#ff5c9a', '#ffc53d'][i]}`}>
               <span class="news-pic" aria-hidden="true">{n.img && <img src={asset(`/news/${n.img}.jpg`)} alt="" loading="lazy" />}</span>
-              <span class="card-tag">{n.tag}</span>
+              {n.tag && <span class="card-tag">{n.tag}</span>}
               <span class:list={['card-title', { hang: /^[《「『“【〈（]/.test(n.title) }]}>{n.title}</span>
               <span class="news-date">{n.date}</span>
             </a>
@@ -235,7 +235,8 @@ const news = home.news;
     .l2 { padding-left: 0; }
     .ip-feature { grid-template-columns: 1fr 1fr; }
     .news { grid-template-columns: 1fr; }
-    .news-card { min-height: 0; }
+    .news-card { min-height: 0; padding-top: 0 !important; } /* 手机卡片统一 padding 18px，图片要顶格、贴左右边 */
+    .news-pic { margin: 0 -18px 14px; }
     .audience { margin-top: -40px; border-radius: 22px; }
     .aud-label { width: 100%; }
   }
