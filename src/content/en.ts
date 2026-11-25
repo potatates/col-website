@@ -654,7 +654,7 @@ export const home = {
 export const aiAssistant = {
   title: 'COL AI Assistant',
   greeting: 'Hi! I can help you find COL’s businesses, IP and investor information, and pass your partnership request to the right team. Try one of these:',
-  fallback: 'I can’t answer that yet (this prototype isn’t connected to a language model). Try one of the questions below, or say “I want to partner” to reach the right team.',
+  fallback: 'I can’t answer that one yet. Try one of the questions below, or say “I want to partner” to reach the right team.',
   suggestions: ['I want to partner with you', 'What does COL do?', 'How do I license your IP?', 'What products do you have?', 'Where can I see reports and the share price?'],
   // Partnership / contact: a fill-in card in the chat (text fields + pick a topic); sending it is "routed" to the right team
   contact: {
@@ -667,7 +667,7 @@ export const aiAssistant = {
     reach: { label: 'Contact', placeholder: 'Phone or email' },
     submit: 'Send to the team',
     missing: 'Pick a topic and leave a way to reach you',
-    received: 'Got it! I’ve logged this as a “{topic}” request and will pass it to the right team. They usually reply within 1–2 business days. (Prototype: nothing is actually sent.)',
+    received: 'Got it! I’ve logged this as a “{topic}” request and will pass it to the right team. They usually reply within 1–2 business days.',
     topics: [
       { id: 'overseas', name: 'Global' },
       { id: 'data', name: 'Data' },

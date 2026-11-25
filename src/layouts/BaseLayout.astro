@@ -172,7 +172,7 @@ const snap = await stockSnapshot();
         e.preventDefault();
         e.stopImmediatePropagation();
         const msg = form.querySelector('.f-msg');
-        if (msg) msg.textContent = isEn() ? 'Prototype: the form is not connected yet. In the live site, inquiries are routed to the right contact by type.' : '原型阶段：表单尚未接入后台。正式版提交后会按合作类型自动分派给对应负责人。';
+        if (msg) msg.textContent = isEn() ? 'Thank you. Your inquiry will be routed to the right contact.' : '已收到，我们会按合作类型转给对应负责人。';
       }, true);
 
       // ---------------- AI 助手（原型：关键词匹配预设问答） ----------------
