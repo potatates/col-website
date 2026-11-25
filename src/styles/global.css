@@ -312,3 +312,7 @@ video:-webkit-full-screen {
   max-width: none !important;
   border-radius: 0 !important;
 }
+
+/* 中文页里的英文作品名（She Means Justice、99 Charms…）：用与英文站相同的 Outfit 标题字体，两边看起来一致 */
+html:not([lang='en']) .latin-title, html:not([lang='en']) main.ipd-latin .page-hero h1 { font-family: 'Outfit Variable', 'Outfit', var(--font) !important; font-weight: 800 !important; letter-spacing: -.02em !important; }
+html:not([lang='en']) main.ipd-latin .page-hero h1 { line-height: 1 !important; }

@@ -23,7 +23,7 @@ const theme = pages.ip.theme ?? ['#6c4dff', '#ff5c9a'];
 ---
 <BaseLayout title={`${ip.title}_${site.name}`} description={ip.intro ?? ip.tags.join(' · ')}>
   <Header current="ip" />
-  <main class:list={['ipd-main', { 'ipd-long': ip.title.length > 24 }]} style={`--c1:${theme[0]};--c2:${theme[1]}`}>
+  <main class:list={['ipd-main', { 'ipd-long': ip.title.length > 24, 'ipd-latin': /^[\x20-\x7E’‘“”]+$/.test(ip.title) }]} style={`--c1:${theme[0]};--c2:${theme[1]}`}>
     <PageHero title={ip.title} en={`${ip.genre} · ${ip.forms.join(' / ')}`} intro={ip.intro ?? ''} crumbs={[{ label: pages.ip.title, href: '/ip' }]} theme={theme}>
       <div slot="aside" class="ipd-poster">
         <div class="cover has-poster">{ip.poster && <PosterImg name={ip.poster} alt={ip.title} />}</div>
@@ -71,7 +71,7 @@ const theme = pages.ip.theme ?? ['#6c4dff', '#ff5c9a'];
           {others.map((x) => (
             <a href={u(`/ip/${x.slug}`)} class="ipd-mcard">
               <div class="cover has-poster">{x.poster && <PosterImg name={x.poster} alt={x.title} />}</div>
-              <strong>{x.title}</strong>
+              <strong class:list={{ 'latin-title': /^[\x20-\x7E’‘“”]+$/.test(x.title) }}>{x.title}</strong>
             </a>
           ))}
         </div>
@@ -89,7 +89,7 @@ const theme = pages.ip.theme ?? ['#6c4dff', '#ff5c9a'];
   .ipd-sec { margin-top: 64px; }
   .ipd-sec:first-child { margin-top: 0; }
   .ipd-h { font-size: clamp(24px, 2.6vw, 32px); font-weight: 900; color: var(--ink); margin-bottom: 24px; }
-  .ipd-list { list-style: none; display: grid; gap: 12px; }
+  .ipd-list { list-style: none; display: grid; gap: 12px; max-width: 900px; }
   .ipd-list li { display: grid; grid-template-columns: 76px 1fr; gap: 18px; align-items: baseline; padding: 20px 24px; border-radius: 20px; background: var(--surface); box-shadow: 0 10px 26px -20px rgba(10,22,48,.3); }
   .ipd-list li:not(:has(.ipd-k)) { grid-template-columns: 1fr; }
   .ipd-k { font-size: 15px; font-weight: 900; background: linear-gradient(120deg, var(--c1), var(--c2)); -webkit-background-clip: text; background-clip: text; color: transparent; }

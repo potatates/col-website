@@ -389,7 +389,7 @@ const isNum = (v: string) => /^[\d,]+$/.test(v);
                 <div class:list={['cover', { 'has-poster': x.poster }]} style={`--h:${hue(x.title)}`}>
                   {x.poster ? <PosterImg name={x.poster} wide={x.wide} alt={x.title} /> : <span>{x.title}</span>}
                 </div>
-                <strong class="ip-title">{x.title}</strong>
+                <strong class:list={['ip-title', { 'latin-title': /^[\x20-\x7E’‘“”]+$/.test(x.title) }]}>{x.title}</strong>
                 <div class="ip-meta">
                   {/* 英文版卡片只留题材（小标签）+ 一条核心数据，完整信息在作品详情页 */}
                   <span class="ip-genre">{x.genre}{lang !== 'en' && x.forms.length > 0 && ` · ${x.forms.join(' / ')}`}</span>
@@ -969,6 +969,9 @@ const isNum = (v: string) => /^[\d,]+$/.test(v);
     100% { box-shadow: 0 0 0 22px transparent, 0 30px 60px -28px rgba(10,22,48,.45); }
   }
   .contact-card:has(.card-stripe) { overflow: hidden; }
+  .contact-card.is-focus .card-stripe { display: none; }
+  /* 顶部色条跟着卡片圆角裁切，两端不留缺口 */
+  .card:has(> .card-stripe) { overflow: hidden; }
   .cc-badge { display: none; }
   .is-focus .cc-badge {
     display: inline-flex; align-self: flex-start; align-items: center; gap: 6px; margin: -4px 0 4px;
