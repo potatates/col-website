@@ -2,91 +2,6 @@
   "note": "IP 墙作品（/ip 页、首页、作品详情页）。顺序即显示顺序；hidden: true 隐藏。由内容管理页「IP 作品」编辑。",
   "works": [
     {
-      "slug": "xiuluowushen",
-      "poster": "xiuluowushen",
-      "hidden": false,
-      "zh": {
-        "title": "修罗武神",
-        "genre": "漫剧",
-        "forms": [
-          "网文",
-          "有声",
-          "3D动画"
-        ],
-        "tags": [
-          "第二季登顶腾讯视频动漫玄幻榜",
-          "有声播放超50亿"
-        ],
-        "intro": "平台头部网文IP，从网文、有声到3D动画全模态开发，是中文在线“网文连载+IP衍生同步开发”的代表作品。",
-        "stats": [
-          {
-            "value": "50",
-            "unit": "亿",
-            "label": "有声历史播放量"
-          },
-          {
-            "value": "TOP2",
-            "label": "动画首季腾讯视频动漫热播榜"
-          }
-        ],
-        "highlights": [
-          {
-            "k": "有声",
-            "v": "有声版历史播放量达50亿，位列公司头部有声作品第一"
-          },
-          {
-            "k": "2023",
-            "v": "3D动画于腾讯视频开播，首日拿下站内热搜TOP7、动漫热播榜TOP2"
-          },
-          {
-            "k": "2026",
-            "v": "第二季于2月24日上线，开播即登顶腾讯视频动漫玄幻榜，并冲入国漫榜、热播榜及3D榜单TOP3"
-          }
-        ],
-        "source": "《中文在线集团介绍》（2026-09）第16–17页"
-      },
-      "en": {
-        "title": "Martial God Asura",
-        "genre": "Animation",
-        "forms": [
-          "Webnovel",
-          "Audio",
-          "3D animation"
-        ],
-        "tags": [
-          "Season 2 topped Tencent Video’s fantasy animation chart",
-          "5B audio plays"
-        ],
-        "intro": "A flagship webnovel IP developed across every format, from webnovel and audio to 3D animation. It shows how COL develops IP while stories are still being serialized.",
-        "stats": [
-          {
-            "value": "5",
-            "unit": "B",
-            "label": "Lifetime audiobook plays"
-          },
-          {
-            "value": "TOP2",
-            "label": "Tencent Video animation chart (season 1)"
-          }
-        ],
-        "highlights": [
-          {
-            "k": "Audio",
-            "v": "The audiobook has 5 billion lifetime plays, the most of any COL audio title"
-          },
-          {
-            "k": "2023",
-            "v": "The 3D animation premieres on Tencent Video, reaching No. 7 on the site’s trending searches and No. 2 on its animation chart on day one"
-          },
-          {
-            "k": "2026",
-            "v": "Season 2 launches on February 24 and immediately tops Tencent Video’s fantasy animation chart, reaching the top 3 of its Chinese animation, trending and 3D charts"
-          }
-        ],
-        "source": "COL Group corporate presentation (Sept 2026), pp. 16–17"
-      }
-    },
-    {
       "slug": "luoxiaohei",
       "poster": "luoxiaohei",
       "video": "luoxiaohei2-trailer",
@@ -233,6 +148,91 @@
           }
         ],
         "source": "COL Group corporate presentation (Sept 2026), pp. 18–19"
+      }
+    },
+    {
+      "slug": "xiuluowushen",
+      "poster": "xiuluowushen",
+      "hidden": false,
+      "zh": {
+        "title": "修罗武神",
+        "genre": "漫剧",
+        "forms": [
+          "网文",
+          "有声",
+          "3D动画"
+        ],
+        "tags": [
+          "第二季登顶腾讯视频动漫玄幻榜",
+          "有声播放超50亿"
+        ],
+        "intro": "平台头部网文IP，从网文、有声到3D动画全模态开发，是中文在线“网文连载+IP衍生同步开发”的代表作品。",
+        "stats": [
+          {
+            "value": "50",
+            "unit": "亿",
+            "label": "有声历史播放量"
+          },
+          {
+            "value": "TOP2",
+            "label": "动画首季腾讯视频动漫热播榜"
+          }
+        ],
+        "highlights": [
+          {
+            "k": "有声",
+            "v": "有声版历史播放量达50亿，位列公司头部有声作品第一"
+          },
+          {
+            "k": "2023",
+            "v": "3D动画于腾讯视频开播，首日拿下站内热搜TOP7、动漫热播榜TOP2"
+          },
+          {
+            "k": "2026",
+            "v": "第二季于2月24日上线，开播即登顶腾讯视频动漫玄幻榜，并冲入国漫榜、热播榜及3D榜单TOP3"
+          }
+        ],
+        "source": "《中文在线集团介绍》（2026-09）第16–17页"
+      },
+      "en": {
+        "title": "Martial God Asura",
+        "genre": "Animation",
+        "forms": [
+          "Webnovel",
+          "Audio",
+          "3D animation"
+        ],
+        "tags": [
+          "Season 2 topped Tencent Video’s fantasy animation chart",
+          "5B audio plays"
+        ],
+        "intro": "A flagship webnovel IP developed across every format, from webnovel and audio to 3D animation. It shows how COL develops IP while stories are still being serialized.",
+        "stats": [
+          {
+            "value": "5",
+            "unit": "B",
+            "label": "Lifetime audiobook plays"
+          },
+          {
+            "value": "TOP2",
+            "label": "Tencent Video animation chart (season 1)"
+          }
+        ],
+        "highlights": [
+          {
+            "k": "Audio",
+            "v": "The audiobook has 5 billion lifetime plays, the most of any COL audio title"
+          },
+          {
+            "k": "2023",
+            "v": "The 3D animation premieres on Tencent Video, reaching No. 7 on the site’s trending searches and No. 2 on its animation chart on day one"
+          },
+          {
+            "k": "2026",
+            "v": "Season 2 launches on February 24 and immediately tops Tencent Video’s fantasy animation chart, reaching the top 3 of its Chinese animation, trending and 3D charts"
+          }
+        ],
+        "source": "COL Group corporate presentation (Sept 2026), pp. 16–17"
       }
     },
     {
