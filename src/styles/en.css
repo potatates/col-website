@@ -342,3 +342,13 @@ html[lang='en'] .b-contacts .cc-spark { color: var(--c1, var(--violet)) !importa
   html[lang='en'] .b-contacts:has(> :nth-child(7):last-child) > :first-child .card-title { font-size: 30px !important; }
   html[lang='en'] .b-contacts:has(> :nth-child(7):last-child) > :first-child .card-text { font-size: 17px !important; max-width: 44ch !important; }
 }
+
+/* ---------- Home news on desktop: the two side stories share the lead story's height ----------
+   Each side picture stretches to the full height of its row, so no empty gap is left under the second one. */
+@media (min-width: 1001px) {
+  html[lang='en'] .news { grid-template-rows: 1fr 1fr !important; gap: 24px 36px !important; }
+  html[lang='en'] .news-card:not(:first-child) { grid-template-columns: minmax(220px, 46%) 1fr !important; align-content: start !important; padding-bottom: 0 !important; margin-bottom: 0 !important; border-bottom: 0 !important; }
+  html[lang='en'] .news-card:not(:first-child) .news-pic { grid-row: 1 / -1 !important; aspect-ratio: auto !important; height: 100% !important; min-height: 150px !important; }
+  html[lang='en'] .news-card:not(:first-child) .card-title { font-size: 22px !important; }
+  html[lang='en'] .news-card:first-child .news-pic { margin-bottom: 14px !important; }
+}
