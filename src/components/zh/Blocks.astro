@@ -350,7 +350,7 @@ const isNum = (v: string) => /^[\d,]+$/.test(v);
           </ul>
           {b.items.length > SHOW && (
             <div class="news-morewrap">
-              <button type="button" class="news-more" data-step={SHOW} data-en={lang === 'en' ? '1' : undefined}>{lang === 'en' ? 'Show more' : '查看更多'}<span class="news-more-n">{lang === 'en' ? `${b.items.length - SHOW} more` : `还有 ${b.items.length - SHOW} 条`}</span><span class="news-more-arrow" aria-hidden="true">↓</span></button>
+              <button type="button" class="btn news-more" data-step={SHOW}>{lang === 'en' ? 'See more' : '查看更多'}</button>
             </div>
           )}
         </div>
@@ -882,13 +882,8 @@ const isNum = (v: string) => /^[\d,]+$/.test(v);
   .news-meta { display: flex; align-items: center; gap: 12px; }
   .news-morewrap { display: flex; justify-content: center; margin-top: 28px; }
   .b-news li[hidden] { display: none; }
-  .news-more { display: inline-flex; align-items: center; gap: 10px; border: 0; cursor: pointer; font: inherit; font-size: 15px; font-weight: 700; color: var(--brand); background: color-mix(in srgb, var(--brand) 9%, transparent); border-radius: 999px; padding: 12px 26px; transition: background .25s, transform .2s; }
-  .news-more:hover { background: color-mix(in srgb, var(--brand) 15%, transparent); }
-  .news-more:active { transform: scale(.97); }
-  .news-more-n { font-weight: 500; opacity: .7; }
-  .news-more-n::before { content: '· '; }
-  .news-more-arrow { transition: transform .25s; }
-  .news-more:hover .news-more-arrow { transform: translateY(2px); }
+  .news-more { border: 0; cursor: pointer; font: inherit; font-size: 15px; font-weight: 600; background: var(--surface); color: var(--ink); box-shadow: 0 8px 24px -14px rgba(10,22,48,.35); }
+  .news-more:hover { background: var(--night); color: #fff; }
   .news-text { font-size: 14px; line-height: 1.7; color: var(--muted); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
   .news-go { font-size: 13px; font-weight: 700; color: var(--c1, var(--brand)); white-space: nowrap; }
   .news-go .arrow { display: inline-block; transition: transform .4s var(--spring); }
@@ -1149,9 +1144,7 @@ const isNum = (v: string) => /^[\d,]+$/.test(v);
       const wrap = b.closest('.b-newswrap'), step = Number(b.dataset.step) || 8;
       const hidden = [...wrap.querySelectorAll('.b-news > li[hidden]')];
       hidden.slice(0, step).forEach((li) => { li.hidden = false; li.classList.add('in'); });
-      const left = hidden.length - step;
-      if (left <= 0) b.parentElement.remove();
-      else b.querySelector('.news-more-n').textContent = b.dataset.en ? `${left} more` : `还有 ${left} 条`;
+      if (hidden.length <= step) b.parentElement.remove();
     });
   }
 </script>
