@@ -55,6 +55,7 @@ function parse(path: string, text: string): NewsEntry {
   if (!str('date') || !str('title')) throw new Error(`新闻缺少 date 或 title：${path}`);
   return {
     id, date: str('date')!, title: str('title')!, tag: str('tag'), img: str('image'), text: str('summary'),
+    focus: str('focus') === 'top' || str('focus') === 'bottom' ? (str('focus') as 'top' | 'bottom') : undefined,
     href: str('link'), source: str('source'),
     slug: str('link') ? undefined : id,
     body: body.length ? body : undefined,
@@ -68,6 +69,11 @@ for (const [p, text] of Object.entries(files)) {
   const lang = p.endsWith('/en.md') ? 'en' : p.endsWith('/zh.md') ? 'zh' : null;
   if (lang) byLang[lang].push(parse(p, text));
 }
+// 封面裁切位置（focus）只需在一个语言版本里设置：英文版没写时沿用中文版的
+{
+  const zhFocus = new Map(byLang.zh.map((n) => [n.id, n.focus]));
+  for (const n of byLang.en) if (!n.focus && n.img && zhFocus.get(n.id)) n.focus = zhFocus.get(n.id);
+}
 for (const l of ['zh', 'en'] as Lang[]) byLang[l].sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : 0));
 
 /** 列表用：已发布的新闻（不含草稿），最新在前 */
@@ -76,3 +82,7 @@ export const newsList = (lang: Lang, section: Section): NewsItem[] => byLang[lan
 export const allNews = (lang: Lang): NewsEntry[] => byLang[lang];
 /** 详情页用：所有本站发布的新闻（含草稿） */
 export const newsPages = (lang: Lang): NewsEntry[] => byLang[lang].filter((n) => n.slug && n.body);
+
+/** 封面图在列表、首页被裁成宽幅时保留哪一部分：给 <img> 的 style 用（不填 focus = 居中，返回 undefined） */
+export const focusStyle = (n: { focus?: 'top' | 'bottom' }): string | undefined =>
+  n.focus === 'top' ? 'object-position:50% 0' : n.focus === 'bottom' ? 'object-position:50% 100%' : undefined;

@@ -2,6 +2,7 @@
 // 首页 = 全站导览。每个板块预告一个栏目页，可一路滚动看完概况，也可随时点进去。
 import { u as asset } from '../lib/url';
 import { useLang } from '../lib/i18n';
+import { focusStyle } from '../lib/news';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Header from '../components/zh/Header.astro';
 import Footer from '../components/zh/Footer.astro';
@@ -106,7 +107,7 @@ const news = home.news;
         <div class="news">
           {news.map((n, i) => (
             <a href={n.slug && n.body ? u(`/news/${n.slug}`) : n.href ?? u(`/news#news-${n.date}`)} target={!(n.slug && n.body) && n.href ? '_blank' : undefined} rel={!(n.slug && n.body) && n.href ? 'noopener' : undefined} class="card news-card reveal" style={`--d:${i * 90}ms;--c1:${['#0071ce', '#6c4dff', '#ff5c9a'][i]};--c2:${['#00c1de', '#ff5c9a', '#ffc53d'][i]}`}>
-              <span class="news-pic" aria-hidden="true">{n.img && <img src={asset(`/news/${n.img}.jpg`)} alt="" loading="lazy" />}</span>
+              <span class="news-pic" aria-hidden="true">{n.img && <img src={asset(`/news/${n.img}.jpg`)} alt="" loading="lazy" style={focusStyle(n)} />}</span>
               <span class="card-tag">{n.tag}</span>
               <span class:list={['card-title', { hang: /^[《「『“【〈（]/.test(n.title) }]}>{n.title}</span>
               <span class="news-date">{n.date}</span>

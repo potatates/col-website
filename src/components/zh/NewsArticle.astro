@@ -7,7 +7,7 @@ import Footer from './Footer.astro';
 import CtaBand from './CtaBand.astro';
 import { u as asset } from '../../lib/url';
 import { useLang } from '../../lib/i18n';
-import { newsPages, newsList } from '../../lib/news';
+import { newsPages, newsList, focusStyle } from '../../lib/news';
 
 interface Props { slug: string }
 const { c, ui, l: u, lang } = useLang(Astro.url);
@@ -52,7 +52,7 @@ const theme = pages.news.theme ?? ['#0071ce', '#00c1de'];
           const Tag = href ? 'a' : 'div';
           return (
             <Tag class="na-card" href={href} target={!own && href ? '_blank' : undefined} rel={!own && href ? 'noopener' : undefined}>
-              {m.img && <img src={asset(`/news/${m.img}.jpg`)} alt="" loading="lazy" />}
+              {m.img && <img src={asset(`/news/${m.img}.jpg`)} alt="" loading="lazy" style={focusStyle(m)} />}
               <time>{m.date}</time>
               <strong>{m.title}</strong>
             </Tag>

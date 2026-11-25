@@ -11,7 +11,7 @@
 
 export type Stat = { value: string; unit?: string; label: string };
 // 新闻：有 slug + body 的为本站发布的完整文章（/news/<slug>）；只有 href 的链接到原文
-export type NewsItem = { date: string; title: string; tag?: string; img?: string; text?: string; href?: string; slug?: string; source?: string;
+export type NewsItem = { date: string; title: string; tag?: string; img?: string; /** 封面被裁切时保留哪一部分（不填 = 中间） */ focus?: 'top' | 'bottom'; text?: string; href?: string; slug?: string; source?: string;
   body?: ({ h: string } | { p: string } | { quote: string; by?: string } | { img: string; cap?: string })[] };
 // 新闻内容不在这个文件里：每篇新闻一个文件夹 src/news/<编号>/（zh.md / en.md），由 src/lib/news.ts 读取
 import { ipList } from '../lib/ips';

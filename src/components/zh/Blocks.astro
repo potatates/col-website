@@ -4,6 +4,7 @@ import { u as asset } from '../../lib/url';
 import { inlineImg } from '../../lib/inline';
 import { isVertical } from '../../lib/video';
 import { useLang } from '../../lib/i18n';
+import { focusStyle } from '../../lib/news';
 import type { Block } from '../../content/zh';
 const { ui, l: u, lang } = useLang(Astro.url);
 // 英文数字单位：M / K+ / % 这类紧跟数字、与数字同字号；hrs / RMB / TB 这类单词用小字（中文版不变）
@@ -333,7 +334,7 @@ const isNum = (v: string) => /^[\d,]+$/.test(v);
                   const Row = link ? 'a' : 'div';
                   return (
                     <Row class:list={['news-row', { 'has-img': n.img, live: link, own }]} href={link} target={!own && n.href ? '_blank' : undefined} rel={!own && n.href ? 'noopener' : undefined}>
-                      {n.img && <img class="news-img" src={asset(`/news/${n.img}.jpg`)} alt="" loading="lazy" />}
+                      {n.img && <img class="news-img" src={asset(`/news/${n.img}.jpg`)} alt="" loading="lazy" style={focusStyle(n)} />}
                       <span class="news-body">
                         <span class="news-meta"><time>{n.date}</time>{n.tag && <span class="news-tag">{n.tag}</span>}{own && <span class="news-own">{ui.newsOwn}</span>}</span>
                         <span class="news-title">{n.title}</span>
