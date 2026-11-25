@@ -40,10 +40,10 @@ const words = ui.footerWords;
             // 有链接的账号可点击；账号未提供时只显示图标与说明（悬停/聚焦弹出），不做成空链接
             const Tag = s.href ? 'a' : 'span';
             return (
-              <Tag href={s.href} class:list={['soc', { pending: !s.href }]} target={s.href ? '_blank' : undefined} rel={s.href ? 'noopener' : undefined} tabindex={s.href ? undefined : 0} aria-label={`${s.platform}：${s.account}`}>
+              <Tag href={s.href} class:list={['soc', { pending: !s.href && !s.qr }]} target={s.href ? '_blank' : undefined} rel={s.href ? 'noopener' : undefined} tabindex={s.href ? undefined : 0} aria-label={`${s.platform}：${s.account}`}>
                 <svg class:list={['soc-icon', `i-${s.icon}`]} viewBox="0 0 24 24" aria-hidden="true"><path d={socialIcons[s.icon]} /></svg>
                 <span class="soc-pop" role="tooltip">
-                  <span class="qr" aria-hidden="true">{s.qr ? '' : ui.qr}</span>
+                  {(s.qr || !s.href) && <span class="qr" aria-hidden="true">{s.qr ? <img src={asset(s.qr)} alt="" loading="lazy" /> : ui.qr}</span>}
                   <strong>{s.platform}</strong>
                   <small>{s.account}</small>
                 </span>
@@ -57,11 +57,11 @@ const words = ui.footerWords;
     <div class="legal">
       <div class="licenses">
         {contact.icp.map((t) => <span>{t}</span>)}
-        <a href={u('/about#licenses')} class="link-u">{ui.licenses}</a>
+        <a href="https://cdn.static.17k.com/material_picture/2025/1756720858269.png" target="_blank" rel="noopener" class="link-u">{ui.licenses}</a>
       </div>
-      <div class="links">
+      {legal.length > 0 && <div class="links">
         {legal.map((l) => (l.href === '#' ? <span class="soon" title={ui.fileSoon}>{l.label}</span> : <a href={u(l.href)} class="link-u">{l.label}</a>))}
-      </div>
+      </div>}
     </div>
     <div class="bottom">
       <span>© {year} {site.fullName} {ui.rights}</span>
@@ -99,6 +99,7 @@ const words = ui.footerWords;
     box-shadow: 0 20px 40px -16px rgba(0,0,0,.5);
   }
   .soc:hover .soc-pop, .soc:focus-visible .soc-pop { opacity: 1; visibility: visible; transform: translate(-50%, 0) scale(1); }
+  .qr img { width: 100%; height: 100%; object-fit: cover; border-radius: inherit; display: block; }
   .qr { width: 96px; height: 96px; border-radius: 10px; display: grid; place-items: center; font-size: 11px; color: var(--muted);
     background: repeating-conic-gradient(var(--line) 0 25%, #fff 0 50%) 0 0 / 12px 12px; }
   .soc-pop strong { font-size: 13px; }

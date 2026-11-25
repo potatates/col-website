@@ -311,10 +311,6 @@ const isNum = (v: string) => /^[\d,]+$/.test(v);
               <li class="theme"><em>{i + 1}</em><strong>{t.k}</strong><span>{t.v}</span></li>
             ))}
           </ol>
-          <details class="full">
-            <summary><span>{ui.readFull}</span></summary>
-            <p>{ui.letterSoon}</p>
-          </details>
           <footer><strong>{b.author}</strong> · {b.role} · {b.date}</footer>
         </article>
       );

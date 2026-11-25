@@ -76,26 +76,15 @@ export const contact = {
   icp: ['京ICP证010590号', '京ICP备09030667号-23', '京网文（2023）4750-133号', '京公网安备 11010102003415号'],
 };
 
-// 社媒矩阵：微博链接来自现官网页脚；其余账号名与链接待品牌部提供
+// 社媒矩阵：微信、抖音二维码与微博链接取自原官网（www.col.com）页脚；其余平台待品牌部提供账号后再加
 export const social: { icon: string; platform: string; short: string; account: string; href?: string; qr?: string }[] = [
-  { icon: 'wechat', platform: '微信公众号', short: '微信', account: '账号待提供' },
-  { icon: 'weibo', platform: '微博', short: '微博', account: '中文在线（待核实）', href: 'https://weibo.com/u/1759081553' },
-  { icon: 'douyin', platform: '抖音', short: '抖音', account: '账号待提供' },
-  { icon: 'xhs', platform: '小红书', short: '小红书', account: '账号待提供' },
-  { icon: 'bilibili', platform: '哔哩哔哩', short: 'B站', account: '账号待提供' },
-  { icon: 'linkedin', platform: 'LinkedIn', short: 'in', account: '账号待提供' },
-  { icon: 'youtube', platform: 'YouTube', short: 'YT', account: '账号待提供' },
-  { icon: 'x', platform: 'X', short: 'X', account: '账号待提供' },
+  { icon: 'wechat', platform: '微信公众号', short: '微信', account: '中文在线', qr: '/social/wechat-qr.jpg' },
+  { icon: 'weibo', platform: '微博', short: '微博', account: '中文在线', href: 'https://weibo.com/u/1759081553' },
+  { icon: 'douyin', platform: '抖音', short: '抖音', account: '中文在线', qr: '/social/douyin-qr.jpg' },
 ];
 
-// 法务链接：文件待法务提供
-export const legal = [
-  { label: '隐私政策', href: '#' },
-  { label: '用户协议', href: '#' },
-  { label: 'Cookie 政策', href: '#' },
-  { label: '行为准则', href: '#' },
-  { label: '举报与合规通道', href: '#' },
-];
+// 法务链接：原官网没有这些页面，文件由法务提供后在此加入（{ label, href }）；营业执照沿用原官网页脚的链接
+export const legal: { label: string; href: string }[] = [];
 
 
 /* ============ 业务色板 ============ */
@@ -143,7 +132,7 @@ const about: Page = {
           { value: '560', unit: '万种', label: '数字内容' },
           { value: '400', unit: '万+', label: '签约作者' },
           { value: '49', unit: '万+小时', label: '音频资源' },
-        ], note: '数据来源：《中文在线集团介绍》（2026-09）' },
+        ] },
       ],
     },
     {
@@ -208,7 +197,7 @@ const literature: Page = {
           { value: '400', unit: '万+', label: '签约作者' },
           { value: '600', unit: '余家', label: '出版机构' },
           { value: '2,000', unit: '余位', label: '知名作家' },
-        ], note: '数据来源：《中文在线集团介绍》（2026-09）' },
+        ] },
         { type: 'cards', cols: 3, items: [
           { id: '17k', tag: '核心原创内容生产平台', title: '17K小说网', text: '中宣部认定“网络文学重点园地”，提供玄幻奇幻、都市言情、武侠仙侠、青春校园等全品类内容；点击量过亿IP 100部+，注册用户1亿+。', href: 'https://www.17k.com', external: true },
           { id: '4yt', tag: '古风女频', title: '四月天', text: '古风女频原创小说网站，驻站作者15万+，作品20万+。', href: 'https://www.4yt.net', external: true },
@@ -233,7 +222,7 @@ const literature: Page = {
           { value: '49', unit: '万+小时', label: '音频资源' },
           { value: '20', unit: '万+小时', label: 'AI主播录制时长' },
           { value: '50', unit: '亿', label: '《修罗武神》有声历史播放量' },
-        ], note: '数据来源：《中文在线集团介绍》（2026-09）' },
+        ] },
       ],
     },
   ],
@@ -303,7 +292,7 @@ const global: Page = {
           { value: '40', unit: '%+', label: '海外收入占比' },
           { value: '5,200', unit: '万+', label: 'FlareFlow累计注册用户' },
           { value: '14', unit: '种', label: '内容分销语言' },
-        ], note: '数据来源：2026年董事长致股东信、2026年半年度报告' },
+        ] },
       ],
     },
     {
@@ -346,7 +335,7 @@ const ai: Page = {
           { value: '40', unit: '%', label: '生产效率提升' },
           { value: '75', unit: '%+', label: '3D动画单分钟成本下降' },
           { value: '80', unit: '%', label: 'AI短剧单部制作周期缩短' },
-        ], note: '数据来源：2026年董事长致股东信、《中文在线集团介绍》（2026-09）' },
+        ] },
       ],
     },
   ],
@@ -445,7 +434,7 @@ const ipPage: Page = {
     {
       id: 'wall', label: 'IP墙', en: 'IP WALL', title: '明星IP',
       blocks: [
-        { type: 'ipwall', note: '海报与数据取自《中文在线集团介绍》（2026-09）及公司定期报告。点击海报查看作品介绍。', items: ipList('zh') },
+        { type: 'ipwall', note: '点击海报查看作品介绍。', items: ipList('zh') },
       ],
     },
     {
@@ -537,7 +526,7 @@ const dataPage: Page = {
           { value: '560', unit: '万+', label: '正版数字内容资源' },
           { value: '7', unit: '类', label: '2026年上半年新增高质量数据集' },
           { value: '85', unit: '%', label: '新增数据中垂直专业高难数据占比' },
-        ], note: '数据来源：2025年年度报告、2026年半年度报告' },
+        ] },
         { type: 'cards', cols: 2, items: [
           { tag: '合作', title: '洽谈数商合作', text: '告诉 AI 助手你的数据需求，它会转给数商业务负责人。', href: toPartner('data', '数商合作') },
         ] },
@@ -565,11 +554,6 @@ const news: Page = {
     { id: 'official', label: '官方新闻', en: 'PRESS', title: '官方新闻', blocks: [{ type: 'news', items: newsList('zh', 'official') }] },
     { id: 'media', label: '媒体报道', en: 'MEDIA', title: '媒体报道', blocks: [{ type: 'news', items: newsList('zh', 'media') }] },
     { id: 'presskit', label: '媒体资料', en: 'PRESS KIT', title: '媒体资料包', blocks: [
-      { type: 'downloads', items: [
-        { title: '官方 Logo', meta: 'PNG / SVG · 待提供' },
-        { title: '官方图片库', meta: 'ZIP · 待提供' },
-        { title: '公司简介', meta: 'PDF · 待提供' },
-      ] },
       { type: 'cards', cols: 2, items: [
         { tag: '媒体', title: '采访与报道需求', text: '联系品牌公关团队。', href: toPartner('media', '媒体采访') },
       ] },
@@ -597,7 +581,7 @@ const investors: Page = {
   intro: '',
   sections: [
     { id: 'highlights', label: '投资亮点', en: 'HIGHLIGHTS', title: '投资亮点', blocks: [
-      { type: 'stats', items: irHighlights, note: '数据来源：2026年董事长致股东信、2026年半年度报告' },
+      { type: 'stats', items: irHighlights },
     ] },
     { id: 'letter', label: '致股东信', en: 'LETTER', title: '董事长致股东信', blocks: [
       { type: 'letter', title: '“AI+全球化”双轮驱动，开启新一轮增长曲线',
@@ -875,7 +859,7 @@ export const ui = {
   footerBiz: '业务与产品',
   follow: '关注我们',
   qr: '二维码',
-  licenses: '资质证照',
+  licenses: '营业执照',
   fileSoon: '文件待提供',
   rights: '版权所有',
   // AI 助手

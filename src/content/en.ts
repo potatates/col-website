@@ -26,26 +26,15 @@ export const contact = {
   icp: ['京ICP证010590号', '京ICP备09030667号-23', '京网文（2023）4750-133号', '京公网安备 11010102003415号'],
 };
 
-// Social accounts: Weibo link from the current site footer; other handles to be provided by Brand
+// Social accounts: WeChat / Douyin QR codes and the Weibo link come from the previous site footer (www.col.com)
 export const social: { icon: string; platform: string; short: string; account: string; href?: string; qr?: string }[] = [
-  { icon: 'wechat', platform: 'WeChat Official Account', short: 'WeChat', account: 'To be provided' },
-  { icon: 'weibo', platform: 'Weibo', short: 'Weibo', account: '中文在线 (to be verified)', href: 'https://weibo.com/u/1759081553' },
-  { icon: 'douyin', platform: 'Douyin', short: 'Douyin', account: 'To be provided' },
-  { icon: 'xhs', platform: 'Xiaohongshu (RED)', short: 'RED', account: 'To be provided' },
-  { icon: 'bilibili', platform: 'Bilibili', short: 'Bili', account: 'To be provided' },
-  { icon: 'linkedin', platform: 'LinkedIn', short: 'in', account: 'To be provided' },
-  { icon: 'youtube', platform: 'YouTube', short: 'YT', account: 'To be provided' },
-  { icon: 'x', platform: 'X', short: 'X', account: 'To be provided' },
+  { icon: 'wechat', platform: 'WeChat Official Account', short: 'WeChat', account: '中文在线', qr: '/social/wechat-qr.jpg' },
+  { icon: 'weibo', platform: 'Weibo', short: 'Weibo', account: '中文在线', href: 'https://weibo.com/u/1759081553' },
+  { icon: 'douyin', platform: 'Douyin', short: 'Douyin', account: '中文在线', qr: '/social/douyin-qr.jpg' },
 ];
 
 // Legal documents to be provided by Legal
-export const legal = [
-  { label: 'Privacy Policy', href: '#' },
-  { label: 'Terms of Use', href: '#' },
-  { label: 'Cookie Policy', href: '#' },
-  { label: 'Code of Conduct', href: '#' },
-  { label: 'Whistleblowing & Compliance', href: '#' },
-];
+export const legal: { label: string; href: string }[] = [];
 
 const cninfo = 'http://irm.cninfo.com.cn/ircs/search?keyword=300364';
 
@@ -80,7 +69,7 @@ const about: Page = {
           { value: '5.6', unit: 'M', label: 'Digital content titles' },
           { value: '4', unit: 'M+', label: 'Contracted authors' },
           { value: '490', unit: 'K+ hrs', label: 'Audio content' },
-        ], note: 'Source: COL Group corporate presentation (Sept 2026)' },
+        ] },
       ],
     },
     {
@@ -143,7 +132,7 @@ const literature: Page = {
           { value: '4', unit: 'M+', label: 'Contracted authors' },
           { value: '600', unit: '+', label: 'Publishing houses' },
           { value: '2,000', unit: '+', label: 'Acclaimed authors' },
-        ], note: 'Source: COL Group corporate presentation (Sept 2026)' },
+        ] },
         { type: 'cards', cols: 3, items: [
           { id: '17k', tag: 'Flagship original platform', title: '17K', text: 'Recognized as a “key webnovel platform” by the Publicity Department of the CPC Central Committee, covering every genre from fantasy and urban romance to wuxia, xianxia and campus stories. 100+ IPs with over 100 million clicks; 100M+ registered users.', href: 'https://www.17k.com', external: true },
           { id: '4yt', tag: 'Period fiction for women', title: 'SiYueTian', text: 'An original fiction site for period stories aimed at women readers, with 150,000+ resident authors and 200,000+ titles.', href: 'https://www.4yt.net', external: true },
@@ -168,7 +157,7 @@ const literature: Page = {
           { value: '490', unit: 'K+ hrs', label: 'Audio content' },
           { value: '200', unit: 'K+ hrs', label: 'Recorded by AI narrators' },
           { value: '5', unit: 'B', label: 'Lifetime plays of the Martial God Asura audiobook' },
-        ], note: 'Source: COL Group corporate presentation (Sept 2026)' },
+        ] },
       ],
     },
   ],
@@ -237,7 +226,7 @@ const global: Page = {
           { value: '40', unit: '%+', label: 'Share of revenue from overseas' },
           { value: '52', unit: 'M+', label: 'FlareFlow registered users' },
           { value: '14', unit: '', label: 'Distribution languages' },
-        ], note: 'Sources: 2026 Chairman’s Letter to Shareholders, 2026 Interim Report' },
+        ] },
       ],
     },
     {
@@ -280,7 +269,7 @@ const ai: Page = {
           { value: '40', unit: '%', label: 'Higher production efficiency' },
           { value: '75', unit: '%+', label: 'Lower per-minute cost of 3D animation' },
           { value: '80', unit: '%', label: 'Shorter production time per AI microdrama' },
-        ], note: 'Sources: 2026 Chairman’s Letter to Shareholders, COL Group corporate presentation (Sept 2026)' },
+        ] },
       ],
     },
   ],
@@ -378,7 +367,7 @@ const ipPage: Page = {
     {
       id: 'wall', label: 'IP Wall', en: 'IP WALL', title: 'Featured IP',
       blocks: [
-        { type: 'ipwall', note: 'Posters and figures from the COL Group corporate presentation (Sept 2026) and COL’s periodic reports. Click a poster to learn about the work.', items: ipList('en') },
+        { type: 'ipwall', note: 'Click a poster to learn about the work.', items: ipList('en') },
       ],
     },
     {
@@ -469,7 +458,7 @@ const dataPage: Page = {
           { value: '5.6', unit: 'M+', label: 'Licensed digital content titles' },
           { value: '7', unit: '', label: 'New high-quality dataset types (H1 2026)' },
           { value: '85', unit: '%', label: 'Share of new data that is specialized, high-difficulty' },
-        ], note: 'Sources: 2025 Annual Report, 2026 Interim Report' },
+        ] },
         { type: 'cards', cols: 2, items: [
           { tag: 'Partner', title: 'Discuss a data partnership', text: 'Tell our AI assistant what data you need and it will pass it to the Data Solutions team.', href: toPartner('data', 'Data Solutions') },
         ] },
@@ -498,11 +487,6 @@ const news: Page = {
     { id: 'official', label: 'Press Releases', en: 'PRESS', title: 'Press releases', blocks: [{ type: 'news', items: newsList('en', 'official') }] },
     { id: 'media', label: 'In the Media', en: 'MEDIA', title: 'In the media', blocks: [{ type: 'news', items: newsList('en', 'media') }] },
     { id: 'presskit', label: 'Press Kit', en: 'PRESS KIT', title: 'Press kit', blocks: [
-      { type: 'downloads', items: [
-        { title: 'Official logo', meta: 'PNG / SVG · To be provided' },
-        { title: 'Image library', meta: 'ZIP · To be provided' },
-        { title: 'Company overview', meta: 'PDF · To be provided' },
-      ] },
       { type: 'cards', cols: 2, items: [
         { tag: 'Media', title: 'Interview & coverage requests', text: 'Contact our brand and PR team.', href: toPartner('media', 'Media Inquiries') },
       ] },
@@ -531,7 +515,7 @@ const investors: Page = {
   intro: '',
   sections: [
     { id: 'highlights', label: 'Highlights', en: 'HIGHLIGHTS', title: 'Investment highlights', blocks: [
-      { type: 'stats', items: irHighlights, note: 'Sources: 2026 Chairman’s Letter to Shareholders, 2026 Interim Report' },
+      { type: 'stats', items: irHighlights },
     ] },
     { id: 'letter', label: 'Shareholder Letter', en: 'LETTER', title: 'Chairman’s letter to shareholders', blocks: [
       { type: 'letter', title: 'Driven by AI and globalization: a new growth curve',
@@ -802,7 +786,7 @@ export const ui = {
   footerBiz: 'Business & Products',
   follow: 'Follow us',
   qr: 'QR code',
-  licenses: 'Licenses & Permits',
+  licenses: 'Business Licence',
   fileSoon: 'File coming soon',
   rights: 'All rights reserved',
   // AI assistant
