@@ -354,3 +354,19 @@ html[lang='en'] .b-contacts .cc-spark { color: var(--c1, var(--violet)) !importa
   html[lang='en'] .news-card:not(:first-child) .news-pic { grid-row: 1 / span 4 !important; align-self: start !important; height: var(--side-h) !important; aspect-ratio: 16 / 9 !important; }
   html[lang='en'] .news-card:not(:first-child) .card-title { font-size: 19px !important; line-height: 1.2 !important; display: -webkit-box !important; -webkit-line-clamp: 4 !important; -webkit-box-orient: vertical !important; overflow: hidden !important; }
 }
+
+/* ---- Pre-launch layout fixes (Nov 25) ---- */
+/* About: four strategy titles stay on one line so the numbers below line up */
+@media (min-width: 1001px) {
+  html[lang='en'] .pl-title { font-size: clamp(21px, 1.95vw, 28px) !important; white-space: nowrap !important; }
+}
+/* Tablet: three stats share one row */
+@media (min-width: 641px) and (max-width: 768px) {
+  html[lang='en'] .b-stats.n3 { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; }
+  html[lang='en'] .b-stats.n3 .b-stat { padding: 18px 12px 18px 16px !important; border-left: 1px solid var(--line) !important; border-top: 0 !important; grid-column: auto !important; }
+  html[lang='en'] .b-stats.n3 .b-stat:first-child { padding-left: 0 !important; border-left: 0 !important; }
+}
+/* Phone: arrow cards keep room for the arrow button */
+@media (max-width: 768px) {
+  html[lang='en'] .arrow-cards .card { padding-right: 68px !important; }
+}

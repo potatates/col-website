@@ -684,7 +684,7 @@ const isNum = (v: string) => /^[\d,]+$/.test(v);
   .b-stats { display: flex; flex-wrap: wrap; gap: 32px 64px; }
   .b-stat { position: relative; min-width: 160px; }
   /* 四个数字：固定四列，避免最后一个换行落单 */
-  .b-stats.n4 { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 32px; }
+  .b-stats.n4 { display: grid; grid-template-columns: repeat(4, minmax(0, auto)); justify-content: start; gap: 32px 56px; }
   .b-stats.n4 .b-stat { min-width: 0; }
   @media (max-width: 768px) { .b-stats.n4 { grid-template-columns: 1fr 1fr; gap: 24px; } }
   .b-stat::before {
@@ -1131,6 +1131,29 @@ const isNum = (v: string) => /^[\d,]+$/.test(v);
     .b-docs li a span { grid-column: 1 / -1; grid-row: 2; }
     .b-contact { gap: 24px; padding: 24px; }
     .b-contact .btn { margin-left: 0; }
+  }
+
+  /* ---- 上线前检查的版式修正（11/25）---- */
+  /* 平板：三个数字排成一行，不再落单 */
+  @media (min-width: 641px) and (max-width: 768px) {
+    .b-stats.n3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .b-stats.n3 .b-stat:last-child:nth-child(odd) { grid-column: auto; }
+  }
+  /* 竖版预告片：放进与横版同样大小的黑底画框里，四个视频排成整齐的两行 */
+  .video.vertical { grid-column: span 2; }
+  .video.has-video.vertical video { aspect-ratio: 16 / 9; object-fit: contain; }
+  .b-videos .b-note { grid-column: 1 / -1; margin-top: 0; }
+  /* 只有一张卡片时：横向铺满，文字在左、链接在右，旁边不留空白 */
+  @media (min-width: 641px) {
+    .b-cards.c2:has(> .card:only-child), .b-cards.c3:has(> .card:only-child) { grid-template-columns: 1fr; }
+    .b-cards.c2 > .card:only-child, .b-cards.c3 > .card:only-child { display: grid; grid-template-columns: 1fr auto; column-gap: 32px; align-items: center; }
+    .b-cards.c2 > .card:only-child > *, .b-cards.c3 > .card:only-child > * { grid-column: 1; justify-self: start; }
+    .b-cards.c2 > .card:only-child > .card-stripe, .b-cards.c3 > .card:only-child > .card-stripe { grid-column: 1 / -1; justify-self: stretch; }
+    .b-cards.c2 > .card:only-child > .card-go, .b-cards.c3 > .card:only-child > .card-go, .b-cards.c2 > .card:only-child > .card-soon, .b-cards.c3 > .card:only-child > .card-soon { grid-column: 2; grid-row: 1 / span 3; align-self: center; padding-top: 0; margin-top: 0; }
+  }
+  /* 手机：投资者联系卡片上下排，邮箱与按钮不再挤在一行 */
+  @media (max-width: 600px) {
+    .b-contact { flex-direction: column; align-items: flex-start; }
   }
 </style>
 
