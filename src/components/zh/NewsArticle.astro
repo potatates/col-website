@@ -7,7 +7,7 @@ import Footer from './Footer.astro';
 import CtaBand from './CtaBand.astro';
 import { u as asset } from '../../lib/url';
 import { useLang } from '../../lib/i18n';
-import { newsPages, newsList, focusStyle } from '../../lib/news';
+import { newsPages, newsList, cropStyle } from '../../lib/news';
 
 interface Props { slug: string }
 const { c, ui, l: u, lang } = useLang(Astro.url);
@@ -52,7 +52,7 @@ const theme = pages.news.theme ?? ['#0071ce', '#00c1de'];
           const Tag = href ? 'a' : 'div';
           return (
             <Tag class="na-card" href={href} target={!own && href ? '_blank' : undefined} rel={!own && href ? 'noopener' : undefined}>
-              {m.img && <img src={asset(`/news/${m.img}.jpg`)} alt="" loading="lazy" style={focusStyle(m)} />}
+              {m.img && <span class="na-thumb"><img src={asset(`/news/${m.img}.jpg`)} alt="" loading="lazy" style={cropStyle(m)} /></span>}
               <time>{m.date}</time>
               <strong>{m.title}</strong>
             </Tag>
@@ -93,7 +93,8 @@ const theme = pages.news.theme ?? ['#0071ce', '#00c1de'];
   .na-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
   .na-card { display: flex; flex-direction: column; gap: 8px; padding: 14px 14px 20px; border-radius: 22px; background: var(--surface); box-shadow: 0 10px 26px -20px rgba(10,22,48,.3); transition: transform .45s var(--spring); }
   a.na-card:hover { transform: translateY(-6px); }
-  .na-card img { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; border-radius: 14px; margin-bottom: 6px; }
+  .na-thumb { display: block; width: 100%; aspect-ratio: 16 / 9; overflow: hidden; border-radius: 14px; margin-bottom: 6px; }
+  .na-card img { display: block; width: 100%; height: 100%; object-fit: cover; }
   .na-card time { font-size: 13px; color: var(--muted); padding: 0 6px; }
   .na-card strong { font-size: 15px; line-height: 1.5; color: var(--ink); padding: 0 6px; }
   @media (max-width: 768px) {

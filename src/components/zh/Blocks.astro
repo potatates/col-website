@@ -4,7 +4,7 @@ import { u as asset } from '../../lib/url';
 import { inlineImg } from '../../lib/inline';
 import { isVertical } from '../../lib/video';
 import { useLang } from '../../lib/i18n';
-import { focusStyle } from '../../lib/news';
+import { cropStyle } from '../../lib/news';
 import type { Block } from '../../content/zh';
 const { ui, l: u, lang } = useLang(Astro.url);
 // 英文数字单位：M / K+ / % 这类紧跟数字、与数字同字号；hrs / RMB / TB 这类单词用小字（中文版不变）
@@ -334,7 +334,7 @@ const isNum = (v: string) => /^[\d,]+$/.test(v);
                   const Row = link ? 'a' : 'div';
                   return (
                     <Row class:list={['news-row', { 'has-img': n.img, live: link, own }]} href={link} target={!own && n.href ? '_blank' : undefined} rel={!own && n.href ? 'noopener' : undefined}>
-                      {n.img && <img class="news-img" src={asset(`/news/${n.img}.jpg`)} alt="" loading="lazy" style={focusStyle(n)} />}
+                      {n.img && <span class="news-img"><img src={asset(`/news/${n.img}.jpg`)} alt="" loading="lazy" style={cropStyle(n)} /></span>}
                       <span class="news-body">
                         <span class="news-meta"><time>{n.date}</time>{n.tag && <span class="news-tag">{n.tag}</span>}{own && <span class="news-own">{ui.newsOwn}</span>}</span>
                         <span class="news-title">{n.title}</span>
@@ -875,7 +875,9 @@ const isNum = (v: string) => /^[\d,]+$/.test(v);
   .news-row { display: grid; grid-template-columns: 110px 72px 1fr auto; align-items: center; gap: 20px; padding: 22px 24px; border-radius: 22px; background: var(--surface); box-shadow: 0 8px 20px -16px rgba(10,22,48,.3); }
   .news-row { grid-template-columns: 1fr auto; }
   .news-row.has-img { grid-template-columns: 220px 1fr auto; padding: 14px 24px 14px 14px; }
-  .news-img { width: 220px; aspect-ratio: 16 / 9; object-fit: cover; border-radius: 14px; }
+  /* 缩略图外框裁切，里面的图片可按“取景”设置移动、放大 */
+  .news-img { display: block; width: 220px; aspect-ratio: 16 / 9; overflow: hidden; border-radius: 14px; }
+  .news-img img { display: block; width: 100%; height: 100%; object-fit: cover; }
   .news-body { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
   .news-meta { display: flex; align-items: center; gap: 12px; }
   .news-morewrap { display: flex; justify-content: center; margin-top: 28px; }

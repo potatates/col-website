@@ -39,6 +39,15 @@ function parseBody(src: string): NonNullable<NewsItem['body']> {
   return out;
 }
 
+/** 文件里写作 `crop: 50 30 1.4`（x y 放大倍数） */
+function parseCrop(v?: string): { x: number; y: number; z: number } | undefined {
+  if (!v) return undefined;
+  const [x, y, z = 1] = v.trim().split(/\s+/).map(Number);
+  if (![x, y, z].every(Number.isFinite)) return undefined;
+  const clamp = (n: number, a: number, b: number) => Math.min(b, Math.max(a, n));
+  return { x: clamp(x, 0, 100), y: clamp(y, 0, 100), z: clamp(z, 1, 3) };
+}
+
 export type NewsEntry = NewsItem & { id: string; section: Section; draft?: boolean };
 
 function parse(path: string, text: string): NewsEntry {
@@ -55,7 +64,7 @@ function parse(path: string, text: string): NewsEntry {
   if (!str('date') || !str('title')) throw new Error(`新闻缺少 date 或 title：${path}`);
   return {
     id, date: str('date')!, title: str('title')!, tag: str('tag'), img: str('image'), text: str('summary'),
-    focus: str('focus') === 'top' || str('focus') === 'bottom' ? (str('focus') as 'top' | 'bottom') : undefined,
+    crop: parseCrop(str('crop')),
     href: str('link'), source: str('source'),
     slug: str('link') ? undefined : id,
     body: body.length ? body : undefined,
@@ -69,10 +78,10 @@ for (const [p, text] of Object.entries(files)) {
   const lang = p.endsWith('/en.md') ? 'en' : p.endsWith('/zh.md') ? 'zh' : null;
   if (lang) byLang[lang].push(parse(p, text));
 }
-// 封面裁切位置（focus）只需在一个语言版本里设置：英文版没写时沿用中文版的
+// 封面取景（crop）只需在一个语言版本里设置：英文版没写、且用的是同一张封面时，沿用中文版的
 {
-  const zhFocus = new Map(byLang.zh.map((n) => [n.id, n.focus]));
-  for (const n of byLang.en) if (!n.focus && n.img && zhFocus.get(n.id)) n.focus = zhFocus.get(n.id);
+  const zh = new Map(byLang.zh.map((n) => [n.id, n]));
+  for (const n of byLang.en) { const z = zh.get(n.id); if (!n.crop && z?.crop && n.img === z.img) n.crop = z.crop; }
 }
 for (const l of ['zh', 'en'] as Lang[]) byLang[l].sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : 0));
 
@@ -83,6 +92,10 @@ export const allNews = (lang: Lang): NewsEntry[] => byLang[lang];
 /** 详情页用：所有本站发布的新闻（含草稿） */
 export const newsPages = (lang: Lang): NewsEntry[] => byLang[lang].filter((n) => n.slug && n.body);
 
-/** 封面图在列表、首页被裁成宽幅时保留哪一部分：给 <img> 的 style 用（不填 focus = 居中，返回 undefined） */
-export const focusStyle = (n: { focus?: 'top' | 'bottom' }): string | undefined =>
-  n.focus === 'top' ? 'object-position:50% 0' : n.focus === 'bottom' ? 'object-position:50% 100%' : undefined;
+/** 封面取景：给 <img> 的 style 用。图片必须放在一个 overflow:hidden 的框里（放大后会超出自身大小）。
+ *  发布页（/news-admin/）的取景框用同一套算法：object-position 定位置，再以同一点为中心放大 z 倍。 */
+export const cropStyle = (n: { crop?: { x: number; y: number; z: number } }): string | undefined => {
+  const c = n.crop;
+  if (!c) return undefined;
+  return `object-position:${c.x}% ${c.y}%` + (c.z > 1 ? `;scale:${c.z};transform-origin:${c.x}% ${c.y}%` : '');
+};

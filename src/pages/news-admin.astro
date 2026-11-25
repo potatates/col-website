@@ -81,10 +81,16 @@ const LOCKED = Object.values(keyFiles)[0] ?? null;
     #runs li .t { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 600; }
     .cover-row { display: flex; gap: 14px; align-items: center; margin-top: 6px; flex-wrap: wrap; }
     .cover-row img { width: 160px; aspect-ratio: 16/9; object-fit: cover; border-radius: 10px; background: #eef2f9; }
-    /* 新闻封面预览按首页大图的 2:1 裁切显示，裁切位置随下面的选项变化 */
-    #ed-cover { width: 200px; aspect-ratio: 2/1; }
-    .focus-row { display: grid; grid-template-columns: 170px 1fr; gap: 12px; align-items: start; }
-    @media (max-width: 560px) { .focus-row { grid-template-columns: 1fr; } }
+    /* 封面取景：整张图铺在灰色画布上，中间的亮框是首页大图的形状（2:1）；框外的部分变灰。拖动图片、滑块或滚轮放大 */
+    .crop { position: relative; width: 100%; max-width: 560px; height: 340px; overflow: hidden; border-radius: 14px; background: #dfe4ee; touch-action: none; cursor: grab; user-select: none; }
+    .crop.dragging { cursor: grabbing; }
+    .crop img { position: absolute; left: 0; top: 0; max-width: none; pointer-events: none; -webkit-user-drag: none; }
+    .crop-frame { position: absolute; border: 2px solid #fff; border-radius: 6px; box-shadow: 0 0 0 9999px rgba(223,228,238,.78), 0 0 0 1px rgba(11,20,48,.35); pointer-events: none; }
+    .crop-frame::after { content: '首页大图显示这一块'; position: absolute; left: 8px; top: 6px; font-size: 11px; font-weight: 700; color: #fff; text-shadow: 0 1px 4px rgba(0,0,0,.6); }
+    .crop-tools { display: flex; align-items: center; gap: 12px; margin-top: 10px; max-width: 560px; flex-wrap: wrap; }
+    .crop-tools input[type=range] { flex: 1; min-width: 140px; padding: 0; border: 0; accent-color: var(--brand); }
+    .crop-tools button { font-size: 13px; padding: 7px 14px; }
+    .crop-tools .hint { white-space: nowrap; }
     .check { display: flex; gap: 8px; align-items: center; font-weight: 400; }
     .check input { width: auto; }
     .ip-row { display: flex; gap: 12px; align-items: center; }
@@ -188,13 +194,14 @@ const LOCKED = Object.values(keyFiles)[0] ?? null;
             <div><label>&nbsp;</label><label class="check"><input type="checkbox" id="ed-draft" /> 草稿（不在新闻列表显示）</label></div>
           </div>
           <label for="ed-summary">导语（标题下面的一两句话）</label><textarea id="ed-summary" rows="2"></textarea>
-          <label>封面图</label>
-          <div class="cover-row"><img id="ed-cover" alt="" /><button type="button" class="ghost" id="ed-cover-btn">换封面</button><input type="file" id="ed-cover-file" accept="image/*" hidden /><span class="hint" id="ed-cover-note"></span></div>
-          <label for="ed-focus">封面裁切时保留</label>
-          <div class="focus-row">
-            <select id="ed-focus"><option value="">中间（默认）</option><option value="top">上部</option><option value="bottom">下部</option></select>
-            <span class="hint">首页和新闻列表会把封面裁成宽幅，上下各少一条。上面的小图就是首页大图的裁切效果；如果标题或人脸被切掉，在这里改成保留上部或下部。只需设置一次，中英文版都生效。</span>
+          <label>封面图与取景</label>
+          <div class="crop" id="ed-crop" hidden><img id="ed-cover" alt="" draggable="false" /><div class="crop-frame" id="ed-frame"></div></div>
+          <div class="crop-tools" id="ed-crop-tools" hidden>
+            <span class="hint">放大</span><input type="range" id="ed-zoom" min="1" max="3" step="0.01" value="1" aria-label="放大" />
+            <button type="button" class="ghost" id="ed-crop-reset">恢复居中</button>
           </div>
+          <p class="hint" id="ed-crop-hint" hidden>拖动图片，把要显示的部分放进亮框；框外变灰的部分在首页大图上看不到。可以用滑块或鼠标滚轮放大。新闻列表里的小图比亮框略高，上下会多露出一点；文章页顶部仍显示整张图。只需设置一次，中英文版都生效。</p>
+          <div class="cover-row"><button type="button" class="ghost" id="ed-cover-btn">换封面</button><input type="file" id="ed-cover-file" accept="image/*" hidden /><span class="hint" id="ed-cover-note"></span></div>
           <label for="ed-body">正文</label>
           <div class="ed-tools">
             <button type="button" class="ghost" data-ins="h">＋ 小标题</button>
@@ -523,12 +530,12 @@ const LOCKED = Object.values(keyFiles)[0] ?? null;
       return { order, fm, body: m[2].replace(/^\n+/, ''), lead: /^\n/.test(m[2]) ? '\n' : '' };
     }
     function buildMd(order, fm, body, lead = '\n') {
-      const keys = ['date', 'section', 'title', 'tag', 'image', 'focus', 'summary', 'link', 'source', 'wechat', 'draft'];
+      const keys = ['date', 'section', 'title', 'tag', 'image', 'crop', 'summary', 'link', 'source', 'wechat', 'draft'];
       const all = [...new Set([...keys.filter((k) => order.includes(k) || fm[k]), ...order])];
       const lines = all.filter((k) => fm[k] !== undefined && fm[k] !== '' && fm[k] !== false && fm[k] !== 'false').map((k) => {
         const v = fm[k];
         if (v === true || v === 'true') return `${k}: true`;
-        return `${k}: ${/^(date|section|image|focus|link|wechat)$/.test(k) ? v : JSON.stringify(String(v))}`;
+        return `${k}: ${/^(date|section|image|crop|link|wechat)$/.test(k) ? v : JSON.stringify(String(v))}`;
       });
       return `---\n${lines.join('\n')}\n---\n${body.trim() ? lead + body.trim() + '\n' : ''}`;
     }
@@ -546,7 +553,7 @@ const LOCKED = Object.values(keyFiles)[0] ?? null;
           // 还没有英文版：沿用中文版的日期、栏目、封面、外链和草稿状态，标题和正文留空待填
           const zf = await getFile(`src/news/${id}/zh.md`);
           const z = zf ? parseMd(fromB64(zf.content)) : { order: [], fm: {} };
-          const keep = {}; for (const k of ['date', 'section', 'image', 'focus', 'link', 'draft']) if (z.fm[k]) keep[k] = z.fm[k];
+          const keep = {}; for (const k of ['date', 'section', 'image', 'crop', 'link', 'draft']) if (z.fm[k]) keep[k] = z.fm[k];
           if (z.fm.source) keep.source = 'COL Group';
           parsed = { order: Object.keys(keep), fm: keep, body: '' }; isNew = true;
         } else throw new Error('找不到这篇新闻的文件，可能已被删除。');
@@ -555,8 +562,7 @@ const LOCKED = Object.values(keyFiles)[0] ?? null;
         $('ed-title').value = fm.title || ''; $('ed-date').value = fm.date || ''; $('ed-tag').value = fm.tag || '';
         $('ed-section').value = fm.section || 'official'; $('ed-draft').checked = fm.draft === true || fm.draft === 'true';
         $('ed-summary').value = fm.summary || ''; $('ed-body').value = parsed.body; renderPreview();
-        $('ed-focus').value = fm.focus === 'top' || fm.focus === 'bottom' ? fm.focus : ''; showFocus();
-        $('ed-cover').src = fm.image ? `${base}/news/${fm.image}.jpg?t=${Date.now()}` : ''; $('ed-cover-note').textContent = fm.image ? '' : '（没有封面）';
+        setCropImage(fm.image ? `${base}/news/${fm.image}.jpg?t=${Date.now()}` : '', fm.crop); $('ed-cover-note').textContent = fm.image ? '' : '（没有封面）';
         const ext = !!fm.link;
         $('ed-view').hidden = ext || isNew; $('ed-view').href = `${base}${lang === 'en' ? '/en' : ''}/news/${id}/`;
         $('ed-form').hidden = false;
@@ -564,14 +570,59 @@ const LOCKED = Object.values(keyFiles)[0] ?? null;
       } catch (e) { say($('ed-msg'), e.message, 'err'); }
     }
     $('ed-pick').onchange = openEditor; $('ed-lang').onchange = openEditor;
-    // 封面裁切位置：预览图跟着选项变
-    function showFocus() { $('ed-cover').style.objectPosition = { top: '50% 0', bottom: '50% 100%' }[$('ed-focus').value] || '50% 50%'; }
-    $('ed-focus').onchange = showFocus;
+    // ---- 封面取景（拖动 + 放大）----
+    // 存成 crop: "x y z"：x、y 是 0–100 的位置（同 CSS object-position），z 是放大倍数。网站上用同一套算法显示（src/lib/news.ts 的 cropStyle）。
+    const crop = { x: 50, y: 50, z: 1, iw: 0, ih: 0 };
+    const cropBox = () => { const st = $('ed-crop'), W = st.clientWidth, H = st.clientHeight; const fw = Math.min(W - 64, (H - 64) * 2), fh = fw / 2; return { W, H, fw, fh, fx: (W - fw) / 2, fy: (H - fh) / 2 }; };
+    function cropSize(b) { const r = crop.iw / crop.ih; const w0 = r > b.fw / b.fh ? b.fh * r : b.fw; return { w: w0 * crop.z, h: (w0 / r) * crop.z }; }
+    function drawCrop() {
+      if (!crop.iw) return;
+      const b = cropBox(), { w, h } = cropSize(b), img = $('ed-cover'), fr = $('ed-frame');
+      fr.style.cssText = `left:${b.fx}px;top:${b.fy}px;width:${b.fw}px;height:${b.fh}px`;
+      img.style.width = `${w}px`; img.style.height = `${h}px`;
+      img.style.transform = `translate(${b.fx + (crop.x / 100) * (b.fw - w)}px, ${b.fy + (crop.y / 100) * (b.fh - h)}px)`;
+      $('ed-zoom').value = crop.z;
+    }
+    function setCropImage(src, saved) {
+      const has = !!src; $('ed-crop').hidden = !has; $('ed-crop-tools').hidden = !has; $('ed-crop-hint').hidden = !has;
+      const [x, y, z] = String(saved || '').trim() ? String(saved).trim().split(/\s+/).map(Number) : [];
+      Object.assign(crop, { x: Number.isFinite(x) ? x : 50, y: Number.isFinite(y) ? y : 50, z: Number.isFinite(z) && z >= 1 ? Math.min(z, 3) : 1, iw: 0, ih: 0 });
+      const img = $('ed-cover'); if (!has) { img.removeAttribute('src'); return; }
+      img.onload = () => { crop.iw = img.naturalWidth; crop.ih = img.naturalHeight; drawCrop(); };
+      img.src = src;
+    }
+    const cropValue = () => (Math.abs(crop.x - 50) < 0.05 && Math.abs(crop.y - 50) < 0.05 && crop.z < 1.005 ? '' : `${+crop.x.toFixed(1)} ${+crop.y.toFixed(1)} ${+crop.z.toFixed(2)}`);
+    // 拖动：按像素移动图片，再换算回 0–100 的位置；图片始终盖满亮框
+    function moveCrop(dx, dy) {
+      const b = cropBox(), { w, h } = cropSize(b), clamp = (v) => Math.min(100, Math.max(0, v));
+      if (w - b.fw > 0.5) crop.x = clamp(crop.x - (dx / (w - b.fw)) * 100);
+      if (h - b.fh > 0.5) crop.y = clamp(crop.y - (dy / (h - b.fh)) * 100);
+      drawCrop();
+    }
+    // 放大：亮框正中的那一点保持不动
+    function zoomCrop(z) {
+      const b = cropBox(), o = cropSize(b), cx = b.fw / 2 - (crop.x / 100) * (b.fw - o.w), cy = b.fh / 2 - (crop.y / 100) * (b.fh - o.h);
+      const k = Math.min(3, Math.max(1, z)) / crop.z; crop.z *= k;
+      const n = cropSize(b), clamp = (v) => Math.min(100, Math.max(0, v));
+      crop.x = n.w - b.fw > 0.5 ? clamp(((cx * k - b.fw / 2) / (n.w - b.fw)) * 100) : 50;
+      crop.y = n.h - b.fh > 0.5 ? clamp(((cy * k - b.fh / 2) / (n.h - b.fh)) * 100) : 50;
+      drawCrop();
+    }
+    { const st = $('ed-crop'); let last = null;
+      st.addEventListener('pointerdown', (e) => { last = [e.clientX, e.clientY]; st.setPointerCapture(e.pointerId); st.classList.add('dragging'); });
+      st.addEventListener('pointermove', (e) => { if (!last) return; moveCrop(e.clientX - last[0], e.clientY - last[1]); last = [e.clientX, e.clientY]; });
+      const end = () => { last = null; st.classList.remove('dragging'); };
+      st.addEventListener('pointerup', end); st.addEventListener('pointercancel', end);
+      st.addEventListener('wheel', (e) => { e.preventDefault(); zoomCrop(crop.z * (e.deltaY < 0 ? 1.06 : 1 / 1.06)); }, { passive: false });
+      $('ed-zoom').oninput = () => zoomCrop(+$('ed-zoom').value);
+      $('ed-crop-reset').onclick = () => { Object.assign(crop, { x: 50, y: 50, z: 1 }); drawCrop(); };
+      addEventListener('resize', drawCrop);
+    }
     $('ed-cover-btn').onclick = () => $('ed-cover-file').click();
     $('ed-cover-file').onchange = async () => {
       const file = $('ed-cover-file').files[0]; $('ed-cover-file').value = '';
       if (!file || !ed) return;
-      try { ed.cover = await prepImage(file, 0, 1200); $('ed-cover').src = ed.cover.url; $('ed-cover-note').textContent = '新封面，保存后生效'; }
+      try { ed.cover = await prepImage(file, 0, 1200); setCropImage(ed.cover.url, ''); $('ed-cover-note').textContent = '新封面，保存后生效'; }
       catch (e) { say($('ed-msg'), e.message, 'err'); }
     };
     $('ed-form').onsubmit = async (e) => {
@@ -579,7 +630,7 @@ const LOCKED = Object.values(keyFiles)[0] ?? null;
       if (!ed) return;
       const fm = ed.fm;
       fm.title = $('ed-title').value.trim(); fm.date = $('ed-date').value; fm.tag = $('ed-tag').value.trim();
-      fm.section = $('ed-section').value; fm.draft = $('ed-draft').checked; fm.focus = $('ed-focus').value; fm.summary = $('ed-summary').value.trim().replace(/\s*\n\s*/g, ' ');
+      fm.section = $('ed-section').value; fm.draft = $('ed-draft').checked; fm.crop = fm.image || ed.cover ? cropValue() : ''; fm.summary = $('ed-summary').value.trim().replace(/\s*\n\s*/g, ' ');
       const body = $('ed-body').value;
       if (!fm.title || !fm.date) return say($('ed-msg'), '标题和日期不能空。', 'err');
       if (!fm.link && !body.trim()) return say($('ed-msg'), '正文不能空。', 'err');
