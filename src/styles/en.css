@@ -342,3 +342,15 @@ html[lang='en'] .b-contacts .cc-spark { color: var(--c1, var(--violet)) !importa
   html[lang='en'] .b-contacts:has(> :nth-child(7):last-child) > :first-child .card-title { font-size: 30px !important; }
   html[lang='en'] .b-contacts:has(> :nth-child(7):last-child) > :first-child .card-text { font-size: 17px !important; max-width: 44ch !important; }
 }
+
+/* ---------- Home news on desktop: the two side pictures line up with the big picture ----------
+   The big picture is a wide 2:1 (shorter than 16:9), in the left column (1.25 of 2.25 parts, minus the 36px column gap).
+   Each side picture keeps the normal 16:9 shape and is half the big picture's height minus half the 24px row gap,
+   so the second side picture ends exactly where the big picture ends. Sizes come from the block's own width (cqw). */
+@media (min-width: 1001px) {
+  html[lang='en'] .news { container-type: inline-size !important; grid-template-rows: auto 1fr !important; gap: 24px 36px !important; }
+  html[lang='en'] .news-card:first-child .news-pic { aspect-ratio: 2 / 1 !important; }
+  html[lang='en'] .news-card:not(:first-child) { --side-h: calc(((100cqw - 36px) * 1.25 / 2.25 / 2 - 24px) / 2); height: var(--side-h) !important; grid-template-columns: auto 1fr !important; grid-template-rows: max-content max-content max-content !important; align-content: start !important; padding-bottom: 0 !important; margin-bottom: 0 !important; border-bottom: 0 !important; overflow: hidden !important; }
+  html[lang='en'] .news-card:not(:first-child) .news-pic { grid-row: 1 / span 4 !important; align-self: start !important; height: var(--side-h) !important; aspect-ratio: 16 / 9 !important; }
+  html[lang='en'] .news-card:not(:first-child) .card-title { font-size: 19px !important; line-height: 1.2 !important; display: -webkit-box !important; -webkit-line-clamp: 4 !important; -webkit-box-orient: vertical !important; overflow: hidden !important; }
+}
