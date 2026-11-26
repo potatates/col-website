@@ -76,16 +76,21 @@ export const contact = {
   icp: ['京ICP证010590号', '京ICP备09030667号-23', '京网文（2023）4750-133号', '京公网安备 11010102003415号'],
 };
 
-// 社媒矩阵：微博链接来自现官网页脚；其余账号名与链接待品牌部提供
+// 社媒矩阵：国内平台二维码在 public/social/（品牌部 2026-11-26 提供），海外账号为链接；LinkedIn 待提供
 export const social: { icon: string; platform: string; short: string; account: string; href?: string; qr?: string }[] = [
-  { icon: 'wechat', platform: '微信公众号', short: '微信', account: '账号待提供' },
-  { icon: 'weibo', platform: '微博', short: '微博', account: '中文在线（待核实）', href: 'https://weibo.com/u/1759081553' },
-  { icon: 'douyin', platform: '抖音', short: '抖音', account: '账号待提供' },
-  { icon: 'xhs', platform: '小红书', short: '小红书', account: '账号待提供' },
-  { icon: 'bilibili', platform: '哔哩哔哩', short: 'B站', account: '账号待提供' },
+  { icon: 'wechat', platform: '微信公众号', short: '微信', account: '扫码关注', qr: '/social/qr-wechat.png' },
+  { icon: 'channels', platform: '微信视频号', short: '视频号', account: '中文在线', qr: '/social/qr-channels.png' },
+  { icon: 'weibo', platform: '微博', short: '微博', account: '@中文在线官方微博', href: 'https://weibo.com/u/7731071835', qr: '/social/qr-weibo.png' },
+  { icon: 'douyin', platform: '抖音', short: '抖音', account: '中文在线集团股份有限公司', qr: '/social/qr-douyin.png' },
+  { icon: 'kuaishou', platform: '快手', short: '快手', account: '中文在线', qr: '/social/qr-kuaishou.png' },
+  { icon: 'xhs', platform: '小红书', short: '小红书', account: '中文在线小喇叭', qr: '/social/qr-xhs.png' },
+  { icon: 'bilibili', platform: '哔哩哔哩', short: 'B站', account: '中文在线', qr: '/social/qr-bilibili.png' },
+  { icon: 'tiktok', platform: 'TikTok', short: 'TT', account: '@col_intl', href: 'https://www.tiktok.com/@col_intl' },
+  { icon: 'instagram', platform: 'Instagram', short: 'IG', account: '@col_intl', href: 'https://www.instagram.com/col_intl' },
+  { icon: 'youtube', platform: 'YouTube', short: 'YT', account: '@col_intl', href: 'https://www.youtube.com/@col_intl' },
+  { icon: 'facebook', platform: 'Facebook', short: 'f', account: 'COL International IP', href: 'https://www.facebook.com/COLInternationalIP/' },
+  { icon: 'x', platform: 'X', short: 'X', account: '@col_intl', href: 'https://twitter.com/col_intl' },
   { icon: 'linkedin', platform: 'LinkedIn', short: 'in', account: '账号待提供' },
-  { icon: 'youtube', platform: 'YouTube', short: 'YT', account: '账号待提供' },
-  { icon: 'x', platform: 'X', short: 'X', account: '账号待提供' },
 ];
 
 // 法务链接：文件待法务提供

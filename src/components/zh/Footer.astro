@@ -40,10 +40,10 @@ const words = ui.footerWords;
             // 有链接的账号可点击；账号未提供时只显示图标与说明（悬停/聚焦弹出），不做成空链接
             const Tag = s.href ? 'a' : 'span';
             return (
-              <Tag href={s.href} class:list={['soc', { pending: !s.href }]} target={s.href ? '_blank' : undefined} rel={s.href ? 'noopener' : undefined} tabindex={s.href ? undefined : 0} aria-label={`${s.platform}：${s.account}`}>
+              <Tag href={s.href} class:list={['soc', { pending: !s.href && !s.qr }]} target={s.href ? '_blank' : undefined} rel={s.href ? 'noopener' : undefined} tabindex={s.href ? undefined : 0} aria-label={`${s.platform}：${s.account}`}>
                 <svg class:list={['soc-icon', `i-${s.icon}`]} viewBox="0 0 24 24" aria-hidden="true"><path d={socialIcons[s.icon]} /></svg>
                 <span class="soc-pop" role="tooltip">
-                  <span class="qr" aria-hidden="true">{s.qr ? '' : ui.qr}</span>
+                  {s.qr ? <img class="qr" src={asset(s.qr)} alt="" width="120" height="120" loading="lazy" /> : !s.href && <span class="qr ph" aria-hidden="true">{ui.qr}</span>}
                   <strong>{s.platform}</strong>
                   <small>{s.account}</small>
                 </span>
@@ -95,11 +95,14 @@ const words = ui.footerWords;
   .soc-pop {
     position: absolute; bottom: calc(100% + 10px); left: 50%; z-index: 5; width: 150px; padding: 12px; border-radius: 16px;
     background: #fff; color: #0b1430; display: flex; flex-direction: column; align-items: center; gap: 4px; text-align: center;
-    opacity: 0; visibility: hidden; transform: translate(-50%, 8px) scale(.95); transition: opacity .2s, transform .35s var(--spring), visibility .2s;
+    opacity: 0; visibility: hidden; transform: translate(var(--px, -50%), 8px) scale(.95); transition: opacity .2s, transform .35s var(--spring), visibility .2s;
     box-shadow: 0 20px 40px -16px rgba(0,0,0,.5);
   }
-  .soc:hover .soc-pop, .soc:focus-visible .soc-pop { opacity: 1; visibility: visible; transform: translate(-50%, 0) scale(1); }
-  .qr { width: 96px; height: 96px; border-radius: 10px; display: grid; place-items: center; font-size: 11px; color: var(--muted);
+  .soc:hover .soc-pop, .soc:focus-visible .soc-pop { opacity: 1; visibility: visible; transform: translate(var(--px, -50%), 0) scale(1); }
+  /* 第一列的弹窗向右展开，避免手机上被屏幕左边裁掉 */
+  .soc:nth-child(4n+1) { --px: -30px; }
+  .qr { width: 120px; height: 120px; border-radius: 10px; display: block; margin-bottom: 4px; }
+  .qr.ph { width: 96px; height: 96px; display: grid; place-items: center; font-size: 11px; color: var(--muted);
     background: repeating-conic-gradient(var(--line) 0 25%, #fff 0 50%) 0 0 / 12px 12px; }
   .soc-pop strong { font-size: 13px; }
   .soc-pop small { font-size: 11px; color: var(--muted); }
@@ -113,7 +116,7 @@ const words = ui.footerWords;
   .soc.pending:hover, .soc.pending:focus-visible { background: rgba(255,255,255,.14); transform: none; }
   .bottom { padding-top: 12px; font-size: 12px; color: rgba(255,255,255,.4); }
   @media (max-width: 1080px) { .top { grid-template-columns: 1fr 1fr; } .brand { grid-column: 1 / -1; } }
-  @media (max-width: 640px) { .top { grid-template-columns: 1fr; } .footer { border-radius: 28px 28px 0 0; padding-top: 64px; } .social { grid-template-columns: repeat(5, 44px); } }
+  @media (max-width: 640px) { .top { grid-template-columns: 1fr; } .footer { border-radius: 28px 28px 0 0; padding-top: 64px; } .social { grid-template-columns: repeat(5, 44px); } .soc:nth-child(4n+1) { --px: -50%; } .soc:nth-child(5n+1) { --px: -30px; } }
   /* 手机：链接上下留出 8px，可点区域更大 */
   @media (max-width: 640px) {
     .col { gap: 0; }

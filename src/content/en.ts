@@ -26,16 +26,21 @@ export const contact = {
   icp: ['京ICP证010590号', '京ICP备09030667号-23', '京网文（2023）4750-133号', '京公网安备 11010102003415号'],
 };
 
-// Social accounts: Weibo link from the current site footer; other handles to be provided by Brand
+// Social accounts: China platforms show a QR code (public/social/, from Brand 2026-11-26); international accounts are links; LinkedIn to be provided
 export const social: { icon: string; platform: string; short: string; account: string; href?: string; qr?: string }[] = [
-  { icon: 'wechat', platform: 'WeChat Official Account', short: 'WeChat', account: 'To be provided' },
-  { icon: 'weibo', platform: 'Weibo', short: 'Weibo', account: '中文在线 (to be verified)', href: 'https://weibo.com/u/1759081553' },
-  { icon: 'douyin', platform: 'Douyin', short: 'Douyin', account: 'To be provided' },
-  { icon: 'xhs', platform: 'Xiaohongshu (RED)', short: 'RED', account: 'To be provided' },
-  { icon: 'bilibili', platform: 'Bilibili', short: 'Bili', account: 'To be provided' },
+  { icon: 'tiktok', platform: 'TikTok', short: 'TT', account: '@col_intl', href: 'https://www.tiktok.com/@col_intl' },
+  { icon: 'instagram', platform: 'Instagram', short: 'IG', account: '@col_intl', href: 'https://www.instagram.com/col_intl' },
+  { icon: 'youtube', platform: 'YouTube', short: 'YT', account: '@col_intl', href: 'https://www.youtube.com/@col_intl' },
+  { icon: 'facebook', platform: 'Facebook', short: 'f', account: 'COL International IP', href: 'https://www.facebook.com/COLInternationalIP/' },
+  { icon: 'x', platform: 'X', short: 'X', account: '@col_intl', href: 'https://twitter.com/col_intl' },
   { icon: 'linkedin', platform: 'LinkedIn', short: 'in', account: 'To be provided' },
-  { icon: 'youtube', platform: 'YouTube', short: 'YT', account: 'To be provided' },
-  { icon: 'x', platform: 'X', short: 'X', account: 'To be provided' },
+  { icon: 'wechat', platform: 'WeChat Official Account', short: 'WeChat', account: 'Scan to follow', qr: '/social/qr-wechat.png' },
+  { icon: 'channels', platform: 'WeChat Channels', short: 'Channels', account: '中文在线', qr: '/social/qr-channels.png' },
+  { icon: 'weibo', platform: 'Weibo', short: 'Weibo', account: '@中文在线官方微博', href: 'https://weibo.com/u/7731071835', qr: '/social/qr-weibo.png' },
+  { icon: 'douyin', platform: 'Douyin', short: 'Douyin', account: '中文在线集团股份有限公司', qr: '/social/qr-douyin.png' },
+  { icon: 'kuaishou', platform: 'Kuaishou', short: 'Kuaishou', account: '中文在线', qr: '/social/qr-kuaishou.png' },
+  { icon: 'xhs', platform: 'Xiaohongshu (RED)', short: 'RED', account: '中文在线小喇叭', qr: '/social/qr-xhs.png' },
+  { icon: 'bilibili', platform: 'Bilibili', short: 'Bili', account: '中文在线', qr: '/social/qr-bilibili.png' },
 ];
 
 // Legal documents to be provided by Legal
