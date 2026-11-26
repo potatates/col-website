@@ -15,8 +15,7 @@ const words = ui.footerWords;
   </div>
 </div>
 <footer class="footer">
-  <div class="blob b1" aria-hidden="true"></div>
-  <div class="blob b2" aria-hidden="true"></div>
+  <div class="blobs" aria-hidden="true"><div class="blob b1"></div><div class="blob b2"></div></div>
   <div class="container">
     <div class="top">
       <div class="brand">
@@ -74,7 +73,8 @@ const words = ui.footerWords;
   .blob { position: absolute; border-radius: 50%; filter: blur(90px); z-index: -1; pointer-events: none; }
   .b1 { width: 480px; height: 480px; background: var(--brand); opacity: .45; right: 0; top: -100px; }
   .b2 { width: 360px; height: 360px; background: var(--violet); opacity: .3; left: 10%; bottom: 0; }
-  .footer { overflow: hidden; }
+  /* 光斑单独裁切；页脚本身不裁切，二维码弹窗可以超出页脚顶部 */
+  .blobs { position: absolute; inset: 0; overflow: hidden; border-radius: inherit; z-index: -1; pointer-events: none; }
   .top { display: grid; grid-template-columns: 1.6fr 1fr 1fr 1.3fr; gap: 40px; padding-bottom: 48px; }
   .logo { height: 24px; width: auto; margin-bottom: 20px; }
   .muted { color: rgba(255,255,255,.45); font-size: 13px; margin-top: 10px; }
