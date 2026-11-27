@@ -520,7 +520,9 @@ const snap = await stockSnapshot();
             document.querySelectorAll<HTMLElement>('[data-stock]').forEach((el) => {
               const k = el.dataset.stock!;
               if (k === 'status') {
-                el.textContent = snap ? `${en ? 'Delayed' : '延时行情'} · ${q.mo}-${q.dd} ${q.hh}:${q.mm}` : q.hh ? `${el.dataset.stockLive} · ${q.hh}:${q.mm}` : el.dataset.stockLive!;
+                // 时间都是北京时间，标出来避免海外访客误以为是本地时间
+                const t = (hm: string) => (en ? `${hm} Beijing time` : `北京时间 ${hm}`);
+                el.textContent = snap ? `${en ? 'Delayed' : '延时行情'} · ${t(`${q.mo}-${q.dd} ${q.hh}:${q.mm}`)}` : q.hh ? `${el.dataset.stockLive} · ${t(`${q.hh}:${q.mm}`)}` : el.dataset.stockLive!;
                 return;
               }
               if (!(k in vals)) return;
