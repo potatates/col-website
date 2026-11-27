@@ -71,3 +71,10 @@
   html[lang][lang] .hero .hero-actions { margin-top: 24px !important; gap: 10px !important; flex-wrap: nowrap !important; }
   html[lang='en'][lang] .hero .hero-actions .btn { padding-left: 16px !important; padding-right: 16px !important; font-size: 14px !important; white-space: nowrap !important; }
 }
+
+/* Chinese home, phones: each business band's one-line description stays on one line */
+@media (max-width: 640px) {
+  html:not([lang='en'])[lang] .posters .poster { padding-right: 56px !important; }
+  html:not([lang='en'])[lang] .posters .p-hook { font-size: clamp(10.5px, 3.25vw, 13px) !important; letter-spacing: -.01em !important; padding-right: 0 !important; }
+  html:not([lang='en'])[lang] .posters .p-go { right: 12px !important; }
+}
