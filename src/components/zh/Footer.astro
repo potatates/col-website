@@ -32,7 +32,7 @@ const words = ui.footerWords;
           <a href={u(b.href)} class="biz" style={`--c1:${b.theme?.[0]};--c2:${b.theme?.[1]}`}><i></i>{b.title}</a>
         ))}
       </div>
-      <div class="col">
+      <div class="col follow">
         <span class="label">{ui.follow}</span>
         <div class="social">
           {social.map((s) => {
@@ -116,7 +116,7 @@ const words = ui.footerWords;
   .soc.pending:hover, .soc.pending:focus-visible { background: rgba(255,255,255,.14); transform: none; }
   .bottom { padding-top: 12px; font-size: 12px; color: rgba(255,255,255,.4); }
   @media (max-width: 1080px) { .top { grid-template-columns: 1fr 1fr; } .brand { grid-column: 1 / -1; } }
-  @media (max-width: 640px) { .top { grid-template-columns: 1fr; } .footer { border-radius: 28px 28px 0 0; padding-top: 64px; } .social { grid-template-columns: repeat(5, 44px); } .soc:nth-child(4n+1) { --px: -50%; } .soc:nth-child(5n+1) { --px: -30px; } }
+  @media (max-width: 640px) { .top { grid-template-columns: 1fr 1fr; gap: 32px 20px; } .follow { grid-column: 1 / -1; } .footer { border-radius: 28px 28px 0 0; padding-top: 64px; } .social { grid-template-columns: repeat(5, 44px); } .soc:nth-child(4n+1) { --px: -50%; } .soc:nth-child(5n+1) { --px: -30px; } }
   /* 手机：链接上下留出 8px，可点区域更大 */
   @media (max-width: 640px) {
     .col { gap: 0; }
